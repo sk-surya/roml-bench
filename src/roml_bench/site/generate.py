@@ -190,7 +190,8 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
 
     python_impls = [i for i in PYTHON_ORDER if _has_points(summary, i)]
     core_impls = [i for i in CORE_ORDER if _has_points(summary, i)]
-    all_impls = [i for i in PYTHON_ORDER + ["roml_python_scalar", "roml_core_rust"] if _has_points(summary, i)]
+    panel = PYTHON_ORDER + ["roml_python_scalar", "roml_core_rust"]
+    all_impls = [i for i in panel if _has_points(summary, i)]
 
     ctx_common = {
         "provenance": provenance,
