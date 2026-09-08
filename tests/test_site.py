@@ -4,8 +4,8 @@ import json
 import re
 from pathlib import Path
 
-from roml_bench.summarize import write_summary
 from roml_bench.site.generate import generate_site
+from roml_bench.summarize import write_summary
 
 REPO_ROOT = Path(__file__).parent.parent
 
