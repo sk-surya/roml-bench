@@ -24,12 +24,32 @@ from roml_bench.workloads import make_case
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 
 IMPLEMENTATION_NOTES = {
-    "roml_python_bulk": "ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add (bess_96); roml.sum/roml.dot objectives.",
-    "roml_python_scalar": "ROML Python scalar path: Model.var + scalar expressions + Model.add. Diagnostic track for binding-overhead comparison.",
-    "roml_core_rust": "Native ROML core (roml crate, release build): scalar construction in Rust; same variables, constraints, coefficients, bounds, objective, and naming policy as roml_python_scalar.",
-    "pulp_python": "PuLP: LpProblem.add_variable_dicts + lpSum helpers. Validation solves use the bundled CBC binary.",
-    "pyomo_python": "Pyomo: ConcreteModel + indexed Var/Constraint rules + quicksum. Validation solves use appsi_highs.",
-    "pyoptinterface_python": "PyOptInterface: add_m_variables per family + add_m_linear_constraints per sense group + ExprBuilder objective, backed directly by HiGHS (see methodology).",
+    "roml_python_bulk": (
+        "ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR "
+        "(sparse_rows) or vectorized Model.add (bess_96); roml.sum/roml.dot objectives."
+    ),
+    "roml_python_scalar": (
+        "ROML Python scalar path: Model.var + scalar expressions + Model.add. "
+        "Diagnostic track for binding-overhead comparison."
+    ),
+    "roml_core_rust": (
+        "Native ROML core (roml crate, release build): scalar construction in Rust; "
+        "same variables, constraints, coefficients, bounds, objective, and naming "
+        "policy as roml_python_scalar."
+    ),
+    "pulp_python": (
+        "PuLP: LpProblem.add_variable_dicts + lpSum helpers. "
+        "Validation solves use the bundled CBC binary."
+    ),
+    "pyomo_python": (
+        "Pyomo: ConcreteModel + indexed Var/Constraint rules + quicksum. "
+        "Validation solves use appsi_highs."
+    ),
+    "pyoptinterface_python": (
+        "PyOptInterface: add_m_variables per family + add_m_linear_constraints "
+        "per sense group + ExprBuilder objective, backed directly by HiGHS "
+        "(see methodology)."
+    ),
 }
 
 
