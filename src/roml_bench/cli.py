@@ -27,10 +27,25 @@ def _cmd_validate(_args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 1
 
 
+def _cmd_run(args: argparse.Namespace) -> int:
+    from roml_bench.orchestrator import run_profile
+
+    try:
+        run_dir = run_profile(args.profile, run_id=args.run_id)
+    except RuntimeError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(str(run_dir))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="roml-bench")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("validate", help="run the structural/equivalence validation gate")
+    run_parser = sub.add_parser("run", help="run a benchmark profile")
+    run_parser.add_argument("--profile", choices=["quick", "standard"], required=True)
+    run_parser.add_argument("--run-id", default=None)
     return parser
 
 
@@ -38,6 +53,8 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "validate":
         return _cmd_validate(args)
+    if args.command == "run":
+        return _cmd_run(args)
     print(f"unknown command: {args.command}", file=sys.stderr)
     return 2
 
