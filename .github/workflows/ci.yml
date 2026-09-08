@@ -1,0 +1,56 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  correctness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v5
+      - name: Bootstrap (ROML wheel + Rust core)
+        run: ./scripts/bootstrap.sh
+      - name: Ruff
+        run: uv run ruff check .
+      - name: Python tests
+        run: uv run pytest -q
+      - name: Site smoke from fixture
+        run: |
+          uv run python - <<'EOF'
+          import json, shutil
+          from pathlib import Path
+          from roml_bench.summarize import write_summary
+          run_dir = Path("smoke-run")
+          if run_dir.exists():
+              shutil.rmtree(run_dir)
+          run_dir.mkdir()
+          (run_dir / "run.json").write_text(json.dumps({
+              "run_id": "ci-smoke", "profile": "quick", "seed": 20260908,
+              "benchmark_sha": "ci", "roml_sha": "ci", "stopped": [],
+          }))
+          (run_dir / "environment.json").write_text(json.dumps({
+              "timestamp_utc": "2026-09-08T00:00:00Z", "platform": "ci",
+              "python": "3.13", "packages": {},
+          }))
+          shutil.copy("fixtures/quick-results.jsonl", run_dir / "raw.jsonl")
+          write_summary(run_dir)
+          EOF
+          mkdir -p results
+          echo '{"status": "ok"}' > results/validation.json
+          uv run roml-bench site smoke-run --output smoke-site
+          test -f smoke-site/index.html
+          test -f smoke-site/static/plotly.min.js
+          ! grep -Eo 'src="https?://[^"]+"|href="https?://[^"]+"' smoke-site/*.html
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Cargo fmt
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy -p roml-bench-core --all-targets -- -D warnings
+      - name: Rust tests
+        run: cargo test -p roml-bench-core
