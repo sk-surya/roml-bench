@@ -39,6 +39,21 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_summarize(args: argparse.Namespace) -> int:
+    from roml_bench.summarize import write_summary
+
+    summary = write_summary(args.run_dir)
+    print(json.dumps(
+        {
+            "run_id": summary["run_id"],
+            "groups": len(summary["groups"]),
+            "speedups": len(summary["speedups"]),
+        },
+        indent=2,
+    ))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="roml-bench")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -46,6 +61,8 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser = sub.add_parser("run", help="run a benchmark profile")
     run_parser.add_argument("--profile", choices=["quick", "standard"], required=True)
     run_parser.add_argument("--run-id", default=None)
+    sum_parser = sub.add_parser("summarize", help="derive summaries from raw results")
+    sum_parser.add_argument("run_dir")
     return parser
 
 
@@ -55,6 +72,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_validate(args)
     if args.command == "run":
         return _cmd_run(args)
+    if args.command == "summarize":
+        return _cmd_summarize(args)
     print(f"unknown command: {args.command}", file=sys.stderr)
     return 2
 
