@@ -57,10 +57,10 @@ footer { border-top: 1px solid #bcccdc; padding: 1rem; font-size: 0.85rem;
 
 <div class="provenance">
 <dl>
-<dt>Run</dt><dd>20260908T042228Z-ai90-64615d6c (profile standard, seed 20260908)</dd>
-<dt>Timestamp (UTC)</dt><dd>2026-09-08T04:22:28Z</dd>
+<dt>Run</dt><dd>20260908T053319Z-ai90-14738229 (profile forensic, seed 20260908)</dd>
+<dt>Timestamp (UTC)</dt><dd>2026-09-08T05:33:19Z</dd>
 <dt>Host</dt><dd>Linux-7.0.0-30-generic-x86_64-with-glibc2.43 — AMD Ryzen 9 9950X 16-Core Processor — 59.5 GiB RAM</dd>
-<dt>Benchmark SHA</dt><dd>64615d6cce15e0b00ba7542c2e1f2a78d920771a</dd>
+<dt>Benchmark SHA</dt><dd>14738229c2bc4705c97895ebc1a0c32cf9c1074e</dd>
 <dt>ROML SHA</dt><dd>6062398b418c4bc0c7718b2ce569da8b9e42766e</dd>
 <dt>Packages</dt><dd>Python 3.13.14 · roml-python 0.1.0 · PuLP 3.3.1 · Pyomo 6.10.1 · PyOptInterface 0.6.1 · HiGHS 1.15.1 · NumPy 2.5.3</dd>
 </dl>
@@ -69,7 +69,7 @@ footer { border-top: 1px solid #bcccdc; padding: 1rem; font-size: 0.85rem;
 
 <h1>Methodology</h1>
 <p>This page states the exact benchmark contract, semantic boundaries, pins,
-and host provenance for run <code>20260908T042228Z-ai90-64615d6c</code>.</p>
+and host provenance for run <code>20260908T053319Z-ai90-14738229</code>.</p>
 
 <h2>Workloads</h2>
 <h3>sparse_rows</h3>
@@ -107,7 +107,7 @@ scaling charts use <code>populate_ms</code>.</p>
 
 <h2>Implementations and construction paths</h2>
 <ul>
-<li><strong>ROML Python (bulk)</strong> — ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add (bess_96); roml.sum/roml.dot objectives.</li><li><strong>PuLP</strong> — PuLP: LpProblem.add_variable_dicts + lpSum helpers. Validation solves use the bundled CBC binary.</li><li><strong>Pyomo</strong> — Pyomo: ConcreteModel + indexed Var/Constraint rules + quicksum. Validation solves use appsi_highs.</li><li><strong>PyOptInterface</strong> — PyOptInterface: add_m_variables per family + add_m_linear_constraints per sense group + ExprBuilder objective, backed directly by HiGHS (see methodology).</li><li><strong>ROML Python (scalar)</strong> — ROML Python scalar path: Model.var + scalar expressions + Model.add. Diagnostic track for binding-overhead comparison.</li><li><strong>ROML core (Rust)</strong> — Native ROML core (roml crate, release build): scalar construction in Rust; same variables, constraints, coefficients, bounds, objective, and naming policy as roml_python_scalar.</li>
+<li><strong>ROML Python (bulk)</strong> — ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add with one fused rm.dot objective call (bess_96, corrected in the forensic pass).</li><li><strong>ROML Python (naive chain)</strong> — Naive scalar chain: Model.var + repeated `total = total + v`. Each `+` clones the accumulated expression and linearly scans its terms (O(n^2)); measures the naive path, not binding overhead.</li><li><strong>PuLP</strong> — PuLP: LpProblem.add_variable_dicts + lpSum helpers. Validation solves use the bundled CBC binary.</li><li><strong>Pyomo</strong> — Pyomo: ConcreteModel + indexed Var/Constraint rules + quicksum. Validation solves use appsi_highs.</li><li><strong>PyOptInterface (scalar)</strong> — PyOptInterface formulation: scalar add_variable loop + per-row ScalarAffineFunction constraints + ExprBuilder objective, driven from B/T/prices with no shared CSR.</li><li><strong>ROML Python (CSR ingest)</strong> — BESS matrix ingestion: one flat Model.vars with exact per-element bounds + add_linear_rows from the shared canonical CSR; flat v[i] namespace (ingestion diagnostic, bess_96 only).</li><li><strong>PyOptInterface (matrix)</strong> — PyOptInterface matrix ingestion: add_m_variables per family + add_m_linear_constraints per sense group + ExprBuilder objective, backed directly by HiGHS (see methodology).</li>
 </ul>
 <p>Python primary comparison uses each library's documented efficient public
 API while preserving workload mathematics and semantic naming
@@ -149,7 +149,7 @@ p25, p75, min, max, MAD, and replicate count. Speedup is
 
 <h2>Pins and provenance</h2>
 <ul>
-<li>Benchmark SHA: <code>64615d6cce15e0b00ba7542c2e1f2a78d920771a</code></li>
+<li>Benchmark SHA: <code>14738229c2bc4705c97895ebc1a0c32cf9c1074e</code></li>
 <li>ROML SHA: <code>6062398b418c4bc0c7718b2ce569da8b9e42766e</code> (exact pinned source; never a moving main)</li>
 <li>Python 3.13.14 · roml-python 0.1.0 · PuLP 3.3.1 · Pyomo 6.10.1 · PyOptInterface 0.6.1 · HiGHS 1.15.1 · NumPy 2.5.3</li>
 <li>Host: Linux-7.0.0-30-generic-x86_64-with-glibc2.43 — AMD Ryzen 9 9950X 16-Core Processor</li>
@@ -158,6 +158,30 @@ deterministic HiGHS-compatible solve per implementation/workload with
 objective agreement within 1e-7 absolute + 1e-7 relative —
 passed
 (see <a href="data/validation.json">validation.json</a>).</li>
+</ul>
+
+<h2>Forensic pass (v2) addendum</h2>
+<p>The v1 report mixed two questions. The forensic pass splits them:</p>
+<ul>
+<li><strong>Formulation panel.</strong> Timed input is N (sparse) or
+B/T/prices/dt/eta/limits (bess). New arms: <code>roml_python_naive_chain</code>
+(the renamed v1 scalar path; O(n^2) chaining disclosed),
+<code>pyoptinterface_scalar</code> (scalar formulation with no shared CSR).
+The BESS bulk objective is one fused <code>rm.dot(price_grid,
+discharge − charge)</code> call over a precomputed contiguous grid.</li>
+<li><strong>Matrix-ingestion panel.</strong> Timed input is the shared CSR
+matrix, row bounds, objective vector, and variable bounds. Arms:
+ROML bulk (sparse), <code>roml_python_csr</code> (bess, flat namespace
+with exact per-element bounds), PyOptInterface matrix. PuLP/Pyomo expose
+no matrix API and are excluded here by design.</li>
+<li><strong>Phase decomposition.</strong> Adapters expose
+<code>variables</code> / <code>constraints</code> / <code>objective</code>
+phases timed separately inside the worker (Rust: <code>--phase-breakdown</code>).</li>
+<li><strong>Ingestion diagnostics.</strong> <code>shuffled</code> permutes
+in-row column order; <code>duplicated</code> doubles entries (2x nnz,
+recorded). Canonical only for leaderboards and speedups.</li>
+<li><strong>Named vs anonymous core.</strong> <code>roml_core_rust_anon</code>
+skips every <code>.named()</code> call to isolate name-registration cost.</li>
 </ul>
 
 <h2>Interpretation discipline</h2>

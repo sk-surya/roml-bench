@@ -387,7 +387,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
     (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")
 
     raw_path = run_dir / "raw.jsonl"
-    stopped: set[tuple[str, str]] = set()
+    stopped: set[tuple] = set()
     with open(raw_path, "w") as raw:
         for workload, size in plan:
             for replicate in range(config["replicates"]):
@@ -444,23 +444,34 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
     return run_dir
 
 
-def _handle_record(raw, run_dir, run_meta, stopped, record, pilot_capped_ok=True) -> None:
-    """Append a record and update stop bookkeeping; shared by all loops."""
+def _handle_record(raw, run_dir, run_meta, stopped, record, variant_scoped=False) -> None:
+    """Append a record and update stop bookkeeping; shared by all loops.
+
+    Canonical stops key (implementation, workload) and halt larger sizes.
+    Variant-diagnostic stops key (implementation, workload, variant) and
+    never halt canonical points (which always run first).
+    """
     raw.write(json.dumps(record) + "\n")
     raw.flush()
+    variant = record.get("variant", "canonical")
     key = (
         f"{record['workload']}/{record['size']}/{record['implementation']}"
-        f"/{record.get('variant', 'canonical')}"
+        f"/{variant}"
     )
     run_meta["points"].setdefault(key, []).append(record["status"])
     if record["status"] != "ok":
-        stopped.add((record["implementation"], record["workload"]))
+        stop_key = (
+            (record["implementation"], record["workload"], variant)
+            if variant_scoped or variant != "canonical"
+            else (record["implementation"], record["workload"])
+        )
+        stopped.add(stop_key)
         run_meta["stopped"].append(
             {
                 "implementation": record["implementation"],
                 "workload": record["workload"],
                 "size": record["size"],
-                "variant": record.get("variant", "canonical"),
+                "variant": variant,
                 "status": record["status"],
                 "error": record["error"],
             }
@@ -479,6 +490,8 @@ def _run_variants(raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, 
                     cpu = pick_cpu()
                     for implementation in order:
                         if (implementation, workload) in stopped:
+                            continue
+                        if (implementation, workload, variant) in stopped:
                             continue
                         record = run_child(
                             implementation, workload, size, seed, replicate,

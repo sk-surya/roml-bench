@@ -101,3 +101,39 @@ discipline.
   remain host-specific — compare medians/ratios, not single samples.
 - Scope is model construction only: no solve-time, incremental-update,
   warm-start, extraction, or solver-quality claims.
+
+---
+
+# Addendum — forensic pass v2 (2026-09-08, supersedes v1 headlines)
+
+Owner review found the v1 BESS leaderboard methodologically invalid as a
+single panel (preassembled CSR for POI vs algebra formulation for ROML)
+and the 350x figure misdiagnosed (O(n^2) naive expression chaining, not
+binding overhead). PR #1 stays draft; v1 raw data is retained for the
+record but its headlines are withdrawn. Packet: `.planning/FORENSIC-PASS.md`.
+
+- Forensic run ID: `20260908T053319Z-ai90-14738229` (benchmark SHA at
+  measurement: `14738229`; 793 raw records: 791 ok + 1 timeout + 1 error).
+- Validation: ok for all 9 arms (fused-dot equivalence proven by
+  cross-solver agreement; CSR/anon arms verified).
+- Corrected findings (paired medians):
+  - BESS formulation B=300: POI scalar 130 ms fastest; ROML bulk (fused)
+    197 ms; POI matrix 211 ms; Pyomo 359 ms; PuLP 475 ms; naive chain 4.8 s.
+  - BESS ingestion B=300: ROML CSR 168 ms < ROML bulk 197 ms < POI 211 ms.
+  - Sparse formulation 100k (largest fully paired): Pyomo 88 ms fastest;
+    POI scalar 0.78x, ROML bulk baseline; naive chain 274x (chaining cost).
+  - Sparse ingestion 1M: POI 1.60 s vs ROML bulk 1.71 s; Pyomo 1.05 s
+    (formulation) still leads overall; core 1.23 s.
+  - Named vs anonymous core: 1.03x at sparse 100k (no significant
+    name-registration effect at this scale).
+  - Phases (sparse 1M): ROML bulk objective 804 ms of 1710 ms; vars 328 ms
+    vs core vars 77 ms; POI vars 1186 ms dominate its total.
+  - Variants: shuffled ≈ canonical (no sorted-input effect); duplicated
+    costs ROML bulk nothing measurable; POI matrix cannot ingest
+    duplicates (HiGHS Status -1) — an API limitation, published as data.
+- Censored: naive chain sparse 300k timeout (expected O(n^2)); POI
+  duplicated-100k error stopped only that diagnostic (variant-scoped stop
+  keys; canonical 1M POI intact).
+- Trust: bulk-vs-core gap (~1.3x sparse), core-vs-Pyomo gap (real),
+  ingestion ranking (ROML CSR < POI on BESS). Do not trust: any
+  binding-overhead claim from the naive chain; v1 BESS numbers.

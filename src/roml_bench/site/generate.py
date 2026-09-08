@@ -125,6 +125,34 @@ def _largest_paired(summary: dict, workload: str, implementations: list[str]) ->
     return {"size": size, "medians": dict(ordered), "fastest": ordered[0][0]}
 
 
+def _largest_paired_subset(
+    summary: dict, workload: str, candidates: list[str], minimum: int = 2
+) -> dict | None:
+    """Largest size where at least `minimum` candidates have canonical points."""
+    ok = {
+        (g["size"], g["implementation"])
+        for g in summary["groups"]
+        if g["workload"] == workload and "median_ms" in g
+        and g.get("variant", "canonical") == "canonical"
+    }
+    sizes = sorted({
+        size for size, _ in ok
+        if sum((size, impl) in ok for impl in candidates) >= minimum
+    })
+    if not sizes:
+        return None
+    size = sizes[-1]
+    medians = {
+        g["implementation"]: g["median_ms"]
+        for g in summary["groups"]
+        if g["workload"] == workload and g["size"] == size
+        and g["implementation"] in candidates and "median_ms" in g
+        and g.get("variant", "canonical") == "canonical"
+    }
+    ordered = sorted(medians.items(), key=lambda kv: kv[1])
+    return {"size": size, "medians": dict(ordered), "fastest": ordered[0][0]}
+
+
 def _finding_text(summary: dict, run_meta: dict) -> list[str]:
     findings = []
     for workload in ("sparse_rows", "bess_96"):
@@ -149,8 +177,8 @@ def _finding_text(summary: dict, run_meta: dict) -> list[str]:
                 + "; ".join(parts)
                 + "."
             )
-        ingested = _largest_paired(summary, workload, INGESTION_ORDER)
-        if ingested is not None and workload == "bess_96":
+        ingested = _largest_paired_subset(summary, workload, INGESTION_ORDER)
+        if ingested is not None:
             meds = ingested["medians"]
             order = ", ".join(
                 f"{LABELS[i]} {meds[i]:.3g} ms" for i in INGESTION_ORDER if i in meds
