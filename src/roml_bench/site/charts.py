@@ -15,6 +15,7 @@ COLORS = {
     "roml_python_csr": "#9467BD",
     "roml_core_rust": "#009E73",
     "roml_core_rust_anon": "#2CA02C",
+    "roml_core_bulk": "#17BECF",
     "pulp_python": "#D55E00",
     "pyomo_python": "#CC79A7",
     "pyoptinterface_python": "#E69F00",
@@ -26,8 +27,9 @@ LABELS = {
     "roml_python_naive_chain": "ROML Python (naive chain)",
     "roml_python_scalar": "ROML Python (scalar, v1 legacy)",
     "roml_python_csr": "ROML Python (CSR ingest)",
-    "roml_core_rust": "ROML core (Rust)",
+    "roml_core_rust": "ROML core, scalar (Rust)",
     "roml_core_rust_anon": "ROML core, anonymous (Rust)",
+    "roml_core_bulk": "ROML core, bulk (Rust)",
     "pulp_python": "PuLP",
     "pyomo_python": "Pyomo",
     "pyoptinterface_python": "PyOptInterface (matrix)",
@@ -53,6 +55,7 @@ CORE_ORDER = [
     "roml_python_bulk",
     "roml_core_rust",
     "roml_core_rust_anon",
+    "roml_core_bulk",
 ]
 
 PYTHON_ORDER = FORMULATION_ORDER  # backward-compatible alias

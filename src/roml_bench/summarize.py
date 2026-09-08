@@ -22,6 +22,7 @@ PYTHON_PANEL = (
 )
 PYTHON_BASELINE = "roml_python_bulk"
 CORE_BASELINE = "roml_core_rust"
+CORE_BULK_BASELINE = "roml_core_bulk"
 
 # Formulation panel (high-level modeling from B/T/prices or N).
 FORMULATION_ARMS = (
@@ -33,6 +34,7 @@ FORMULATION_ARMS = (
     "pyoptinterface_scalar",
     "roml_core_rust",
     "roml_core_rust_anon",
+    "roml_core_bulk",
 )
 # Matrix-ingestion panel (shared canonical CSR input).
 INGESTION_ARMS = (
@@ -139,8 +141,16 @@ def summarize_run(run_dir: str | Path) -> dict:
                         "speedup": median / base,
                     }
                 )
-        if implementation in ("roml_python_naive_chain", "roml_python_bulk"):
-            base = medians.get((workload, size, CORE_BASELINE))
+        # roml-core panel baseline is the matched bulk arm: scalar-vs-Python
+        # compares different core APIs, so only bulk-vs-bulk ratios measure
+        # interface overhead. The scalar arm keeps its trace (general-path cost).
+        if implementation in (
+            "roml_python_naive_chain",
+            "roml_python_bulk",
+            "roml_core_rust",
+            "roml_core_rust_anon",
+        ):
+            base = medians.get((workload, size, CORE_BULK_BASELINE))
             if base:
                 speedups.append(
                     {
@@ -148,7 +158,7 @@ def summarize_run(run_dir: str | Path) -> dict:
                         "workload": workload,
                         "size": size,
                         "numerator": implementation,
-                        "denominator": CORE_BASELINE,
+                        "denominator": CORE_BULK_BASELINE,
                         "speedup": median / base,
                     }
                 )

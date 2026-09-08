@@ -43,8 +43,15 @@ IMPLEMENTATION_NOTES = {
         "v[i] namespace (ingestion diagnostic, bess_96 only)."
     ),
     "roml_core_rust": (
-        "Native ROML core (roml crate, release build): scalar construction "
-        "in Rust with full naming."
+        "Native ROML core scalar path (roml crate, release build): "
+        "per-variable/per-row/per-term construction in Rust with full "
+        "naming. Measures the general modeling path, not the fastest "
+        "native API."
+    ),
+    "roml_core_bulk": (
+        "Native ROML core through the documented bulk API "
+        "(add_linear_rows_bulk, set_linear_objective_bulk): the matched "
+        "baseline for Python-interface overhead."
     ),
     "roml_core_rust_anon": (
         "Native ROML core without any .named() calls: isolates eager "
@@ -283,7 +290,7 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
                                          "Ingestion: sparse_rows"))),
                 ("ROML Python vs native core (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", core_impls,
-                                         "ROML core overhead: sparse_rows"))),
+                                         "ROML core paths: sparse_rows"))),
             ],
         },
         "python": {
@@ -359,14 +366,15 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
                                          "ROML overhead: sparse_rows"))),
                 ("ROML naive chain vs bulk vs native core (bess_96)",
                  figure_div(time_vs_size(summary, "bess_96", core_impls,
-                                         "ROML overhead: bess_96"))),
-                ("Overhead vs native core (paired sizes only)",
+                                         "ROML core paths: bess_96"))),
+                ("Overhead vs matched native bulk core (paired sizes only)",
                  figure_div(speedup_chart(
                      summary, "roml-core",
-                     "Python overhead vs native ROML core",
-                     "naive-chain-vs-core shows expression-chaining cost, not "
-                     "binding overhead; bulk-vs-core is the practical fast-path gap; "
-                     "named-vs-anon isolates name registration"))),
+                     "Python overhead vs native bulk ROML core",
+                     "naive-chain-vs-bulk-core shows expression-chaining cost, not "
+                     "binding overhead; python-bulk-vs-bulk-core is the interface "
+                     "overhead; scalar-core-vs-bulk-core shows the general-path "
+                     "cost; named-vs-anon isolates name registration"))),
                 ("Core phase decomposition (sparse_rows, 1M)",
                  figure_div(phase_breakdown_chart(
                      summary, "sparse_rows", 1000000, core_impls,
