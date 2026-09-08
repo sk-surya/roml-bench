@@ -69,9 +69,7 @@ fn usage() -> ! {
 }
 
 fn get(args: &[String], flag: &str) -> Option<String> {
-    args.windows(2)
-        .find(|w| w[0] == flag)
-        .map(|w| w[1].clone())
+    args.windows(2).find(|w| w[0] == flag).map(|w| w[1].clone())
 }
 
 fn parse_args() -> Args {
@@ -105,10 +103,18 @@ fn rss_bytes() -> (u64, u64) {
     if let Ok(text) = std::fs::read_to_string("/proc/self/status") {
         for line in text.lines() {
             if let Some(rest) = line.strip_prefix("VmRSS:") {
-                rss = rest.split_whitespace().next().and_then(|v| v.parse().ok()).unwrap_or(0)
+                rss = rest
+                    .split_whitespace()
+                    .next()
+                    .and_then(|v| v.parse().ok())
+                    .unwrap_or(0)
                     * 1024;
             } else if let Some(rest) = line.strip_prefix("VmHWM:") {
-                hwm = rest.split_whitespace().next().and_then(|v| v.parse().ok()).unwrap_or(0)
+                hwm = rest
+                    .split_whitespace()
+                    .next()
+                    .and_then(|v| v.parse().ok())
+                    .unwrap_or(0)
                     * 1024;
             }
         }
@@ -152,7 +158,9 @@ fn build_bess(
         for tt in 0..t {
             charge.push(
                 model.add_variable(
-                    continuous().bounds(0.0, BESS_P).named(format!("charge[{bb},{tt}]")),
+                    continuous()
+                        .bounds(0.0, BESS_P)
+                        .named(format!("charge[{bb},{tt}]")),
                 )?,
             );
         }
@@ -161,7 +169,9 @@ fn build_bess(
         for tt in 0..t {
             discharge.push(
                 model.add_variable(
-                    continuous().bounds(0.0, BESS_P).named(format!("discharge[{bb},{tt}]")),
+                    continuous()
+                        .bounds(0.0, BESS_P)
+                        .named(format!("discharge[{bb},{tt}]")),
                 )?,
             );
         }
@@ -170,7 +180,9 @@ fn build_bess(
         for tt in 0..=t {
             energy.push(
                 model.add_variable(
-                    continuous().bounds(0.0, BESS_E).named(format!("energy[{bb},{tt}]")),
+                    continuous()
+                        .bounds(0.0, BESS_E)
+                        .named(format!("energy[{bb},{tt}]")),
                 )?,
             );
         }
@@ -178,7 +190,9 @@ fn build_bess(
     let mut obj = LinExpr::new();
     for bb in 0..b {
         model.add_constraint(
-            LinExpr::from(energy[bb * (t + 1)]).eq(BESS_E0).named(format!("init[{bb}]")),
+            LinExpr::from(energy[bb * (t + 1)])
+                .eq(BESS_E0)
+                .named(format!("init[{bb}]")),
         )?;
         for tt in 0..t {
             let ch = charge[bb * t + tt];
@@ -190,7 +204,9 @@ fn build_bess(
                 + LinExpr::new().term(BESS_DT * BESS_ETA, ch)
                 + LinExpr::new().term(-BESS_DT / BESS_ETA, di);
             model.add_constraint(
-                (LinExpr::from(en1) - rhs).eq(0.0).named(format!("balance[{bb},{tt}]")),
+                (LinExpr::from(en1) - rhs)
+                    .eq(0.0)
+                    .named(format!("balance[{bb},{tt}]")),
             )?;
             model.add_constraint(
                 (LinExpr::from(ch) + LinExpr::from(di))
@@ -202,11 +218,19 @@ fn build_bess(
         }
     }
     model.maximize(obj)?;
-    Ok((b * (3 * t + 1), b * (2 * t + 1), b * (1 + 6 * t), b * (2 * t)))
+    Ok((
+        b * (3 * t + 1),
+        b * (2 * t + 1),
+        b * (1 + 6 * t),
+        b * (2 * t),
+    ))
 }
 
 fn emit(record: &Record) {
-    println!("{}", serde_json::to_string(record).unwrap_or_else(|_| "{}".to_string()));
+    println!(
+        "{}",
+        serde_json::to_string(record).unwrap_or_else(|_| "{}".to_string())
+    );
 }
 
 fn fail(args: &Args, message: String, container_init_ns: u64) -> ! {
@@ -267,13 +291,21 @@ fn main() {
     } else {
         let csv = match &args.prices_csv {
             Some(v) => v.clone(),
-            None => fail(&args, "bess_96 requires --prices-csv".to_string(), container_init_ns),
+            None => fail(
+                &args,
+                "bess_96 requires --prices-csv".to_string(),
+                container_init_ns,
+            ),
         };
         let prices: Vec<f64> = csv
             .split(',')
             .map(|s| {
                 s.trim().parse().unwrap_or_else(|_| {
-                    fail(&args, format!("bad prices-csv value: {s}"), container_init_ns)
+                    fail(
+                        &args,
+                        format!("bad prices-csv value: {s}"),
+                        container_init_ns,
+                    )
                 })
             })
             .collect();
@@ -288,7 +320,11 @@ fn main() {
     };
     let (variables, constraints, constraint_nnz, objective_nnz) = match counts {
         Ok(v) => v,
-        Err(e) => fail(&args, format!("construction failed: {e:?}"), container_init_ns),
+        Err(e) => fail(
+            &args,
+            format!("construction failed: {e:?}"),
+            container_init_ns,
+        ),
     };
     let populate_ns = pop_start.elapsed().as_nanos() as u64;
     let (rss_after, peak) = rss_bytes();
@@ -349,6 +385,11 @@ mod tests {
     }
 
     fn count_bess(b: usize) -> (usize, usize, usize, usize) {
-        (b * (3 * BESS_T + 1), b * (2 * BESS_T + 1), b * (1 + 6 * BESS_T), b * (2 * BESS_T))
+        (
+            b * (3 * BESS_T + 1),
+            b * (2 * BESS_T + 1),
+            b * (1 + 6 * BESS_T),
+            b * (2 * BESS_T),
+        )
     }
 }

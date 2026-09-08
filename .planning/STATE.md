@@ -7,12 +7,14 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 ## Current state
 
 - Planning: complete
-- Implementation: Tasks 1-10 complete (bootstrap through CI gate)
+- Implementation: Tasks 1-11 complete (bootstrap through authoritative run)
 - Validation: passing for all 6 implementations
-- Quick profile: 72/72 ok; methodology bug (BESS CSR order) caught and fixed
-- Authoritative benchmark run: starting (standard profile)
-- Site generation: generator verified on quick data
-- Network service: user systemd available, linger enabled; install pending
+- Authoritative benchmark run: `20260908T042228Z-ai90-64615d6c` (533 records,
+  532 ok + 1 timeout), summarized, inspected, committed with site
+- Site generation: `site/` generated from the authoritative run, offline
+  (bundled Plotly), committed
+- Network service: `roml-bench-site.service` active; localhost, LAN, and
+  Tailscale URLs verified via curl
 
 ## Locked decisions
 
@@ -26,8 +28,8 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 
 ## Next gate
 
-Task 11 in `.planning/IMPLEMENTATION-PLAN.md`: authoritative standard run
-and publication.
+Task 12 in `.planning/IMPLEMENTATION-PLAN.md`: final self-review and stop
+condition (then push + draft PR).
 
 ## Stop condition
 
