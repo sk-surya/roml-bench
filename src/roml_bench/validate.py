@@ -174,7 +174,9 @@ def _check_rust_core(cases: dict) -> dict:
             continue
         if proc.returncode != 0:
             entry["status"] = "failed"
-            entry["problems"].append(f"{workload}/{size}: exit {proc.returncode}: {proc.stderr[-500:]}")
+            entry["problems"].append(
+                f"{workload}/{size}: exit {proc.returncode}: {proc.stderr[-500:]}"
+            )
             continue
         try:
             record = json.loads(proc.stdout.strip().splitlines()[-1])
