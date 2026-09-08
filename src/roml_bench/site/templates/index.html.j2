@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% block title %}ROML model-build benchmark — summary{% endblock %}
+{% block body %}
+<h1>Model-construction benchmark v1</h1>
+<p>How long does it take to <em>build</em> an equivalent linear model as the
+problem grows — ROML Python vs PuLP, Pyomo, and PyOptInterface, plus ROML
+Python vs native ROML core? Primary metric: <code>populate_ms</code>, the
+elapsed construction-API time from the first variable insertion into an
+already-created empty model through objective installation. Imports, data
+generation, solves, serialization, and report generation are excluded.</p>
+<div class="findings">
+<h2>Measured findings (paired points only)</h2>
+<ul>
+{% for finding in findings %}<li>{{ finding }}</li>{% endfor %}
+</ul>
+</div>
+{% for title, div in charts %}
+<div class="chart"><h2>{{ title }}</h2>{{ div | safe }}</div>
+{% endfor %}
+<div class="notice">
+PyOptInterface is a thin direct wrapper around a HiGHS solver model, while
+ROML, PuLP, and Pyomo maintain separate modeling representations. The
+Populate time therefore measures elapsed user-facing construction-API work
+under each library's architecture — not identical internal work. See
+<a href="methodology.html">Methodology</a>.
+</div>
+{% endblock %}

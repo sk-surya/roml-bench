@@ -1,0 +1,57 @@
+{% extends "base.html.j2" %}
+{% block title %}Data — ROML model-build benchmark{% endblock %}
+{% block body %}
+<h1>Run data</h1>
+<p>Every figure on this site derives from the immutable raw records below.
+No censored or failed point is hidden; missing points are gaps, never
+extrapolated.</p>
+<h2>Downloads</h2>
+<ul>
+<li><a href="data/raw.jsonl">raw.jsonl</a> — one JSON record per replicate (immutable)</li>
+<li><a href="data/summary.json">summary.json</a> — derived medians, quartiles, paired speedups</li>
+<li><a href="data/summary.csv">summary.csv</a> — same summary as CSV</li>
+<li><a href="data/run.json">run.json</a> — run configuration and stop events</li>
+<li><a href="data/environment.json">environment.json</a> — host/provenance metadata</li>
+<li><a href="data/validation.json">validation.json</a> — equivalence-gate evidence</li>
+</ul>
+<h2>Measured groups (median populate_ms)</h2>
+<table class="data">
+<thead><tr><th>Workload</th><th>Size</th><th>Implementation</th><th>Status</th>
+<th>n</th><th>Median ms</th><th>p25</th><th>p75</th><th>Min</th><th>Max</th><th>MAD</th></tr></thead>
+<tbody>
+{% for g in groups %}
+<tr><td>{{ g.workload }}</td><td>{{ g.size }}</td><td>{{ labels[g.implementation] }}</td>
+<td>{{ g.status }}</td><td>{{ g.replicates if g.replicates else '—' }}</td>
+<td>{{ '%.3g'|format(g.median_ms) if g.median_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.p25_ms) if g.p25_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.p75_ms) if g.p75_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.min_ms) if g.min_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.max_ms) if g.max_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.mad_ms) if g.mad_ms is defined else '—' }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<h2>Paired speedups (median ratios)</h2>
+<table class="data">
+<thead><tr><th>Panel</th><th>Workload</th><th>Size</th><th>Numerator</th><th>Denominator</th><th>Speedup</th></tr></thead>
+<tbody>
+{% for s in speedups %}
+<tr><td>{{ s.panel }}</td><td>{{ s.workload }}</td><td>{{ s.size }}</td>
+<td>{{ labels[s.numerator] }}</td><td>{{ labels[s.denominator] }}</td>
+<td>{{ '%.3g'|format(s.speedup) }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% if stopped %}
+<h2>Stop / censor events</h2>
+<table class="data">
+<thead><tr><th>Implementation</th><th>Workload</th><th>Size</th><th>Status</th><th>Detail</th></tr></thead>
+<tbody>
+{% for s in stopped %}
+<tr><td>{{ labels[s.implementation] }}</td><td>{{ s.workload }}</td><td>{{ s.size }}</td>
+<td>{{ s.status }}</td><td style="text-align:left">{{ s.error }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% endblock %}

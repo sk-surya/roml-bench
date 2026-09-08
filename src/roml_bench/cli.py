@@ -54,6 +54,14 @@ def _cmd_summarize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_site(args: argparse.Namespace) -> int:
+    from roml_bench.site.generate import generate_site
+
+    out = generate_site(args.run_dir, args.output)
+    print(str(out))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="roml-bench")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -63,6 +71,9 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--run-id", default=None)
     sum_parser = sub.add_parser("summarize", help="derive summaries from raw results")
     sum_parser.add_argument("run_dir")
+    site_parser = sub.add_parser("site", help="generate the offline static site")
+    site_parser.add_argument("run_dir")
+    site_parser.add_argument("--output", default="site")
     return parser
 
 
@@ -74,6 +85,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_run(args)
     if args.command == "summarize":
         return _cmd_summarize(args)
+    if args.command == "site":
+        return _cmd_site(args)
     print(f"unknown command: {args.command}", file=sys.stderr)
     return 2
 

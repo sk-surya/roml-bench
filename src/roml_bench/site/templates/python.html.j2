@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block title %}Python comparison — ROML model-build benchmark{% endblock %}
+{% block body %}
+<h1>ROML Python vs PuLP / Pyomo / PyOptInterface</h1>
+<div class="notice">
+<strong>Semantic boundary.</strong> PyOptInterface population calls insert
+directly into a solver-backed HiGHS model, while ROML, PuLP, and Pyomo build
+a separate modeling representation first. These curves compare elapsed
+user-facing construction-API time under each library's documented efficient
+public path — not identical internal work. Each library consumed the same
+deterministic canonical input generated once per run outside the timer.
+</div>
+{% for title, div in charts %}
+<div class="chart"><h2>{{ title }}</h2>{{ div | safe }}</div>
+{% endfor %}
+<h2>Construction paths</h2>
+<ul>
+<li><strong>ROML Python (bulk)</strong> — {{ impl_notes['roml_python_bulk'] }}</li>
+<li><strong>PuLP</strong> — {{ impl_notes['pulp_python'] }}</li>
+<li><strong>Pyomo</strong> — {{ impl_notes['pyomo_python'] }}</li>
+<li><strong>PyOptInterface</strong> — {{ impl_notes['pyoptinterface_python'] }}</li>
+</ul>
+{% endblock %}

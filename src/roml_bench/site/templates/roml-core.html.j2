@@ -1,0 +1,14 @@
+{% extends "base.html.j2" %}
+{% block title %}ROML core overhead — ROML model-build benchmark{% endblock %}
+{% block body %}
+<h1>ROML Python scalar / bulk vs native Rust core</h1>
+<p>Both ROML Python paths and the native core build mathematically identical
+models: same variables, constraints, coefficients, bounds, objective, and
+naming policy. The <strong>scalar-vs-scalar</strong> comparison isolates
+Python/binding/modeling overhead most cleanly; the
+<strong>bulk-vs-core</strong> comparison answers how close the public Python
+fast path gets to native construction.</p>
+{% for title, div in charts %}
+<div class="chart"><h2>{{ title }}</h2>{{ div | safe }}</div>
+{% endfor %}
+{% endblock %}
