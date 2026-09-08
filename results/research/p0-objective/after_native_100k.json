@@ -1,0 +1,4 @@
+{"arm":"scalar","n":100000,"mode":"constant","stage":"constructed","expr_ms":1.3,"simplify_ms":3.8,"minimize_ms":43.8,"peak_rss_mb":96}
+{"arm":"scalar","n":100000,"mode":"constant","stage":"committed","commit_ms":13587.0,"snapshot_ms":1105.2,"peak_rss_mb":172,"cells":200000}
+{"arm":"bulk","n":100000,"stage":"constructed","api_ms":26.4,"peak_rss_mb":172}
+{"arm":"bulk","n":100000,"stage":"committed","commit_ms":5783.1,"snapshot_ms":1086.7,"peak_rss_mb":174,"cells":200000}
