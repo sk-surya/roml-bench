@@ -7,20 +7,13 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 ## Current state
 
 - Planning: complete
-- Implementation: Tasks 1-3 complete (bootstrap, workloads, Python adapters)
-- Validation: not started
+- Implementation: Tasks 1-5 complete (bootstrap, workloads, Python adapters,
+  Rust core runner, validation gate)
+- Validation: passing for all 6 implementations (sparse 0.0, bess B=1
+  651.993846 across all 5 Python solvers; Rust core counts verified)
 - Authoritative benchmark run: not started
 - Site generation: not started
 - Network service: not started
-
-## Evidence (2026-09-08)
-
-- `uv sync` resolves Python 3.13 with pulp 3.3.1, pyomo 6.10.1,
-  pyoptinterface 0.6.1, highspy 1.15.1; `uv.lock` committed.
-- ROML wheel built from `.cache/roml` at 6062398b418c4bc0c7718b2ce569da8b9e42766e
-  via maturin release; `import roml` reports 0.1.0.
-- `ruff check .` clean; `pytest` 22 passed (workloads, schema, adapter smoke).
-- Commits: 29721fd (bootstrap), 4083900 (workloads), 0aead47 (adapters).
 
 ## Locked decisions
 
@@ -34,7 +27,8 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 
 ## Next gate
 
-Task 4 in `.planning/IMPLEMENTATION-PLAN.md`: native ROML core runner.
+Task 6 in `.planning/IMPLEMENTATION-PLAN.md`: process-isolated measurement
+orchestrator.
 
 ## Stop condition
 
