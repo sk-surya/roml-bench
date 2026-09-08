@@ -9,7 +9,6 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from plotly.offline import get_plotlyjs
 
-from roml_bench.site import charts
 from roml_bench.site.charts import (
     CORE_ORDER,
     LABELS,

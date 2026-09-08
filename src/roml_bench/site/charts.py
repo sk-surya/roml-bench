@@ -115,7 +115,13 @@ def time_vs_nnz(
                 hovertext=notes, hoverinfo="text",
             )
         )
-    fig.update_layout(**_layout(title, "model nonzeros (constraints + objective)", "populate time, median ms (log)"))
+    fig.update_layout(
+        **_layout(
+            title,
+            "model nonzeros (constraints + objective)",
+            "populate time, median ms (log)",
+        )
+    )
     return fig
 
 
@@ -176,7 +182,10 @@ def memory_chart(summary: dict, workload: str, implementations: list[str], title
                     x=xs, y=ys, mode="lines+markers", name=LABELS[impl],
                     marker={"color": COLORS[impl], "size": 8},
                     line={"color": COLORS[impl]},
-                    hovertext=[f"{LABELS[impl]}<br>size {s}<br>{v:.1f} MiB" for s, v in zip(xs, ys)],
+                    hovertext=[
+                        f"{LABELS[impl]}<br>size {s}<br>{v:.1f} MiB"
+                        for s, v in zip(xs, ys)
+                    ],
                     hoverinfo="text",
                 )
             )
