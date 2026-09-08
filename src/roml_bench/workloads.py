@@ -100,14 +100,15 @@ def make_case(workload: str, size: int, seed: int = CANONICAL_SEED) -> WorkloadC
 
 
 def sizes_for(workload: str, profile: str) -> tuple[int, ...]:
+    if profile not in ("quick", "standard", "forensic"):
+        raise ValueError(f"unknown profile: {profile}")
+    standard = profile in ("standard", "forensic")
     if workload == "sparse_rows":
-        grid = SPARSE_STANDARD_SIZES if profile == "standard" else SPARSE_QUICK_SIZES
+        grid = SPARSE_STANDARD_SIZES if standard else SPARSE_QUICK_SIZES
     elif workload == "bess_96":
-        grid = BESS_STANDARD_SIZES if profile == "standard" else BESS_QUICK_SIZES
+        grid = BESS_STANDARD_SIZES if standard else BESS_QUICK_SIZES
     else:
         raise ValueError(f"unknown workload: {workload}")
-    if profile not in ("quick", "standard"):
-        raise ValueError(f"unknown profile: {profile}")
     return grid
 
 
