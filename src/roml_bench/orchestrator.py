@@ -34,7 +34,7 @@ PYTHON_IMPLEMENTATIONS = (
     "pyoptinterface_python",
     "pyoptinterface_scalar",
 )
-CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon")
+CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon", "roml_core_bulk")
 ALL_IMPLEMENTATIONS = PYTHON_IMPLEMENTATIONS + CORE_IMPLEMENTATIONS
 
 # Matrix-ingestion diagnostic variants: (implementation, workload, sizes).

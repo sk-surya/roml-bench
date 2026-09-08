@@ -8,7 +8,7 @@
 
 mod common;
 
-use common::{build_bess, build_sparse, rss_bytes, BESS_T};
+use common::{build_bess, build_bess_bulk, build_sparse, build_sparse_bulk, rss_bytes, BESS_T};
 use roml::prelude::*;
 use serde::Serialize;
 use std::time::Instant;
@@ -68,7 +68,7 @@ fn usage() -> ! {
         "usage: roml-bench-core --workload <sparse_rows|bess_96> --size <N> \
          --seed <u64> --replicate <u32> --run-id <id> --benchmark-sha <sha> \
          --roml-sha <sha> --timestamp-utc <ts> [--cpu <n>] [--prices-csv <csv>] \
-         [--implementation <roml_core_rust|roml_core_rust_anon>] [--anonymous] \
+         [--implementation <roml_core_rust|roml_core_rust_anon|roml_core_bulk>] [--anonymous] \
          [--phase-breakdown] [--objective-mode <constant|parameterized>]"
     );
     std::process::exit(2);
@@ -91,7 +91,10 @@ fn parse_args() -> Args {
     let has = |flag: &str| raw.iter().any(|a| a == flag);
     let implementation =
         get(&raw, "--implementation").unwrap_or_else(|| "roml_core_rust".to_string());
-    if implementation != "roml_core_rust" && implementation != "roml_core_rust_anon" {
+    if implementation != "roml_core_rust"
+        && implementation != "roml_core_rust_anon"
+        && implementation != "roml_core_bulk"
+    {
         usage();
     }
     let objective_mode = get(&raw, "--objective-mode").unwrap_or_else(|| "constant".to_string());
@@ -187,15 +190,35 @@ fn main() {
         args.phase_breakdown.then(std::collections::BTreeMap::new);
     let named = !args.anonymous;
     let parameterized = args.objective_mode == "parameterized";
+    let bulk = args.implementation == "roml_core_bulk";
+    if bulk && parameterized {
+        fail(
+            &args,
+            "roml_core_bulk has no parameterized-objective mode in this build".to_string(),
+            container_init_ns,
+        );
+    }
+    if bulk && args.anonymous {
+        fail(
+            &args,
+            "roml_core_bulk is always named (mirrors the Python bulk arm)".to_string(),
+            container_init_ns,
+        );
+    }
     let counts = if args.workload == "sparse_rows" {
-        build_sparse(
-            &mut model,
-            args.size,
-            named,
-            parameterized,
-            phase_map.as_mut(),
-        )
-        .map(|(v, c, nnz)| (v, c, nnz, args.size))
+        if bulk {
+            build_sparse_bulk(&mut model, args.size, named, phase_map.as_mut())
+                .map(|(v, c, nnz)| (v, c, nnz, args.size))
+        } else {
+            build_sparse(
+                &mut model,
+                args.size,
+                named,
+                parameterized,
+                phase_map.as_mut(),
+            )
+            .map(|(v, c, nnz)| (v, c, nnz, args.size))
+        }
     } else {
         let csv = match &args.prices_csv {
             Some(v) => v.clone(),
@@ -224,7 +247,11 @@ fn main() {
                 container_init_ns,
             );
         }
-        build_bess(&mut model, args.size, &prices, named, phase_map.as_mut())
+        if bulk {
+            build_bess_bulk(&mut model, args.size, &prices, named, phase_map.as_mut())
+        } else {
+            build_bess(&mut model, args.size, &prices, named, phase_map.as_mut())
+        }
     };
     let (variables, constraints, constraint_nnz, objective_nnz) = match counts {
         Ok(v) => v,

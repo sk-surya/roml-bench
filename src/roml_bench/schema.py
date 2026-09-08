@@ -16,6 +16,7 @@ IMPLEMENTATIONS = (
     "pyoptinterface_scalar",
     "roml_core_rust",
     "roml_core_rust_anon",
+    "roml_core_bulk",
 )
 
 # IDs produced by older benchmark code. Accepted when validating historical

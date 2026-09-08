@@ -131,6 +131,10 @@ def _poi_bound_probe() -> tuple[float, float]:
 
 
 def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dict:
+    # roml_core_bulk exercises the same binary through the documented
+    # bulk core API (add_linear_rows_bulk / set_linear_objective_bulk);
+    # counts, schema, and the probe's bulk-vs-scalar replay proof below
+    # carry its correctness.
     """Run the release binary on validation sizes; verify counts and schema."""
     from roml_bench.schema import validate_record
 
@@ -209,6 +213,58 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
             entry["status"] = "failed"
             entry["problems"].extend(f"{workload}/{size}: {p}" for p in workload_problems)
     return entry
+
+
+def _check_native_equiv() -> list[str]:
+    """Bulk-vs-scalar replay proof via the forensic probe (validation sizes).
+
+    For each validation case, builds through both native constructions,
+    commits both journals, replays both into reference backends, and
+    requires full equality (variables, constraints, all cells,
+    objectives) plus snapshot equality. Returns a list of problems
+    (empty when proven).
+    """
+    problems: list[str] = []
+    binary = Path("target/release/forensic_probe")
+    if not binary.exists():
+        return ["target/release/forensic_probe not built"]
+    import numpy as np
+
+    from roml_bench.workloads import bess_prices
+
+    prices_csv = ",".join(
+        repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
+    )
+    for workload, size in VALIDATION_CASES:
+        for construction in ("scalar", "bulk"):
+            cmd = [
+                str(binary),
+                "--workload", workload,
+                "--size", str(size),
+                "--replicate", "0",
+                "--construction", construction,
+                "--equiv",
+            ]
+            if workload == "bess_96":
+                cmd += ["--prices-csv", prices_csv]
+            try:
+                proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            except subprocess.SubprocessError as exc:
+                problems.append(f"{workload}/{size}: probe {exc}")
+                continue
+            if proc.returncode != 0:
+                problems.append(f"{workload}/{size}: exit {proc.returncode}: {proc.stderr[-500:]}")
+                continue
+            try:
+                record = json.loads(proc.stdout.strip().splitlines()[-1])
+            except ValueError as exc:
+                problems.append(f"{workload}/{size}: bad JSON: {exc}")
+                continue
+            equiv = record.get("equiv_scalar_bulk") or {}
+            bad = [k for k, v in equiv.items() if k not in ("scalar_delta_ops", "bulk_delta_ops") and v is not True]
+            if bad:
+                problems.append(f"{workload}/{size}: replay mismatch: {bad}")
+    return problems
 
 
 def run_validation() -> dict:
@@ -297,7 +353,18 @@ def run_validation() -> dict:
     result["implementations"]["roml_core_rust"] = rust_entry
     anon_entry = _check_rust_core(cases, "roml_core_rust_anon")
     result["implementations"]["roml_core_rust_anon"] = anon_entry
-    for check_entry in (rust_entry, anon_entry):
+    bulk_entry = _check_rust_core(cases, "roml_core_bulk")
+    result["implementations"]["roml_core_bulk"] = bulk_entry
+    # Native bulk-vs-scalar replay proof on the validation sizes: full
+    # journal/delta replay equality plus snapshot equality (bulk ≡ scalar
+    # canonically; scalar ≡ Python by counts; Python by the solve gate).
+    bulk_problems = _check_native_equiv()
+    if bulk_problems:
+        result["status"] = "failed"
+        result["problems"].extend(bulk_problems)
+        bulk_entry["status"] = "failed"
+        bulk_entry["problems"].extend(bulk_problems)
+    for check_entry in (rust_entry, anon_entry, bulk_entry):
         if check_entry["status"] != "ok":
             result["status"] = "failed"
             result["problems"].extend(check_entry["problems"])
