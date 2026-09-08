@@ -141,51 +141,61 @@ def sparse_rows_csr(n: int) -> CsrPayload:
 def bess_96_csr(b: int, prices: np.ndarray, t: int = BESS_T) -> CsrPayload:
     """Flat column order: charge (B*T), discharge (B*T), energy (B*(T+1)).
 
-    Rows per battery: 1 init (energy[b,0] == E0), T balance equalities,
-    T mode rows (charge + discharge <= P).
+    Rows are grouped: B init rows (energy[b,0] == E0), then B*T balance
+    equalities, then B*T mode rows (charge + discharge <= P). Row groups
+    must stay contiguous because matrix consumers slice by sense.
     """
     dt, eta, p, e0 = BESS_DT, BESS_ETA, BESS_P, BESS_E0
     n_vars = b * (3 * t + 1)
-    n_rows = b * (2 * t + 1)
-    indptr = np.zeros(n_rows + 1, dtype=np.int64)
-    idx: list[int] = []
-    val: list[float] = []
-    lower = np.empty(n_rows)
-    upper = np.empty(n_rows)
     obj = np.zeros(n_vars)
-    row = 0
     for bb in range(b):
-        ch = bb * t
-        di = b * t + bb * t
-        en = 2 * b * t + bb * (t + 1)
-        # init row
-        idx.append(en)
-        val.append(1.0)
+        obj[bb * t : bb * t + t] = -dt * prices
+        obj[b * t + bb * t : b * t + bb * t + t] = dt * prices
+
+    def col_charge(bb: int, tt: int) -> int:
+        return bb * t + tt
+
+    def col_discharge(bb: int, tt: int) -> int:
+        return b * t + bb * t + tt
+
+    def col_energy(bb: int, tt: int) -> int:
+        return 2 * b * t + bb * (t + 1) + tt
+
+    indptr = np.zeros(b * (2 * t + 1) + 1, dtype=np.int64)
+    indices = np.zeros(b * (1 + 6 * t), dtype=np.int64)
+    data = np.zeros(b * (1 + 6 * t), dtype=np.float64)
+    lower = np.empty(b * (2 * t + 1))
+    upper = np.empty(b * (2 * t + 1))
+    pos = 0
+    row = 0
+    for bb in range(b):  # init rows
+        indices[pos] = col_energy(bb, 0)
+        data[pos] = 1.0
+        pos += 1
         lower[row] = upper[row] = e0
         row += 1
+        indptr[row] = pos
+    for bb in range(b):  # balance rows
         for tt in range(t):
             # energy[t+1] - energy[t] - dt*eta*charge + (dt/eta)*discharge == 0
-            idx.extend([en + tt + 1, en + tt, ch + tt, di + tt])
-            val.extend([1.0, -1.0, -dt * eta, dt / eta])
+            indices[pos : pos + 4] = (
+                col_energy(bb, tt + 1),
+                col_energy(bb, tt),
+                col_charge(bb, tt),
+                col_discharge(bb, tt),
+            )
+            data[pos : pos + 4] = (1.0, -1.0, -dt * eta, dt / eta)
+            pos += 4
             lower[row] = upper[row] = 0.0
             row += 1
+            indptr[row] = pos
+    for bb in range(b):  # mode rows
         for tt in range(t):
-            idx.extend([ch + tt, di + tt])
-            val.extend([1.0, 1.0])
+            indices[pos : pos + 2] = (col_charge(bb, tt), col_discharge(bb, tt))
+            data[pos : pos + 2] = (1.0, 1.0)
+            pos += 2
             lower[row] = -np.inf
             upper[row] = p
             row += 1
-        obj[ch : ch + t] = -dt * prices
-        obj[di : di + t] = dt * prices
-    # Deterministic row widths: 1 per init row, 4 per balance row, 2 per mode row.
-    widths = np.array([1] * b + [4] * (b * t) + [2] * (b * t), dtype=np.int64)
-    indptr[1:] = np.cumsum(widths)
-    return CsrPayload(
-        indptr,
-        np.asarray(idx, dtype=np.int64),
-        np.asarray(val, dtype=np.float64),
-        lower,
-        upper,
-        obj,
-        True,
-    )
+            indptr[row] = pos
+    return CsrPayload(indptr, indices, data, lower, upper, obj, True)

@@ -82,9 +82,27 @@ def test_csr_payloads_match_contract_counts():
     assert (bcsr.indptr[-1], len(bcsr.lower), len(bcsr.obj_coeff)) == (5770, 1930, 2890)
     assert bcsr.csr_array().shape == (1930, 2890)
     assert bcsr.csr_array().nnz == 5770
+    # Row groups are contiguous: inits, then balance, then mode.
+    widths = np.diff(bcsr.indptr)
+    assert widths.tolist() == [1] * 10 + [4] * 960 + [2] * 960
     # init row of battery 0 pins energy[0,0] to E0
     assert bcsr.lower[0] == bcsr.upper[0] == BESS_E0
     assert bcsr.indices[0] == 2 * 10 * 96
+    # First balance row (battery 0, t=0): {en1, en0, ch, di} with exact coefficients.
+    seg = slice(bcsr.indptr[10], bcsr.indptr[11])
+    cols = set(bcsr.indices[seg].tolist())
+    assert cols == {2 * 10 * 96 + 1, 2 * 10 * 96, 0, 10 * 96}
+    coef = dict(zip(bcsr.indices[seg].tolist(), bcsr.data[seg].tolist()))
+    assert coef[2 * 10 * 96 + 1] == 1.0
+    assert coef[2 * 10 * 96] == -1.0
+    assert coef[0] == -(0.25 * 0.95)
+    assert coef[10 * 96] == 0.25 / 0.95
+    assert bcsr.lower[10] == bcsr.upper[10] == 0.0
+    # First mode row (battery 0, t=0).
+    assert bcsr.lower[10 + 960] == float("-inf")
+    assert bcsr.upper[10 + 960] == BESS_P
+    seg = slice(bcsr.indptr[10 + 960], bcsr.indptr[10 + 961])
+    assert set(bcsr.indices[seg].tolist()) == {0, 10 * 96}
     # objective coefficients follow dt * price
     assert bcsr.obj_coeff[0] == -(0.25 * prices[0])
     assert bcsr.obj_coeff[10 * 96] == 0.25 * prices[0]
