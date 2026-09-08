@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology — ROML model-build benchmark</title>
+<style>
+:root { color-scheme: light; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0; color: #1a1a1a; background: #fff; line-height: 1.5; }
+header.nav { background: #102a43; color: #fff; padding: 0.6rem 1rem; }
+header.nav nav { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem;
+  max-width: 72rem; margin: 0 auto; align-items: baseline; }
+header.nav a { color: #d9e2ec; text-decoration: none; padding: 0.2rem 0.1rem; }
+header.nav a.active { color: #fff; font-weight: 700; border-bottom: 2px solid #fff; }
+header.nav .brand { color: #fff; font-weight: 700; margin-right: 1rem; }
+main { max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.provenance { background: #f0f4f8; border: 1px solid #bcccdc;
+  border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+.provenance dl { display: grid; grid-template-columns: auto 1fr;
+  gap: 0.15rem 1rem; margin: 0; font-size: 0.92rem; }
+.provenance dt { font-weight: 600; color: #334e68; }
+.provenance dd { margin: 0; overflow-wrap: anywhere; }
+.findings { background: #fffbea; border: 1px solid #e3c878;
+  border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+.chart { margin: 2rem 0; }
+.chart h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+table.data { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+table.data th, table.data td { border: 1px solid #bcccdc; padding: 0.3rem 0.5rem;
+  text-align: right; }
+table.data th:first-child, table.data td:first-child,
+table.data th:nth-child(2), table.data td:nth-child(2),
+table.data th:nth-child(3), table.data td:nth-child(3) { text-align: left; }
+table.data thead { background: #d9e2ec; }
+.notice { background: #f0f4f8; border-left: 4px solid #0072B2;
+  padding: 0.6rem 1rem; margin: 1rem 0; }
+code { background: #f0f4f8; padding: 0.1rem 0.3rem; border-radius: 4px; }
+footer { border-top: 1px solid #bcccdc; padding: 1rem; font-size: 0.85rem;
+  color: #334e68; max-width: 72rem; margin: 0 auto; }
+@media (max-width: 50rem) {
+  .provenance dl { grid-template-columns: 1fr; }
+  table.data { font-size: 0.75rem; }
+}
+</style>
+<script src="static/plotly.min.js"></script>
+</head>
+<body>
+<header class="nav"><nav>
+<span class="brand">ROML model-build bench</span>
+<a href="index.html" class="">Summary</a>
+<a href="python.html" class="">Python comparison</a>
+<a href="roml-core.html" class="">ROML core</a>
+<a href="methodology.html" class="active">Methodology</a>
+<a href="data.html" class="">Data</a>
+</nav></header>
+<main>
+
+<div class="provenance">
+<dl>
+<dt>Run</dt><dd>20260908T042228Z-ai90-64615d6c (profile standard, seed 20260908)</dd>
+<dt>Timestamp (UTC)</dt><dd>2026-09-08T04:22:28Z</dd>
+<dt>Host</dt><dd>Linux-7.0.0-30-generic-x86_64-with-glibc2.43 — AMD Ryzen 9 9950X 16-Core Processor — 59.5 GiB RAM</dd>
+<dt>Benchmark SHA</dt><dd>64615d6cce15e0b00ba7542c2e1f2a78d920771a</dd>
+<dt>ROML SHA</dt><dd>6062398b418c4bc0c7718b2ce569da8b9e42766e</dd>
+<dt>Packages</dt><dd>Python 3.13.14 · roml-python 0.1.0 · PuLP 3.3.1 · Pyomo 6.10.1 · PyOptInterface 0.6.1 · HiGHS 1.15.1 · NumPy 2.5.3</dd>
+</dl>
+</div>
+
+
+<h1>Methodology</h1>
+<p>This page states the exact benchmark contract, semantic boundaries, pins,
+and host provenance for run <code>20260908T042228Z-ai90-64615d6c</code>.</p>
+
+<h2>Workloads</h2>
+<h3>sparse_rows</h3>
+<p>Isolates primitive linear-model construction overhead with fixed sparsity.
+For size <code>N</code>: continuous variables <code>x[0:N]</code> with
+<code>0 &lt;= x &lt;= 5</code>; <code>R = floor(N/10)</code> rows, each
+<code>sum(x[10r+k], k=0..9) &lt;= 10</code>; objective <code>min sum x</code>.
+Variables <code>N</code>, constraints <code>floor(N/10)</code>, row nonzeros
+<code>10·floor(N/10)</code>, objective nonzeros <code>N</code>.</p>
+<h3>bess_96</h3>
+<p>Realistic indexed linear algebra: <code>T = 96</code> periods,
+<code>dt = 0.25</code>, leg efficiency <code>eta = 0.95</code>, power limit
+<code>P = 2.0</code>, energy limit <code>E = 4.0</code>, initial energy
+<code>E0 = 2.0</code>. Per battery: <code>charge[t]</code>,
+<code>discharge[t]</code> in <code>[0, P]</code>, <code>energy[t]</code> in
+<code>[0, E]</code>; <code>energy[0] == E0</code>;
+<code>energy[t+1] == energy[t] + dt·(eta·charge[t] − discharge[t]/eta)</code>;
+<code>charge[t] + discharge[t] &lt;= P</code>. Objective
+<code>max dt·Σ price[t]·(discharge[t] − charge[t])</code> with a deterministic
+price vector uniform on [20, 80) generated once per run from seed
+<code>20260908</code> and shared across implementations. Per
+battery: 289 variables, 193 constraints, 577 row nonzeros, 192 objective
+nonzeros. No ROML mutable parameters are used: this milestone is model
+construction, not parameter updates.</p>
+
+<h2>Timed boundary</h2>
+<p>Primary metric <code>populate_ms</code>: the timer starts immediately
+before the first variable insertion into an already-created empty
+model/container and stops immediately after the objective is installed.
+Excluded: process startup, imports, canonical data generation, RNG, version
+detection, logging, validation, solver optimization, serialization, and HTML
+generation. <code>container_init_ms</code> is measured separately;
+<code>user_build_total_ms = container_init_ms + populate_ms</code>. The main
+scaling charts use <code>populate_ms</code>.</p>
+
+<h2>Implementations and construction paths</h2>
+<ul>
+<li><strong>ROML Python (bulk)</strong> — ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add (bess_96); roml.sum/roml.dot objectives.</li><li><strong>PuLP</strong> — PuLP: LpProblem.add_variable_dicts + lpSum helpers. Validation solves use the bundled CBC binary.</li><li><strong>Pyomo</strong> — Pyomo: ConcreteModel + indexed Var/Constraint rules + quicksum. Validation solves use appsi_highs.</li><li><strong>PyOptInterface</strong> — PyOptInterface: add_m_variables per family + add_m_linear_constraints per sense group + ExprBuilder objective, backed directly by HiGHS (see methodology).</li><li><strong>ROML Python (scalar)</strong> — ROML Python scalar path: Model.var + scalar expressions + Model.add. Diagnostic track for binding-overhead comparison.</li><li><strong>ROML core (Rust)</strong> — Native ROML core (roml crate, release build): scalar construction in Rust; same variables, constraints, coefficients, bounds, objective, and naming policy as roml_python_scalar.</li>
+</ul>
+<p>Python primary comparison uses each library's documented efficient public
+API while preserving workload mathematics and semantic naming
+(<code>x</code> for sparse_rows; <code>charge</code>,
+<code>discharge</code>, <code>energy</code> for bess_96). ROML Python exposes
+no public model-count introspection, so its structural counts are exact
+adapter construction bookkeeping; PuLP and Pyomo counts are library
+introspection. Mathematical equivalence is proven by the validation solve
+gate, not by counts alone.</p>
+
+<h2>Semantic boundaries</h2>
+<p>PyOptInterface's model is solver-backed: population calls insert directly
+into HiGHS. ROML, PuLP, and Pyomo maintain a separate modeling
+representation. <code>populate_ms</code> is elapsed user-facing
+construction-API work under each architecture, not identical internal work.
+Memory figures are child-process RSS (peak high-water mark) — a secondary
+metric, not allocator-independent efficiency evidence.</p>
+
+<h2>Process isolation and runtime controls</h2>
+<p>Every replicate runs in a fresh child process: import dependencies, apply
+thread limits, generate canonical input outside timing, run a tiny unrecorded
+warmup, create the empty model (<code>container_init</code>), time the full
+population, emit one machine-readable JSON record, exit. Implementation order
+is randomized per workload/size/replicate from the run seed. Children are
+pinned to one logical CPU when the platform allows; thread environment is
+limited (<code>OMP_NUM_THREADS=1</code>, <code>OPENBLAS_NUM_THREADS=1</code>,
+<code>MKL_NUM_THREADS=1</code>, <code>NUMEXPR_NUM_THREADS=1</code>,
+<code>RAYON_NUM_THREADS=1</code>).</p>
+
+<h2>Replicates, stop policy, statistics</h2>
+<p>Quick profile: 3 replicates, 15&nbsp;s per-process wall limit. Standard
+profile: 7 replicates, 120&nbsp;s hard wall limit, 16&nbsp;GiB child RSS
+ceiling, plus a 60&nbsp;s pilot budget (an implementation whose own first
+replicate exceeds it is stopped for larger sizes). Timeouts, RSS breaches,
+and errors are recorded as data; larger sizes stop for that
+implementation/workload; nothing is extrapolated. Summaries report median,
+p25, p75, min, max, MAD, and replicate count. Speedup is
+<code>competitor_median / roml_median</code> on paired points only.</p>
+
+<h2>Pins and provenance</h2>
+<ul>
+<li>Benchmark SHA: <code>64615d6cce15e0b00ba7542c2e1f2a78d920771a</code></li>
+<li>ROML SHA: <code>6062398b418c4bc0c7718b2ce569da8b9e42766e</code> (exact pinned source; never a moving main)</li>
+<li>Python 3.13.14 · roml-python 0.1.0 · PuLP 3.3.1 · Pyomo 6.10.1 · PyOptInterface 0.6.1 · HiGHS 1.15.1 · NumPy 2.5.3</li>
+<li>Host: Linux-7.0.0-30-generic-x86_64-with-glibc2.43 — AMD Ryzen 9 9950X 16-Core Processor</li>
+<li>Validation: structural counts, bound/domain spot checks, and a small
+deterministic HiGHS-compatible solve per implementation/workload with
+objective agreement within 1e-7 absolute + 1e-7 relative —
+passed
+(see <a href="data/validation.json">validation.json</a>).</li>
+</ul>
+
+<h2>Interpretation discipline</h2>
+<p>ROML may be called faster/slower only for the measured workloads, size
+range, versions, and construction boundary. These numbers say nothing about
+solve performance, and no single-number overall winner is claimed.</p>
+
+</main>
+<footer>
+Model-construction benchmark only — no solve-time or solution-quality claims.
+Raw measurements: <a href="data/raw.jsonl">raw.jsonl</a> ·
+<a href="data/summary.csv">summary.csv</a> · <a href="data.html">data page</a>.
+</footer>
+</body>
+</html>
