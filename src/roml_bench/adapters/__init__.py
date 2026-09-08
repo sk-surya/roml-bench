@@ -35,6 +35,8 @@ def get_adapter(implementation_id: str):
 
 
 def supported_workloads(implementation_id: str) -> tuple[str, ...]:
+    if implementation_id in ("roml_core_rust", "roml_core_rust_anon"):
+        return ("sparse_rows", "bess_96")
     for cls in ADAPTERS:
         if cls.implementation_id == implementation_id:
             return getattr(cls, "supported_workloads", ("sparse_rows", "bess_96"))

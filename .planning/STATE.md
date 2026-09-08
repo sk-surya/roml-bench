@@ -26,10 +26,11 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 - Site: static Jinja2 + offline Plotly
 - Serve port: `8787`
 
-## Next gate
+## Current state
 
-Task 12 in `.planning/IMPLEMENTATION-PLAN.md`: final self-review and stop
-condition (then push + draft PR).
+- Forensic pass: implementation committed (b59bd6b), validation green for
+  all 9 arms, forensic run launched
+- PR #1: draft, unmerged (stays that way pending forensic outcome)
 
 ## Stop condition
 
