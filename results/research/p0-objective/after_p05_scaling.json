@@ -1,0 +1,1 @@
+{"arm":"p05-scaling","before":{"rows_commit_ms":{"10000":34.7,"50000":799.1,"100000":5656.0},"snapshot_ms":{"10000":12.9,"50000":271.2,"100000":1086.7}},"after":{"rows_commit_ms":{"10000":1.8,"50000":12.5,"100000":26.1},"snapshot_ms":{"10000":2.9,"50000":21.3,"100000":39.5}},"note":"release, pinned CPU; snapshot arm on sparse model incl. bulk objective (200k cells at 100k)"}
