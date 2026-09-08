@@ -4,7 +4,7 @@ from __future__ import annotations
 
 SCHEMA_VERSION = 1
 
-ROML_SHA = "6062398b418c4bc0c7718b2ce569da8b9e42766e"
+ROML_SHA = "d6afabd2988761fe9d5dd08597491a6f3fb73779"
 
 IMPLEMENTATIONS = (
     "roml_python_bulk",

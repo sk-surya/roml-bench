@@ -11,7 +11,7 @@
 # 8. prints exact versions/SHAs
 set -euo pipefail
 
-ROML_SHA="6062398b418c4bc0c7718b2ce569da8b9e42766e"
+ROML_SHA="d6afabd2988761fe9d5dd08597491a6f3fb73779"
 ROML_REPO="https://github.com/sk-surya/roml.git"
 
 cd "$(dirname "$0")/.."

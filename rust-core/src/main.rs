@@ -13,7 +13,7 @@ use roml::prelude::*;
 use serde::Serialize;
 use std::time::Instant;
 
-const ROML_SHA: &str = "6062398b418c4bc0c7718b2ce569da8b9e42766e";
+const ROML_SHA: &str = "d6afabd2988761fe9d5dd08597491a6f3fb73779";
 const SCHEMA_VERSION: u32 = 1;
 
 #[derive(Serialize)]
