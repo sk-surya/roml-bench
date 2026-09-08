@@ -1,0 +1,17 @@
+[package]
+name = "roml-bench-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+
+[[bin]]
+name = "roml-bench-core"
+path = "src/main.rs"
+
+[dependencies]
+roml = { git = "https://github.com/sk-surya/roml", rev = "6062398b418c4bc0c7718b2ce569da8b9e42766e" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
