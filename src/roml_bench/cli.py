@@ -62,6 +62,13 @@ def _cmd_site(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_serve(args: argparse.Namespace) -> int:
+    from roml_bench.serve import serve_forever
+
+    serve_forever(args.host, args.port, args.directory)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="roml-bench")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -74,6 +81,10 @@ def build_parser() -> argparse.ArgumentParser:
     site_parser = sub.add_parser("site", help="generate the offline static site")
     site_parser.add_argument("run_dir")
     site_parser.add_argument("--output", default="site")
+    serve_parser = sub.add_parser("serve", help="serve the generated site")
+    serve_parser.add_argument("--host", default="0.0.0.0")
+    serve_parser.add_argument("--port", type=int, default=8787)
+    serve_parser.add_argument("--directory", default="site")
     return parser
 
 
@@ -87,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_summarize(args)
     if args.command == "site":
         return _cmd_site(args)
+    if args.command == "serve":
+        return _cmd_serve(args)
     print(f"unknown command: {args.command}", file=sys.stderr)
     return 2
 
