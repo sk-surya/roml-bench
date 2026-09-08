@@ -7,15 +7,12 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 ## Current state
 
 - Planning: complete
-- Implementation: Tasks 1-6 complete (bootstrap, workloads, Python adapters,
-  Rust core runner, validation gate, isolated orchestrator)
-- Validation: passing for all 6 implementations (sparse 0.0, bess B=1
-  651.993846 across all 5 Python solvers; Rust core counts verified)
-- Quick profile: methodology bug caught and fixed (BESS CSR row order);
-  re-run pending
-- Authoritative benchmark run: not started
-- Site generation: not started
-- Network service: not started
+- Implementation: Tasks 1-10 complete (bootstrap through CI gate)
+- Validation: passing for all 6 implementations
+- Quick profile: 72/72 ok; methodology bug (BESS CSR order) caught and fixed
+- Authoritative benchmark run: starting (standard profile)
+- Site generation: generator verified on quick data
+- Network service: user systemd available, linger enabled; install pending
 
 ## Locked decisions
 
@@ -29,7 +26,8 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 
 ## Next gate
 
-Task 7 in `.planning/IMPLEMENTATION-PLAN.md`: statistical summarizer.
+Task 11 in `.planning/IMPLEMENTATION-PLAN.md`: authoritative standard run
+and publication.
 
 ## Stop condition
 
