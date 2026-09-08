@@ -8,6 +8,10 @@ rust-version = "1.85"
 name = "roml-bench-core"
 path = "src/main.rs"
 
+[[bin]]
+name = "roml-ops-probe"
+path = "src/bin/ops_probe.rs"
+
 [dependencies]
 roml = { git = "https://github.com/sk-surya/roml", rev = "6062398b418c4bc0c7718b2ce569da8b9e42766e" }
 serde = { version = "1.0", features = ["derive"] }
