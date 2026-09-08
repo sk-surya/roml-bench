@@ -13,7 +13,7 @@ name = "roml-ops-probe"
 path = "src/bin/ops_probe.rs"
 
 [dependencies]
-roml = { git = "https://github.com/sk-surya/roml", rev = "d6afabd2988761fe9d5dd08597491a6f3fb73779" }
+roml = { git = "https://github.com/sk-surya/roml", rev = "9cea1642508693238562d1f1be2edb95bacaf488" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 

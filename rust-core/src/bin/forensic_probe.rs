@@ -32,7 +32,7 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 use std::time::Instant;
 
-const ROML_SHA: &str = "d6afabd2988761fe9d5dd08597491a6f3fb73779";
+const ROML_SHA: &str = "9cea1642508693238562d1f1be2edb95bacaf488";
 
 #[derive(Serialize)]
 struct ProbeRecord {

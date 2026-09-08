@@ -50,7 +50,7 @@ dependencies = [
 [[package]]
 name = "roml"
 version = "0.1.0"
-source = "git+https://github.com/sk-surya/roml?rev=d6afabd2988761fe9d5dd08597491a6f3fb73779#d6afabd2988761fe9d5dd08597491a6f3fb73779"
+source = "git+https://github.com/sk-surya/roml?rev=9cea1642508693238562d1f1be2edb95bacaf488#9cea1642508693238562d1f1be2edb95bacaf488"
 dependencies = [
  "log",
  "windows-sys",
@@ -60,7 +60,7 @@ dependencies = [
 name = "roml-bench-core"
 version = "0.1.0"
 dependencies = [
- "roml 0.1.0 (git+https://github.com/sk-surya/roml?rev=d6afabd2988761fe9d5dd08597491a6f3fb73779)",
+ "roml 0.1.0 (git+https://github.com/sk-surya/roml?rev=9cea1642508693238562d1f1be2edb95bacaf488)",
  "serde",
  "serde_json",
 ]
