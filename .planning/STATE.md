@@ -28,9 +28,12 @@ Complete model-building benchmark v1: Python ROML vs PuLP/Pyomo/PyOptInterface; 
 
 ## Current state
 
-- Forensic pass: implementation committed (b59bd6b), validation green for
-  all 9 arms, forensic run launched
-- PR #1: draft, unmerged (stays that way pending forensic outcome)
+- v1: authoritative run + site committed; PR #1 draft, unmerged (headlines
+  withdrawn after owner review)
+- Forensic pass: implementation + forensic run
+  `20260908T053319Z-ai90-14738229` (793 records) + v2 site committed;
+  validation green for all 9 arms
+- Network service: `roml-bench-site.service` active, serving v2 site
 
 ## Stop condition
 
