@@ -95,3 +95,40 @@ def test_write_summary_outputs_json_and_csv(tmp_path):
     assert text.splitlines()[0].startswith("workload,size,implementation")
     assert "pyomo_python" in text
     assert len(summary["groups"]) == 3
+
+
+def test_phases_aggregated_as_medians(tmp_path):
+    run_dir = _fixture_dir(tmp_path)
+    extra = _record("sparse_rows", 100, "roml_python_bulk", 11.0, replicate=0)
+    records = [
+        dict(r, phases={"variables": 1_000_000, "constraints": 2_000_000, "objective": 3_000_000})
+        if r["status"] == "ok" and r["implementation"] == "roml_python_bulk"
+        else r
+        for r in [json.loads(line) for line in (run_dir / "raw.jsonl").read_text().splitlines()]
+    ]
+    assert extra  # fixture helper shape guard
+    (run_dir / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in records) + "\n")
+    summary = summarize_run(run_dir)
+    bulk = next(g for g in summary["groups"] if g["implementation"] == "roml_python_bulk")
+    assert bulk["phase_median_ms"] == {"variables": 1.0, "constraints": 2.0, "objective": 3.0}
+
+
+def test_variants_form_separate_groups_without_speedups(tmp_path):
+    run_dir = _fixture_dir(tmp_path)
+    records = [json.loads(line) for line in (run_dir / "raw.jsonl").read_text().splitlines()]
+    dup = dict(records[0])
+    dup.update({"variant": "duplicated", "populate_ns": int(30.0 * 1e6), "replicate": 0})
+    records.append(dup)
+    (run_dir / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in records) + "\n")
+    summary = summarize_run(run_dir)
+    variants = {(g["implementation"], g["variant"]) for g in summary["groups"]}
+    assert ("roml_python_bulk", "duplicated") in variants
+    dup_group = next(
+        g for g in summary["groups"]
+        if g["implementation"] == "roml_python_bulk" and g["variant"] == "duplicated"
+    )
+    assert dup_group["median_ms"] == 30.0
+    assert not any(
+        s["numerator"] == "roml_python_bulk" and s["panel"] == "ingestion"
+        for s in summary["speedups"]
+    )

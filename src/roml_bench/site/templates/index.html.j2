@@ -2,9 +2,15 @@
 {% block title %}ROML model-build benchmark — summary{% endblock %}
 {% block body %}
 <h1>Model-construction benchmark v1</h1>
+<div class="findings" style="background:#fdecea;border-color:#e3a878;">
+<h2>Correction to the v1 report</h2>
+<p>{{ retraction }}</p>
+</div>
 <p>How long does it take to <em>build</em> an equivalent linear model as the
-problem grows — ROML Python vs PuLP, Pyomo, and PyOptInterface, plus ROML
-Python vs native ROML core? Primary metric: <code>populate_ms</code>, the
+problem grows? Two separate questions are answered on separate panels:
+<strong>A. formulation</strong> (from B/T/prices or N: algebra, lowering,
+and ingestion) and <strong>B. matrix ingestion</strong> (from shared
+CSR/bounds/objective input). Primary metric: <code>populate_ms</code>, the
 elapsed construction-API time from the first variable insertion into an
 already-created empty model through objective installation. Imports, data
 generation, solves, serialization, and report generation are excluded.</p>

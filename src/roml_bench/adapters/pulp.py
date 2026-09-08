@@ -17,7 +17,8 @@ from roml_bench.workloads import WorkloadCase
 
 class PulpAdapter:
     implementation_id = "pulp_python"
-    construction_path = "LpVariable.dicts + lpSum + LpProblem"
+    construction_path = "LpProblem.add_variable_dicts + lpSum + LpProblem"
+    supported_workloads = ("sparse_rows", "bess_96")
 
     def warmup(self) -> None:
         prob = LpProblem("warmup", LpMinimize)
@@ -30,10 +31,24 @@ class PulpAdapter:
         return LpProblem(case.workload, sense)
 
     def populate(self, model: LpProblem, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case)
+
+    def populate_phases(self, model: LpProblem, case: WorkloadCase):
+        stage: dict = {}
         if case.workload == "sparse_rows":
-            return _populate_sparse(model, case)
+            return [
+                ("variables", lambda: stage.update(xs=_sparse_vars(model, case))),
+                ("constraints", lambda: _sparse_cons(model, case, stage["xs"])),
+                ("objective", lambda: _sparse_obj(model, case, stage["xs"])),
+            ]
         if case.workload == "bess_96":
-            return _populate_bess(model, case)
+            return [
+                ("variables", lambda: stage.update(handles=_bess_vars(model, case))),
+                ("constraints", lambda: _bess_cons(model, case, stage["handles"])),
+                ("objective", lambda: _bess_obj(model, case, stage["handles"])),
+            ]
         raise ValueError(f"unknown workload: {case.workload}")
 
     def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
@@ -54,23 +69,31 @@ class PulpAdapter:
         )
 
 
-def _populate_sparse(model: LpProblem, case: WorkloadCase) -> BuildArtifact:
-    n = case.payload["n"]
-    n_rows = case.payload["n_rows"]
-    xs = model.add_variable_dicts("x", range(n), lowBound=0, upBound=5)
-    for r in range(n_rows):
-        base = 10 * r
-        model += lpSum(xs[base + k] for k in range(10)) <= 10.0, f"row_{r}"
-    model += lpSum(xs[i] for i in range(n))
+def _artifact(model: LpProblem, case: WorkloadCase) -> BuildArtifact:
     return BuildArtifact(
-        model, "pulp_python", case, n, n_rows, 10 * n_rows, n,
+        model, "pulp_python", case, case.variables, case.constraints,
+        case.constraint_nnz, case.objective_nnz,
     )
 
 
-def _populate_bess(model: LpProblem, case: WorkloadCase) -> BuildArtifact:
+def _sparse_vars(model: LpProblem, case: WorkloadCase):
+    n = case.payload["n"]
+    return model.add_variable_dicts("x", range(n), lowBound=0, upBound=5)
+
+
+def _sparse_cons(model: LpProblem, case: WorkloadCase, xs) -> None:
+    for r in range(case.payload["n_rows"]):
+        base = 10 * r
+        model += lpSum(xs[base + k] for k in range(10)) <= 10.0, f"row_{r}"
+
+
+def _sparse_obj(model: LpProblem, case: WorkloadCase, xs) -> None:
+    model += lpSum(xs[i] for i in range(case.payload["n"]))
+
+
+def _bess_vars(model: LpProblem, case: WorkloadCase):
     p = case.payload
-    b, t, dt, eta = p["b"], p["t"], p["dt"], p["eta"]
-    limit, cap, e0, prices = p["p"], p["e"], p["e0"], p["prices"]
+    b, t, limit, cap = p["b"], p["t"], p["p"], p["e"]
     charge = model.add_variable_dicts(
         "charge", (range(b), range(t)), lowBound=0, upBound=limit
     )
@@ -80,6 +103,14 @@ def _populate_bess(model: LpProblem, case: WorkloadCase) -> BuildArtifact:
     energy = model.add_variable_dicts(
         "energy", (range(b), range(t + 1)), lowBound=0, upBound=cap
     )
+    return (charge, discharge, energy)
+
+
+def _bess_cons(model: LpProblem, case: WorkloadCase, handles) -> None:
+    charge, discharge, energy = handles
+    p = case.payload
+    b, t, dt, eta = p["b"], p["t"], p["dt"], p["eta"]
+    limit, e0 = p["p"], p["e0"]
     for bb in range(b):
         model += energy[bb][0] == e0, f"init_{bb}"
         for tt in range(t):
@@ -90,14 +121,16 @@ def _populate_bess(model: LpProblem, case: WorkloadCase) -> BuildArtifact:
             )
         for tt in range(t):
             model += charge[bb][tt] + discharge[bb][tt] <= limit, f"mode_{bb}_{tt}"
+
+
+def _bess_obj(model: LpProblem, case: WorkloadCase, handles) -> None:
+    charge, discharge, _ = handles
+    p = case.payload
+    b, t, dt, prices = p["b"], p["t"], p["dt"], p["prices"]
     model += lpSum(
         dt * float(prices[tt]) * (discharge[bb][tt] - charge[bb][tt])
         for bb in range(b)
         for tt in range(t)
-    )
-    return BuildArtifact(
-        model, "pulp_python", case, case.variables, case.constraints,
-        case.constraint_nnz, case.objective_nnz,
     )
 
 

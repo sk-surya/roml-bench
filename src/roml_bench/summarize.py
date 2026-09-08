@@ -14,9 +14,32 @@ import json
 import statistics
 from pathlib import Path
 
-PYTHON_PANEL = ("pulp_python", "pyomo_python", "pyoptinterface_python")
+PYTHON_PANEL = (
+    "pulp_python",
+    "pyomo_python",
+    "pyoptinterface_python",
+    "pyoptinterface_scalar",
+)
 PYTHON_BASELINE = "roml_python_bulk"
 CORE_BASELINE = "roml_core_rust"
+
+# Formulation panel (high-level modeling from B/T/prices or N).
+FORMULATION_ARMS = (
+    "roml_python_bulk",
+    "roml_python_naive_chain",
+    "roml_python_scalar",  # legacy v1 ID, present in historical runs only
+    "pulp_python",
+    "pyomo_python",
+    "pyoptinterface_scalar",
+    "roml_core_rust",
+    "roml_core_rust_anon",
+)
+# Matrix-ingestion panel (shared canonical CSR input).
+INGESTION_ARMS = (
+    "roml_python_bulk",
+    "roml_python_csr",
+    "pyoptinterface_python",
+)
 
 
 def _stats_ms(values_ms: list[float]) -> dict:
@@ -46,10 +69,13 @@ def summarize_run(run_dir: str | Path) -> dict:
         for line in (run_dir / "raw.jsonl").read_text().splitlines()
         if line.strip()
     ]
-    ok_groups: dict[tuple[str, int, str], list[dict]] = {}
-    censored: dict[tuple[str, int, str], list[dict]] = {}
+    ok_groups: dict[tuple[str, int, str, str], list[dict]] = {}
+    censored: dict[tuple[str, int, str, str], list[dict]] = {}
     for record in records:
-        key = (record["workload"], record["size"], record["implementation"])
+        key = (
+            record["workload"], record["size"], record["implementation"],
+            record.get("variant", "canonical"),
+        )
         if record["status"] == "ok":
             ok_groups.setdefault(key, []).append(record)
         else:
@@ -57,17 +83,18 @@ def summarize_run(run_dir: str | Path) -> dict:
 
     groups = []
     medians: dict[tuple[str, int, str], float] = {}
-    for (workload, size, implementation) in sorted(
+    for (workload, size, implementation, variant) in sorted(
         set(ok_groups) | set(censored),
-        key=lambda k: (k[0], k[1], k[2]),
+        key=lambda k: (k[0], k[1], k[2], k[3]),
     ):
-        ok_recs = ok_groups.get((workload, size, implementation), [])
-        bad_recs = censored.get((workload, size, implementation), [])
+        ok_recs = ok_groups.get((workload, size, implementation, variant), [])
+        bad_recs = censored.get((workload, size, implementation, variant), [])
         statuses = sorted({r["status"] for r in bad_recs})
         entry: dict = {
             "workload": workload,
             "size": size,
             "implementation": implementation,
+            "variant": variant,
             "status": "ok" if ok_recs and not bad_recs else (
                 "ok" if ok_recs else statuses[0]
             ),
@@ -85,17 +112,26 @@ def summarize_run(run_dir: str | Path) -> dict:
             entry["peak_rss_median_bytes"] = statistics.median(
                 [r.get("peak_rss_bytes") or 0 for r in ok_recs]
             )
-            medians[(workload, size, implementation)] = entry["median_ms"]
+            phased = [r.get("phases") for r in ok_recs if r.get("phases")]
+            if phased and len(phased) == len(ok_recs):
+                names = phased[0].keys()
+                if all(set(p.keys()) == set(names) for p in phased):
+                    entry["phase_median_ms"] = {
+                        name: statistics.median([p[name] / 1e6 for p in phased])
+                        for name in names
+                    }
+            if variant == "canonical":
+                medians[(workload, size, implementation)] = entry["median_ms"]
         groups.append(entry)
 
     speedups = []
     for (workload, size, implementation), median in sorted(medians.items()):
-        if implementation in PYTHON_PANEL + ("roml_python_scalar",):
+        if implementation in PYTHON_PANEL + ("roml_python_naive_chain", "roml_python_scalar"):
             base = medians.get((workload, size, PYTHON_BASELINE))
             if base:
                 speedups.append(
                     {
-                        "panel": "python",
+                        "panel": "formulation",
                         "workload": workload,
                         "size": size,
                         "numerator": implementation,
@@ -103,7 +139,7 @@ def summarize_run(run_dir: str | Path) -> dict:
                         "speedup": median / base,
                     }
                 )
-        if implementation in ("roml_python_scalar", "roml_python_bulk"):
+        if implementation in ("roml_python_naive_chain", "roml_python_bulk"):
             base = medians.get((workload, size, CORE_BASELINE))
             if base:
                 speedups.append(
@@ -113,6 +149,19 @@ def summarize_run(run_dir: str | Path) -> dict:
                         "size": size,
                         "numerator": implementation,
                         "denominator": CORE_BASELINE,
+                        "speedup": median / base,
+                    }
+                )
+        if implementation in ("roml_python_csr", "pyoptinterface_python"):
+            base = medians.get((workload, size, PYTHON_BASELINE))
+            if base and implementation != PYTHON_BASELINE:
+                speedups.append(
+                    {
+                        "panel": "ingestion",
+                        "workload": workload,
+                        "size": size,
+                        "numerator": implementation,
+                        "denominator": PYTHON_BASELINE,
                         "speedup": median / base,
                     }
                 )
@@ -144,10 +193,11 @@ def write_summary(run_dir: str | Path) -> dict:
         writer = csv.writer(fh)
         writer.writerow(
             [
-                "workload", "size", "implementation", "status", "replicates",
+                "workload", "size", "implementation", "variant", "status", "replicates",
                 "median_ms", "p25_ms", "p75_ms", "min_ms", "max_ms", "mad_ms",
                 "container_init_median_ms", "user_build_total_median_ms",
                 "peak_rss_median_bytes", "speedup_vs_baseline",
+                "phase_variables_ms", "phase_constraints_ms", "phase_objective_ms",
             ]
         )
         for group in summary["groups"]:
@@ -157,9 +207,11 @@ def write_summary(run_dir: str | Path) -> dict:
                 speedup = speedup_lookup.get(
                     (group["workload"], group["size"], group["implementation"]), ""
                 )
+            phases = group.get("phase_median_ms", {})
             writer.writerow(
                 [
                     group["workload"], group["size"], group["implementation"],
+                    group.get("variant", "canonical"),
                     group["status"], group.get("replicates", ""),
                     _fmt(group.get("median_ms")), _fmt(group.get("p25_ms")),
                     _fmt(group.get("p75_ms")), _fmt(group.get("min_ms")),
@@ -168,6 +220,8 @@ def write_summary(run_dir: str | Path) -> dict:
                     _fmt(group.get("user_build_total_median_ms")),
                     group.get("peak_rss_median_bytes", ""),
                     _fmt(speedup) if speedup != "" else "",
+                    _fmt(phases.get("variables")), _fmt(phases.get("constraints")),
+                    _fmt(phases.get("objective")),
                 ]
             )
     return summary

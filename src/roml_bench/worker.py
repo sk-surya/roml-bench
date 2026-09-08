@@ -30,6 +30,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--benchmark-sha", required=True)
     parser.add_argument("--cpu", default=None)
+    parser.add_argument("--csr-variant", default="canonical",
+                        choices=["canonical", "shuffled", "duplicated"])
     return parser
 
 
@@ -55,9 +57,13 @@ def main(argv: list[str] | None = None) -> int:
 
     from roml_bench.adapters import get_adapter
     from roml_bench.schema import ROML_SHA
-    from roml_bench.workloads import make_case
+    from roml_bench.workloads import apply_csr_variant, make_case
 
     case = make_case(args.workload, args.size, seed=args.seed)
+    variant = args.csr_variant
+    actual_nnz = case.constraint_nnz
+    if variant != "canonical":
+        case, actual_nnz = apply_csr_variant(case, variant, seed=args.seed)
     record = {
         "schema_version": 1,
         "run_id": args.run_id,
@@ -69,10 +75,11 @@ def main(argv: list[str] | None = None) -> int:
         "size": args.size,
         "variables": case.variables,
         "constraints": case.constraints,
-        "constraint_nnz": case.constraint_nnz,
+        "constraint_nnz": actual_nnz,
         "objective_nnz": case.objective_nnz,
         "replicate": args.replicate,
         "seed": args.seed,
+        "variant": variant,
         "container_init_ns": 0,
         "populate_ns": 0,
         "rss_before_bytes": 0,
@@ -89,9 +96,19 @@ def main(argv: list[str] | None = None) -> int:
         model = adapter.new_model(case)
         record["container_init_ns"] = time.perf_counter_ns() - start
         record["rss_before_bytes"], _ = _rss_now()
-        start = time.perf_counter_ns()
-        adapter.populate(model, case)
-        record["populate_ns"] = time.perf_counter_ns() - start
+        phases_fn = getattr(adapter, "populate_phases", None)
+        if phases_fn is not None:
+            phases: dict[str, int] = {}
+            for name, step in phases_fn(model, case):
+                begin = time.perf_counter_ns()
+                step()
+                phases[name] = time.perf_counter_ns() - begin
+            record["populate_ns"] = sum(phases.values())
+            record["phases"] = phases
+        else:
+            start = time.perf_counter_ns()
+            adapter.populate(model, case)
+            record["populate_ns"] = time.perf_counter_ns() - start
         rss_after, peak = _rss_now()
         record["rss_after_bytes"] = rss_after
         record["peak_rss_bytes"] = peak

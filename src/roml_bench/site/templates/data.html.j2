@@ -16,18 +16,23 @@ extrapolated.</p>
 </ul>
 <h2>Measured groups (median populate_ms)</h2>
 <table class="data">
-<thead><tr><th>Workload</th><th>Size</th><th>Implementation</th><th>Status</th>
-<th>n</th><th>Median ms</th><th>p25</th><th>p75</th><th>Min</th><th>Max</th><th>MAD</th></tr></thead>
+<thead><tr><th>Workload</th><th>Size</th><th>Implementation</th><th>Variant</th><th>Status</th>
+<th>n</th><th>Median ms</th><th>p25</th><th>p75</th><th>Min</th><th>Max</th><th>MAD</th>
+<th>Vars ms</th><th>Cons ms</th><th>Obj ms</th></tr></thead>
 <tbody>
 {% for g in groups %}
 <tr><td>{{ g.workload }}</td><td>{{ g.size }}</td><td>{{ labels[g.implementation] }}</td>
+<td>{{ g.variant if g.variant else 'canonical' }}</td>
 <td>{{ g.status }}</td><td>{{ g.replicates if g.replicates else '—' }}</td>
 <td>{{ '%.3g'|format(g.median_ms) if g.median_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.p25_ms) if g.p25_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.p75_ms) if g.p75_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.min_ms) if g.min_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.max_ms) if g.max_ms is defined else '—' }}</td>
-<td>{{ '%.3g'|format(g.mad_ms) if g.mad_ms is defined else '—' }}</td></tr>
+<td>{{ '%.3g'|format(g.mad_ms) if g.mad_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.phase_median_ms.variables) if g.phase_median_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.phase_median_ms.constraints) if g.phase_median_ms is defined else '—' }}</td>
+<td>{{ '%.3g'|format(g.phase_median_ms.objective) if g.phase_median_ms is defined else '—' }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

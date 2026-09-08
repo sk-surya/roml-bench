@@ -36,8 +36,11 @@ struct Record {
     objective_nnz: usize,
     replicate: u32,
     seed: u64,
+    variant: String,
     container_init_ns: u64,
     populate_ns: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    phases: Option<std::collections::BTreeMap<String, u64>>,
     rss_before_bytes: u64,
     rss_after_bytes: u64,
     peak_rss_bytes: u64,
@@ -57,13 +60,18 @@ struct Args {
     timestamp_utc: String,
     cpu: Option<u32>,
     prices_csv: Option<String>,
+    implementation: String,
+    anonymous: bool,
+    phase_breakdown: bool,
 }
 
 fn usage() -> ! {
     eprintln!(
         "usage: roml-bench-core --workload <sparse_rows|bess_96> --size <N> \
          --seed <u64> --replicate <u32> --run-id <id> --benchmark-sha <sha> \
-         --roml-sha <sha> --timestamp-utc <ts> [--cpu <n>] [--prices-csv <csv>]"
+         --roml-sha <sha> --timestamp-utc <ts> [--cpu <n>] [--prices-csv <csv>] \
+         [--implementation <roml_core_rust|roml_core_rust_anon>] [--anonymous] \
+         [--phase-breakdown]"
     );
     std::process::exit(2);
 }
@@ -82,6 +90,12 @@ fn parse_args() -> Args {
     if workload != "sparse_rows" && workload != "bess_96" {
         usage();
     }
+    let has = |flag: &str| raw.iter().any(|a| a == flag);
+    let implementation =
+        get(&raw, "--implementation").unwrap_or_else(|| "roml_core_rust".to_string());
+    if implementation != "roml_core_rust" && implementation != "roml_core_rust_anon" {
+        usage();
+    }
     Args {
         size: req("--size").parse().unwrap_or_else(|_| usage()),
         seed: req("--seed").parse().unwrap_or_else(|_| usage()),
@@ -92,6 +106,9 @@ fn parse_args() -> Args {
         timestamp_utc: req("--timestamp-utc"),
         cpu: get(&raw, "--cpu").map(|v| v.parse().unwrap_or_else(|_| usage())),
         prices_csv: get(&raw, "--prices-csv"),
+        anonymous: has("--anonymous") || implementation == "roml_core_rust_anon",
+        phase_breakdown: has("--phase-breakdown"),
+        implementation,
         workload,
     }
 }
@@ -122,25 +139,59 @@ fn rss_bytes() -> (u64, u64) {
     (rss, hwm)
 }
 
-fn build_sparse(model: &mut Model, n: usize) -> Result<(usize, usize, usize), ModelError> {
+fn var_def(name: Option<String>, lower: f64, upper: f64) -> VariableDef {
+    let def = continuous().bounds(lower, upper);
+    match name {
+        Some(n) => def.named(n),
+        None => def,
+    }
+}
+
+fn con_spec(expr: LinExpr, name: Option<String>, upper: f64) -> ConstraintSpec {
+    let spec = expr.le(upper);
+    match name {
+        Some(n) => spec.named(n),
+        None => spec,
+    }
+}
+
+fn build_sparse(
+    model: &mut Model,
+    n: usize,
+    named: bool,
+    phases: Option<&mut std::collections::BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize), ModelError> {
     let rows = n / 10;
+    let t0 = Instant::now();
     let mut vars = Vec::with_capacity(n);
     for i in 0..n {
-        vars.push(model.add_variable(continuous().bounds(0.0, 5.0).named(format!("x[{i}]")))?);
+        let name = named.then(|| format!("x[{i}]"));
+        vars.push(model.add_variable(var_def(name, 0.0, 5.0))?);
     }
+    let t_vars = t0.elapsed().as_nanos() as u64;
+    let t1 = Instant::now();
     for r in 0..rows {
         let base = 10 * r;
         let mut expr = LinExpr::new();
         for k in 0..10 {
             expr = expr.term(1.0, vars[base + k]);
         }
-        model.add_constraint(expr.le(10.0).named(format!("row[{r}]")))?;
+        let name = named.then(|| format!("row[{r}]"));
+        model.add_constraint(con_spec(expr, name, 10.0))?;
     }
+    let t_cons = t1.elapsed().as_nanos() as u64;
+    let t2 = Instant::now();
     let mut total = LinExpr::new();
     for v in &vars {
         total = total.term(1.0, *v);
     }
     model.minimize(total)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
     Ok((n, rows, 10 * rows))
 }
 
@@ -148,52 +199,42 @@ fn build_bess(
     model: &mut Model,
     b: usize,
     prices: &[f64],
+    named: bool,
+    phases: Option<&mut std::collections::BTreeMap<String, u64>>,
 ) -> Result<(usize, usize, usize, usize), ModelError> {
     assert_eq!(prices.len(), BESS_T);
     let t = BESS_T;
+    let t0 = Instant::now();
     let mut charge = Vec::with_capacity(b * t);
     let mut discharge = Vec::with_capacity(b * t);
     let mut energy = Vec::with_capacity(b * (t + 1));
     for bb in 0..b {
         for tt in 0..t {
-            charge.push(
-                model.add_variable(
-                    continuous()
-                        .bounds(0.0, BESS_P)
-                        .named(format!("charge[{bb},{tt}]")),
-                )?,
-            );
+            let name = named.then(|| format!("charge[{bb},{tt}]"));
+            charge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
         }
     }
     for bb in 0..b {
         for tt in 0..t {
-            discharge.push(
-                model.add_variable(
-                    continuous()
-                        .bounds(0.0, BESS_P)
-                        .named(format!("discharge[{bb},{tt}]")),
-                )?,
-            );
+            let name = named.then(|| format!("discharge[{bb},{tt}]"));
+            discharge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
         }
     }
     for bb in 0..b {
         for tt in 0..=t {
-            energy.push(
-                model.add_variable(
-                    continuous()
-                        .bounds(0.0, BESS_E)
-                        .named(format!("energy[{bb},{tt}]")),
-                )?,
-            );
+            let name = named.then(|| format!("energy[{bb},{tt}]"));
+            energy.push(model.add_variable(var_def(name, 0.0, BESS_E))?);
         }
     }
-    let mut obj = LinExpr::new();
+    let t_vars = t0.elapsed().as_nanos() as u64;
+    let t1 = Instant::now();
     for bb in 0..b {
-        model.add_constraint(
-            LinExpr::from(energy[bb * (t + 1)])
-                .eq(BESS_E0)
-                .named(format!("init[{bb}]")),
-        )?;
+        let spec = LinExpr::from(energy[bb * (t + 1)]).eq(BESS_E0);
+        let spec = match named.then(|| format!("init[{bb}]")) {
+            Some(n) => spec.named(n),
+            None => spec,
+        };
+        model.add_constraint(spec)?;
         for tt in 0..t {
             let ch = charge[bb * t + tt];
             let di = discharge[bb * t + tt];
@@ -203,21 +244,38 @@ fn build_bess(
             let rhs = LinExpr::from(en0)
                 + LinExpr::new().term(BESS_DT * BESS_ETA, ch)
                 + LinExpr::new().term(-BESS_DT / BESS_ETA, di);
-            model.add_constraint(
-                (LinExpr::from(en1) - rhs)
-                    .eq(0.0)
-                    .named(format!("balance[{bb},{tt}]")),
-            )?;
-            model.add_constraint(
-                (LinExpr::from(ch) + LinExpr::from(di))
-                    .le(BESS_P)
-                    .named(format!("mode[{bb},{tt}]")),
-            )?;
+            let spec = (LinExpr::from(en1) - rhs).eq(0.0);
+            let spec = match named.then(|| format!("balance[{bb},{tt}]")) {
+                Some(n) => spec.named(n),
+                None => spec,
+            };
+            model.add_constraint(spec)?;
+            let spec = (LinExpr::from(ch) + LinExpr::from(di)).le(BESS_P);
+            let spec = match named.then(|| format!("mode[{bb},{tt}]")) {
+                Some(n) => spec.named(n),
+                None => spec,
+            };
+            model.add_constraint(spec)?;
+        }
+    }
+    let t_cons = t1.elapsed().as_nanos() as u64;
+    let t2 = Instant::now();
+    let mut obj = LinExpr::new();
+    for bb in 0..b {
+        for tt in 0..t {
+            let ch = charge[bb * t + tt];
+            let di = discharge[bb * t + tt];
             obj = obj.term(-BESS_DT * prices[tt], ch);
             obj = obj.term(BESS_DT * prices[tt], di);
         }
     }
     model.maximize(obj)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
     Ok((
         b * (3 * t + 1),
         b * (2 * t + 1),
@@ -241,7 +299,7 @@ fn fail(args: &Args, message: String, container_init_ns: u64) -> ! {
         timestamp_utc: args.timestamp_utc.clone(),
         benchmark_sha: args.benchmark_sha.clone(),
         roml_sha: args.roml_sha.clone(),
-        implementation: "roml_core_rust".to_string(),
+        implementation: args.implementation.clone(),
         workload: args.workload.clone(),
         size: args.size,
         variables: 0,
@@ -250,8 +308,10 @@ fn fail(args: &Args, message: String, container_init_ns: u64) -> ! {
         objective_nnz: 0,
         replicate: args.replicate,
         seed: args.seed,
+        variant: "canonical".to_string(),
         container_init_ns,
         populate_ns: 0,
+        phases: None,
         rss_before_bytes: 0,
         rss_after_bytes: rss_after,
         peak_rss_bytes: peak,
@@ -286,8 +346,12 @@ fn main() {
 
     let (rss_before, _) = rss_bytes();
     let pop_start = Instant::now();
+    let mut phase_map: Option<std::collections::BTreeMap<String, u64>> =
+        args.phase_breakdown.then(std::collections::BTreeMap::new);
+    let named = !args.anonymous;
     let counts = if args.workload == "sparse_rows" {
-        build_sparse(&mut model, args.size).map(|(v, c, nnz)| (v, c, nnz, args.size))
+        build_sparse(&mut model, args.size, named, phase_map.as_mut())
+            .map(|(v, c, nnz)| (v, c, nnz, args.size))
     } else {
         let csv = match &args.prices_csv {
             Some(v) => v.clone(),
@@ -316,7 +380,7 @@ fn main() {
                 container_init_ns,
             );
         }
-        build_bess(&mut model, args.size, &prices)
+        build_bess(&mut model, args.size, &prices, named, phase_map.as_mut())
     };
     let (variables, constraints, constraint_nnz, objective_nnz) = match counts {
         Ok(v) => v,
@@ -335,7 +399,7 @@ fn main() {
         timestamp_utc: args.timestamp_utc.clone(),
         benchmark_sha: args.benchmark_sha.clone(),
         roml_sha: args.roml_sha.clone(),
-        implementation: "roml_core_rust".to_string(),
+        implementation: args.implementation.clone(),
         workload: args.workload.clone(),
         size: args.size,
         variables,
@@ -344,8 +408,10 @@ fn main() {
         objective_nnz,
         replicate: args.replicate,
         seed: args.seed,
+        variant: "canonical".to_string(),
         container_init_ns,
         populate_ns,
+        phases: phase_map,
         rss_before_bytes: rss_before,
         rss_after_bytes: rss_after,
         peak_rss_bytes: peak,

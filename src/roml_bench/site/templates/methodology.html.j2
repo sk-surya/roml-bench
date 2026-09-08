@@ -94,6 +94,30 @@ objective agreement within 1e-7 absolute + 1e-7 relative —
 (see <a href="data/validation.json">validation.json</a>).</li>
 </ul>
 
+<h2>Forensic pass (v2) addendum</h2>
+<p>The v1 report mixed two questions. The forensic pass splits them:</p>
+<ul>
+<li><strong>Formulation panel.</strong> Timed input is N (sparse) or
+B/T/prices/dt/eta/limits (bess). New arms: <code>roml_python_naive_chain</code>
+(the renamed v1 scalar path; O(n^2) chaining disclosed),
+<code>pyoptinterface_scalar</code> (scalar formulation with no shared CSR).
+The BESS bulk objective is one fused <code>rm.dot(price_grid,
+discharge − charge)</code> call over a precomputed contiguous grid.</li>
+<li><strong>Matrix-ingestion panel.</strong> Timed input is the shared CSR
+matrix, row bounds, objective vector, and variable bounds. Arms:
+ROML bulk (sparse), <code>roml_python_csr</code> (bess, flat namespace
+with exact per-element bounds), PyOptInterface matrix. PuLP/Pyomo expose
+no matrix API and are excluded here by design.</li>
+<li><strong>Phase decomposition.</strong> Adapters expose
+<code>variables</code> / <code>constraints</code> / <code>objective</code>
+phases timed separately inside the worker (Rust: <code>--phase-breakdown</code>).</li>
+<li><strong>Ingestion diagnostics.</strong> <code>shuffled</code> permutes
+in-row column order; <code>duplicated</code> doubles entries (2x nnz,
+recorded). Canonical only for leaderboards and speedups.</li>
+<li><strong>Named vs anonymous core.</strong> <code>roml_core_rust_anon</code>
+skips every <code>.named()</code> call to isolate name-registration cost.</li>
+</ul>
+
 <h2>Interpretation discipline</h2>
 <p>ROML may be called faster/slower only for the measured workloads, size
 range, versions, and construction boundary. These numbers say nothing about

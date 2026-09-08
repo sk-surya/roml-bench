@@ -86,3 +86,33 @@ def test_run_child_rust_core_smoke():
     assert record["status"] == "ok", record.get("error")
     assert validate_record(record) == []
     assert (record["variables"], record["constraints"]) == (20, 2)
+
+
+def test_run_child_reports_phases():
+    record = run_child(
+        "roml_python_bulk", "sparse_rows", 20, 20260908, 0, "test", "test",
+        None, 30, 16 * 1024**3,
+    )
+    assert record["status"] == "ok", record.get("error")
+    assert validate_record(record) == []
+    assert set(record["phases"]) == {"variables", "constraints", "objective"}
+    assert record["populate_ns"] == sum(record["phases"].values())
+    assert record.get("variant", "canonical") == "canonical"
+
+
+def test_run_child_csr_variant_record():
+    record = run_child(
+        "roml_python_bulk", "sparse_rows", 20, 20260908, 0, "test", "test",
+        None, 30, 16 * 1024**3, csr_variant="duplicated",
+    )
+    assert record["status"] == "ok", record.get("error")
+    assert validate_record(record) == []
+    assert record["variant"] == "duplicated"
+    assert record["constraint_nnz"] == 40  # 2 rows x 10 cols, doubled
+
+
+def test_csr_arm_supports_bess_only():
+    from roml_bench.adapters import supported_workloads
+
+    assert supported_workloads("roml_python_csr") == ("bess_96",)
+    assert set(supported_workloads("pulp_python")) == {"sparse_rows", "bess_96"}

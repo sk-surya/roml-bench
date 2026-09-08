@@ -16,6 +16,7 @@ from roml_bench.workloads import WorkloadCase
 class PyomoAdapter:
     implementation_id = "pyomo_python"
     construction_path = "ConcreteModel + indexed Var/Constraint rules + quicksum"
+    supported_workloads = ("sparse_rows", "bess_96")
 
     def warmup(self) -> None:
         m = pyo.ConcreteModel()
@@ -27,10 +28,23 @@ class PyomoAdapter:
         return pyo.ConcreteModel()
 
     def populate(self, model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case)
+
+    def populate_phases(self, model: pyo.ConcreteModel, case: WorkloadCase):
         if case.workload == "sparse_rows":
-            return _populate_sparse(model, case)
+            return [
+                ("variables", lambda: _sparse_vars(model, case)),
+                ("constraints", lambda: _sparse_cons(model, case)),
+                ("objective", lambda: _sparse_obj(model, case)),
+            ]
         if case.workload == "bess_96":
-            return _populate_bess(model, case)
+            return [
+                ("variables", lambda: _bess_vars(model, case)),
+                ("constraints", lambda: _bess_cons(model, case)),
+                ("objective", lambda: _bess_obj(model, case)),
+            ]
         raise ValueError(f"unknown workload: {case.workload}")
 
     def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
@@ -61,30 +75,37 @@ class PyomoAdapter:
         )
 
 
-def _populate_sparse(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifact:
+def _artifact(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifact:
+    return BuildArtifact(
+        model, "pyomo_python", case, case.variables, case.constraints,
+        case.constraint_nnz, case.objective_nnz,
+    )
+
+
+def _sparse_vars(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
     n = case.payload["n"]
-    n_rows = case.payload["n_rows"]
     model.I = pyo.Set(initialize=range(n))
-    model.R = pyo.Set(initialize=range(n_rows))
+    model.R = pyo.Set(initialize=range(case.payload["n_rows"]))
     model.x = pyo.Var(model.I, domain=pyo.NonNegativeReals, bounds=(0, 5))
 
+
+def _sparse_cons(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
     def row_rule(m: pyo.ConcreteModel, r: int) -> pyo.Constraint:
         base = 10 * r
         return pyo.quicksum(m.x[base + k] for k in range(10)) <= 10.0
 
     model.rows = pyo.Constraint(model.R, rule=row_rule)
+
+
+def _sparse_obj(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
     model.obj = pyo.Objective(
         expr=pyo.quicksum(model.x[i] for i in model.I), sense=pyo.minimize
     )
-    return BuildArtifact(
-        model, "pyomo_python", case, n, n_rows, 10 * n_rows, n,
-    )
 
 
-def _populate_bess(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifact:
+def _bess_vars(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
     p = case.payload
-    b, t, dt, eta = p["b"], p["t"], p["dt"], p["eta"]
-    limit, cap, e0, prices = p["p"], p["e"], p["e0"], p["prices"]
+    b, t, limit, cap = p["b"], p["t"], p["p"], p["e"]
     model.B = pyo.Set(initialize=range(b))
     model.T = pyo.Set(initialize=range(t))
     model.Tp1 = pyo.Set(initialize=range(t + 1))
@@ -95,6 +116,11 @@ def _populate_bess(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifac
     model.energy = pyo.Var(
         model.B, model.Tp1, domain=pyo.NonNegativeReals, bounds=(0, cap)
     )
+
+
+def _bess_cons(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
+    p = case.payload
+    dt, eta, limit, e0 = p["dt"], p["eta"], p["p"], p["e0"]
 
     def init_rule(m: pyo.ConcreteModel, bb: int) -> pyo.Constraint:
         return m.energy[bb, 0] == e0
@@ -111,6 +137,11 @@ def _populate_bess(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifac
     model.init = pyo.Constraint(model.B, rule=init_rule)
     model.balance = pyo.Constraint(model.B, model.T, rule=balance_rule)
     model.mode = pyo.Constraint(model.B, model.T, rule=mode_rule)
+
+
+def _bess_obj(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
+    p = case.payload
+    dt, prices = p["dt"], p["prices"]
     model.obj = pyo.Objective(
         expr=pyo.quicksum(
             dt * float(prices[tt]) * (model.discharge[bb, tt] - model.charge[bb, tt])
@@ -118,10 +149,6 @@ def _populate_bess(model: pyo.ConcreteModel, case: WorkloadCase) -> BuildArtifac
             for tt in model.T
         ),
         sense=pyo.maximize,
-    )
-    return BuildArtifact(
-        model, "pyomo_python", case, case.variables, case.constraints,
-        case.constraint_nnz, case.objective_nnz,
     )
 
 

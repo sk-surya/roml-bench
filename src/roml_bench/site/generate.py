@@ -11,13 +11,16 @@ from plotly.offline import get_plotlyjs
 
 from roml_bench.site.charts import (
     CORE_ORDER,
+    FORMULATION_ORDER,
+    INGESTION_ORDER,
     LABELS,
-    PYTHON_ORDER,
     figure_div,
     memory_chart,
+    phase_breakdown_chart,
     speedup_chart,
     time_vs_nnz,
     time_vs_size,
+    variant_chart,
 )
 from roml_bench.workloads import make_case
 
@@ -26,16 +29,26 @@ TEMPLATE_DIR = Path(__file__).parent / "templates"
 IMPLEMENTATION_NOTES = {
     "roml_python_bulk": (
         "ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR "
-        "(sparse_rows) or vectorized Model.add (bess_96); roml.sum/roml.dot objectives."
+        "(sparse_rows) or vectorized Model.add with one fused rm.dot "
+        "objective call (bess_96, corrected in the forensic pass)."
     ),
-    "roml_python_scalar": (
-        "ROML Python scalar path: Model.var + scalar expressions + Model.add. "
-        "Diagnostic track for binding-overhead comparison."
+    "roml_python_naive_chain": (
+        "Naive scalar chain: Model.var + repeated `total = total + v`. "
+        "Each `+` clones the accumulated expression and linearly scans "
+        "its terms (O(n^2)); measures the naive path, not binding overhead."
+    ),
+    "roml_python_csr": (
+        "BESS matrix ingestion: one flat Model.vars with exact per-element "
+        "bounds + add_linear_rows from the shared canonical CSR; flat "
+        "v[i] namespace (ingestion diagnostic, bess_96 only)."
     ),
     "roml_core_rust": (
-        "Native ROML core (roml crate, release build): scalar construction in Rust; "
-        "same variables, constraints, coefficients, bounds, objective, and naming "
-        "policy as roml_python_scalar."
+        "Native ROML core (roml crate, release build): scalar construction "
+        "in Rust with full naming."
+    ),
+    "roml_core_rust_anon": (
+        "Native ROML core without any .named() calls: isolates eager "
+        "name-registration cost."
     ),
     "pulp_python": (
         "PuLP: LpProblem.add_variable_dicts + lpSum helpers. "
@@ -46,9 +59,14 @@ IMPLEMENTATION_NOTES = {
         "Validation solves use appsi_highs."
     ),
     "pyoptinterface_python": (
-        "PyOptInterface: add_m_variables per family + add_m_linear_constraints "
-        "per sense group + ExprBuilder objective, backed directly by HiGHS "
-        "(see methodology)."
+        "PyOptInterface matrix ingestion: add_m_variables per family + "
+        "add_m_linear_constraints per sense group + ExprBuilder objective, "
+        "backed directly by HiGHS (see methodology)."
+    ),
+    "pyoptinterface_scalar": (
+        "PyOptInterface formulation: scalar add_variable loop + per-row "
+        "ScalarAffineFunction constraints + ExprBuilder objective, driven "
+        "from B/T/prices with no shared CSR."
     ),
 }
 
@@ -86,6 +104,7 @@ def _largest_paired(summary: dict, workload: str, implementations: list[str]) ->
         (g["size"], g["implementation"])
         for g in summary["groups"]
         if g["workload"] == workload and "median_ms" in g
+        and g.get("variant", "canonical") == "canonical"
     }
     sizes = sorted(
         {size for size, _ in ok if all((size, impl) in ok for impl in implementations)}
@@ -98,6 +117,7 @@ def _largest_paired(summary: dict, workload: str, implementations: list[str]) ->
         for g in summary["groups"]
         if g["workload"] == workload and g["size"] == size
         and g["implementation"] in implementations and "median_ms" in g
+        and g.get("variant", "canonical") == "canonical"
     }
     if not medians:
         return None
@@ -108,35 +128,48 @@ def _largest_paired(summary: dict, workload: str, implementations: list[str]) ->
 def _finding_text(summary: dict, run_meta: dict) -> list[str]:
     findings = []
     for workload in ("sparse_rows", "bess_96"):
-        paired = _largest_paired(summary, workload, PYTHON_ORDER)
+        paired = _largest_paired(summary, workload, FORMULATION_ORDER)
         if paired is None:
             findings.append(
-                f"{workload}: no size was completed by all four Python implementations; "
-                "curves below stop where each implementation stopped."
+                f"{workload} formulation: no size was completed by all "
+                "formulation arms; curves below stop where each arm stopped."
             )
-            continue
-        size = paired["size"]
-        meds = paired["medians"]
-        base = meds.get("roml_python_bulk")
-        parts = []
-        for impl in PYTHON_ORDER:
-            if impl in meds and impl != "roml_python_bulk" and base:
-                parts.append(f"{LABELS[impl]} {meds[impl] / base:.2f}x vs ROML bulk")
-        fastest = LABELS[paired["fastest"]]
-        findings.append(
-            f"{workload} at paired size {size}: fastest Python construction was "
-            f"{fastest} (median {meds[paired['fastest']]:.3g} ms); "
-            + "; ".join(parts)
-            + "."
-        )
+        else:
+            size = paired["size"]
+            meds = paired["medians"]
+            base = meds.get("roml_python_bulk")
+            parts = []
+            for impl in FORMULATION_ORDER:
+                if impl in meds and impl != "roml_python_bulk" and base:
+                    parts.append(f"{LABELS[impl]} {meds[impl] / base:.2f}x vs ROML bulk")
+            fastest = LABELS[paired["fastest"]]
+            findings.append(
+                f"{workload} formulation at paired size {size}: fastest was "
+                f"{fastest} (median {meds[paired['fastest']]:.3g} ms); "
+                + "; ".join(parts)
+                + "."
+            )
+        ingested = _largest_paired(summary, workload, INGESTION_ORDER)
+        if ingested is not None and workload == "bess_96":
+            meds = ingested["medians"]
+            order = ", ".join(
+                f"{LABELS[i]} {meds[i]:.3g} ms" for i in INGESTION_ORDER if i in meds
+            )
+            findings.append(
+                f"{workload} matrix ingestion at paired size {ingested['size']}: {order}."
+            )
     core_sparse = _largest_paired(summary, "sparse_rows", CORE_ORDER)
     if core_sparse is not None:
         meds = core_sparse["medians"]
+        named = meds.get("roml_core_rust")
+        anon = meds.get("roml_core_rust_anon")
+        extra = ""
+        if named and anon:
+            extra = f" Named vs anonymous core: {named / anon:.2f}x."
         findings.append(
-            f"ROML binding overhead at sparse_rows {core_sparse['size']}: "
-            f"Python scalar {meds['roml_python_scalar'] / meds['roml_core_rust']:.2f}x "
-            f"vs native core; Python bulk {meds['roml_python_bulk'] / meds['roml_core_rust']:.2f}x "
-            "vs native core (median ratios, paired points only)."
+            f"ROML core named vs anonymous at sparse_rows {core_sparse['size']}:"
+            + extra
+            + " (median ratios, paired points only)."
         )
     stopped = run_meta.get("stopped", [])
     if stopped:
@@ -188,52 +221,101 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
     }
     findings = _finding_text(summary, run_meta)
 
-    python_impls = [i for i in PYTHON_ORDER if _has_points(summary, i)]
+    python_impls = [i for i in FORMULATION_ORDER if _has_points(summary, i)]
+    ingest_impls = [i for i in INGESTION_ORDER if _has_points(summary, i)]
     core_impls = [i for i in CORE_ORDER if _has_points(summary, i)]
-    panel = PYTHON_ORDER + ["roml_python_scalar", "roml_core_rust"]
+    panel = FORMULATION_ORDER + ["roml_python_csr", "pyoptinterface_python"]
     all_impls = [i for i in panel if _has_points(summary, i)]
+    retraction = (
+        "Correction to the v1 report: the 350x figure was naive O(n^2) "
+        "expression chaining, not Python binding overhead, and the v1 BESS "
+        "leaderboard mixed matrix ingestion (PyOptInterface) against "
+        "high-level formulation (ROML). This report splits formulation "
+        "from ingestion and renames the scalar arm accordingly."
+    )
 
     ctx_common = {
         "provenance": provenance,
         "findings": findings,
+        "retraction": retraction,
         "labels": LABELS,
         "impl_notes": IMPLEMENTATION_NOTES,
     }
     pages = {
         "index": {
             "charts": [
-                ("Python construction time vs size (sparse_rows)",
+                ("Formulation time vs size (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", python_impls,
-                                         "Python model construction: sparse_rows"))),
-                ("Python construction time vs size (bess_96)",
+                                         "Formulation: sparse_rows"))),
+                ("Formulation time vs size (bess_96)",
                  figure_div(time_vs_size(summary, "bess_96", python_impls,
-                                         "Python model construction: bess_96"))),
+                                         "Formulation: bess_96"))),
+                ("Matrix ingestion time vs size (sparse_rows)",
+                 figure_div(time_vs_size(summary, "sparse_rows", ingest_impls,
+                                         "Ingestion: sparse_rows"))),
                 ("ROML Python vs native core (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", core_impls,
-                                         "ROML binding overhead: sparse_rows"))),
+                                         "ROML core overhead: sparse_rows"))),
             ],
         },
         "python": {
             "charts": [
-                ("Construction time vs size (sparse_rows)",
+                ("A. Formulation time vs size (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", python_impls,
-                                         "sparse_rows: populate time vs N"))),
-                ("Construction time vs size (bess_96)",
+                                         "sparse_rows formulation: populate time vs N"))),
+                ("A. Formulation time vs size (bess_96)",
                  figure_div(time_vs_size(summary, "bess_96", python_impls,
-                                         "bess_96: populate time vs batteries"))),
-                ("Construction time vs model nonzeros (sparse_rows)",
+                                         "bess_96 formulation: populate time vs batteries"))),
+                ("A. Formulation time vs model nonzeros (sparse_rows)",
                  figure_div(time_vs_nnz(summary, "sparse_rows", python_impls,
                                         nnz["sparse_rows"],
-                                        "sparse_rows: populate time vs nonzeros"))),
-                ("Construction time vs model nonzeros (bess_96)",
+                                        "sparse_rows formulation: time vs nonzeros"))),
+                ("A. Formulation time vs model nonzeros (bess_96)",
                  figure_div(time_vs_nnz(summary, "bess_96", python_impls,
                                         nnz["bess_96"],
-                                        "bess_96: populate time vs nonzeros"))),
-                ("Speedup vs ROML Python bulk (paired sizes only)",
+                                        "bess_96 formulation: time vs nonzeros"))),
+                ("B. Matrix ingestion time vs size (sparse_rows)",
+                 figure_div(time_vs_size(summary, "sparse_rows", ingest_impls,
+                                         "sparse_rows ingestion: shared CSR input"))),
+                ("B. Matrix ingestion time vs size (bess_96)",
+                 figure_div(time_vs_size(summary, "bess_96", ingest_impls,
+                                         "bess_96 ingestion: shared CSR input"))),
+                ("Speedup vs ROML Python bulk, formulation (paired sizes only)",
                  figure_div(speedup_chart(
-                     summary, "python",
-                     "Speedup vs ROML Python bulk",
+                     summary, "formulation",
+                     "Speedup vs ROML Python bulk (formulation)",
                      "competitor median / ROML-bulk median; paired points only"))),
+                ("Speedup vs ROML Python bulk, ingestion (paired sizes only)",
+                 figure_div(speedup_chart(
+                     summary, "ingestion",
+                     "Speedup vs ROML Python bulk (ingestion)",
+                     "median ratio on shared CSR input; paired points only"))),
+                ("Phase decomposition (sparse_rows, 100k)",
+                 figure_div(phase_breakdown_chart(
+                     summary, "sparse_rows", 100000, python_impls + ingest_impls,
+                     "Phase medians at sparse_rows 100k"))),
+                ("Phase decomposition (sparse_rows, 1M)",
+                 figure_div(phase_breakdown_chart(
+                     summary, "sparse_rows", 1000000, python_impls + ingest_impls,
+                     "Phase medians at sparse_rows 1M"))),
+                ("Phase decomposition (bess_96, B=100)",
+                 figure_div(phase_breakdown_chart(
+                     summary, "bess_96", 100, python_impls + ingest_impls,
+                     "Phase medians at bess_96 B=100"))),
+                ("Phase decomposition (bess_96, B=300)",
+                 figure_div(phase_breakdown_chart(
+                     summary, "bess_96", 300, python_impls + ingest_impls,
+                     "Phase medians at bess_96 B=300"))),
+                ("CSR ingestion diagnostics (sparse_rows, 100k)",
+                 figure_div(variant_chart(
+                     summary, "sparse_rows", 100000,
+                     ["roml_python_bulk", "pyoptinterface_python"],
+                     "Canonical vs shuffled vs duplicated CSR at 100k"))),
+                ("CSR ingestion diagnostics (sparse_rows, 1M)",
+                 figure_div(variant_chart(
+                     summary, "sparse_rows", 1000000,
+                     ["roml_python_bulk", "pyoptinterface_python"],
+                     "Canonical vs shuffled vs duplicated CSR at 1M"))),
                 ("Child peak RSS vs size (sparse_rows, secondary metric)",
                  figure_div(memory_chart(summary, "sparse_rows", python_impls,
                                          "Memory (RSS-based, secondary): sparse_rows"))),
@@ -244,18 +326,23 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
         },
         "roml-core": {
             "charts": [
-                ("ROML scalar vs bulk vs native core (sparse_rows)",
+                ("ROML naive chain vs bulk vs native core (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", core_impls,
-                                         "ROML binding overhead: sparse_rows"))),
-                ("ROML scalar vs bulk vs native core (bess_96)",
+                                         "ROML overhead: sparse_rows"))),
+                ("ROML naive chain vs bulk vs native core (bess_96)",
                  figure_div(time_vs_size(summary, "bess_96", core_impls,
-                                         "ROML binding overhead: bess_96"))),
+                                         "ROML overhead: bess_96"))),
                 ("Overhead vs native core (paired sizes only)",
                  figure_div(speedup_chart(
                      summary, "roml-core",
                      "Python overhead vs native ROML core",
-                     "scalar-vs-scalar isolates binding overhead; "
-                     "bulk-vs-core is the practical fast-path gap"))),
+                     "naive-chain-vs-core shows expression-chaining cost, not "
+                     "binding overhead; bulk-vs-core is the practical fast-path gap; "
+                     "named-vs-anon isolates name registration"))),
+                ("Core phase decomposition (sparse_rows, 1M)",
+                 figure_div(phase_breakdown_chart(
+                     summary, "sparse_rows", 1000000, core_impls,
+                     "Core phase medians at sparse_rows 1M"))),
             ],
         },
     }

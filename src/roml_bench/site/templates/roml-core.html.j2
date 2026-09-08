@@ -1,13 +1,16 @@
 {% extends "base.html.j2" %}
 {% block title %}ROML core overhead — ROML model-build benchmark{% endblock %}
 {% block body %}
-<h1>ROML Python scalar / bulk vs native Rust core</h1>
+<h1>ROML Python naive chain / bulk / CSR vs native Rust core</h1>
 <p>Both ROML Python paths and the native core build mathematically identical
 models: same variables, constraints, coefficients, bounds, objective, and
-naming policy. The <strong>scalar-vs-scalar</strong> comparison isolates
-Python/binding/modeling overhead most cleanly; the
-<strong>bulk-vs-core</strong> comparison answers how close the public Python
-fast path gets to native construction.</p>
+naming policy (except the flat-namespace CSR ingestion arm, whose
+per-element bounds are exact). The <strong>naive-chain-vs-core</strong>
+comparison exposes expression-chaining cost — it is not a binding-overhead
+measurement. The <strong>bulk-vs-core</strong> comparison answers how close
+the public Python fast path gets to native construction, and the
+<strong>named-vs-anonymous</strong> core comparison isolates eager
+name-registration cost.</p>
 {% for title, div in charts %}
 <div class="chart"><h2>{{ title }}</h2>{{ div | safe }}</div>
 {% endfor %}

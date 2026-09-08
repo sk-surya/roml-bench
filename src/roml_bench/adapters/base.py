@@ -40,6 +40,7 @@ class BuildArtifact:
 class Adapter(Protocol):
     implementation_id: str
     construction_path: str
+    supported_workloads: tuple[str, ...] = ("sparse_rows", "bess_96")
 
     def warmup(self) -> None:
         """Tiny unrecorded construction to settle lazy initialization."""
@@ -51,6 +52,14 @@ class Adapter(Protocol):
 
     def populate(self, model: Any, case: Any) -> BuildArtifact:
         """Build variables, constraints, and objective (primary timer)."""
+        ...
+
+    def populate_phases(self, model: Any, case: Any) -> list | None:
+        """Optional ordered (name, callable) decomposition of populate.
+
+        When provided, the worker times each phase separately and reports
+        per-phase nanoseconds alongside the total populate time.
+        """
         ...
 
     def inspect(self, artifact: BuildArtifact, case: Any) -> StructuralReport:

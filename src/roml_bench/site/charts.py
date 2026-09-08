@@ -10,30 +10,52 @@ import plotly.graph_objects as go
 
 COLORS = {
     "roml_python_bulk": "#0072B2",
+    "roml_python_naive_chain": "#56B4E9",
     "roml_python_scalar": "#56B4E9",
+    "roml_python_csr": "#9467BD",
     "roml_core_rust": "#009E73",
+    "roml_core_rust_anon": "#2CA02C",
     "pulp_python": "#D55E00",
     "pyomo_python": "#CC79A7",
     "pyoptinterface_python": "#E69F00",
+    "pyoptinterface_scalar": "#8C564B",
 }
 
 LABELS = {
     "roml_python_bulk": "ROML Python (bulk)",
-    "roml_python_scalar": "ROML Python (scalar)",
+    "roml_python_naive_chain": "ROML Python (naive chain)",
+    "roml_python_scalar": "ROML Python (scalar, v1 legacy)",
+    "roml_python_csr": "ROML Python (CSR ingest)",
     "roml_core_rust": "ROML core (Rust)",
+    "roml_core_rust_anon": "ROML core, anonymous (Rust)",
     "pulp_python": "PuLP",
     "pyomo_python": "Pyomo",
-    "pyoptinterface_python": "PyOptInterface",
+    "pyoptinterface_python": "PyOptInterface (matrix)",
+    "pyoptinterface_scalar": "PyOptInterface (scalar)",
 }
 
-PYTHON_ORDER = [
+FORMULATION_ORDER = [
     "roml_python_bulk",
+    "roml_python_naive_chain",
     "pulp_python",
     "pyomo_python",
+    "pyoptinterface_scalar",
+]
+
+INGESTION_ORDER = [
+    "roml_python_bulk",
+    "roml_python_csr",
     "pyoptinterface_python",
 ]
 
-CORE_ORDER = ["roml_python_scalar", "roml_python_bulk", "roml_core_rust"]
+CORE_ORDER = [
+    "roml_python_naive_chain",
+    "roml_python_bulk",
+    "roml_core_rust",
+    "roml_core_rust_anon",
+]
+
+PYTHON_ORDER = FORMULATION_ORDER  # backward-compatible alias
 
 
 def _layout(title: str, xtitle: str, ytitle: str) -> dict:
@@ -48,13 +70,24 @@ def _layout(title: str, xtitle: str, ytitle: str) -> dict:
 
 
 def _group_lookup(summary: dict) -> dict:
-    return {(g["workload"], g["size"], g["implementation"]): g for g in summary["groups"]}
+    return {
+        (g["workload"], g["size"], g["implementation"], g.get("variant", "canonical")): g
+        for g in summary["groups"]
+    }
+
+
+def _canonical_lookup(summary: dict) -> dict:
+    return {
+        (g["workload"], g["size"], g["implementation"]): g
+        for g in summary["groups"]
+        if g.get("variant", "canonical") == "canonical"
+    }
 
 
 def time_vs_size(
     summary: dict, workload: str, implementations: list[str], title: str
 ) -> go.Figure:
-    lookup = _group_lookup(summary)
+    lookup = _canonical_lookup(summary)
     sizes = sorted({g["size"] for g in summary["groups"] if g["workload"] == workload})
     fig = go.Figure()
     for impl in implementations:
@@ -91,7 +124,7 @@ def time_vs_size(
 def time_vs_nnz(
     summary: dict, workload: str, implementations: list[str], nnz_of: dict, title: str
 ) -> go.Figure:
-    lookup = _group_lookup(summary)
+    lookup = _canonical_lookup(summary)
     fig = go.Figure()
     for impl in implementations:
         xs, ys, lo, hi, notes = [], [], [], [], []
@@ -165,7 +198,7 @@ def speedup_chart(summary: dict, panel: str, title: str, subtitle: str) -> go.Fi
 
 
 def memory_chart(summary: dict, workload: str, implementations: list[str], title: str) -> go.Figure:
-    lookup = _group_lookup(summary)
+    lookup = _canonical_lookup(summary)
     sizes = sorted({g["size"] for g in summary["groups"] if g["workload"] == workload})
     fig = go.Figure()
     for impl in implementations:
@@ -197,3 +230,63 @@ def figure_div(fig: go.Figure) -> str:
     import plotly.io as pio
 
     return pio.to_html(fig, include_plotlyjs=False, full_html=False)
+
+
+def phase_breakdown_chart(
+    summary: dict, workload: str, size: int, implementations: list[str], title: str
+) -> go.Figure:
+    """Stacked variables/constraints/objective medians for one point."""
+    lookup = _canonical_lookup(summary)
+    phases = ["variables", "constraints", "objective"]
+    fig = go.Figure()
+    for phase in phases:
+        xs, ys, notes = [], [], []
+        for impl in implementations:
+            group = lookup.get((workload, size, impl))
+            if group is None or phase not in group.get("phase_median_ms", {}):
+                continue
+            value = group["phase_median_ms"][phase]
+            xs.append(LABELS[impl])
+            ys.append(value)
+            notes.append(f"{LABELS[impl]}<br>{phase} median {value:.3g} ms")
+        if xs:
+            fig.add_trace(go.Bar(x=xs, y=ys, name=phase, hovertext=notes, hoverinfo="text"))
+    fig.update_layout(
+        title=title,
+        barmode="stack",
+        xaxis={"title": "implementation"},
+        yaxis={"title": "phase median ms (log)", "type": "log"},
+        template="plotly_white",
+        margin={"b": 110},
+    )
+    return fig
+
+
+def variant_chart(
+    summary: dict, workload: str, size: int, implementations: list[str], title: str
+) -> go.Figure:
+    """Grouped canonical/shuffled/duplicated medians for CSR arms."""
+    lookup = _group_lookup(summary)
+    fig = go.Figure()
+    for variant in ("canonical", "shuffled", "duplicated"):
+        xs, ys, notes = [], [], []
+        for impl in implementations:
+            group = lookup.get((workload, size, impl, variant))
+            if group is None or "median_ms" not in group:
+                continue
+            xs.append(LABELS[impl])
+            ys.append(group["median_ms"])
+            notes.append(f"{LABELS[impl]}<br>{variant} median {group['median_ms']:.3g} ms")
+        if xs:
+            fig.add_trace(go.Bar(x=xs, y=ys, name=variant, hovertext=notes, hoverinfo="text"))
+    fig.update_layout(
+        title=title
+        + "<br><sub>diagnostic only: not a leaderboard; "
+        "duplicated rows carry 2x nnz</sub>",
+        barmode="group",
+        xaxis={"title": "implementation"},
+        yaxis={"title": "populate median ms (log)", "type": "log"},
+        template="plotly_white",
+        margin={"b": 110},
+    )
+    return fig

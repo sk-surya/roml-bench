@@ -35,10 +35,12 @@ VALIDATION_CASES = (("sparse_rows", 100), ("bess_96", 1))
 
 PYTHON_SOLVERS = {
     "roml_python_bulk": "roml-highs",
-    "roml_python_scalar": "roml-highs",
+    "roml_python_naive_chain": "roml-highs",
+    "roml_python_csr": "roml-highs",
     "pulp_python": "bundled-cbc",
     "pyomo_python": "appsi-highs",
     "pyoptinterface_python": "highs-direct",
+    "pyoptinterface_scalar": "highs-direct",
 }
 
 
@@ -56,7 +58,7 @@ def _solve_python(implementation: str, model):
         return pulp_adapter.solve_objective(model)
     if implementation == "pyomo_python":
         return pyomo_adapter.solve_objective(model)
-    if implementation == "pyoptinterface_python":
+    if implementation in ("pyoptinterface_python", "pyoptinterface_scalar"):
         return poi_adapter.solve_objective(model)
     raise ValueError(f"no solver path for {implementation}")
 
@@ -128,14 +130,17 @@ def _poi_bound_probe() -> tuple[float, float]:
     return (float(lb), float(ub))
 
 
-def _check_rust_core(cases: dict) -> dict:
+def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dict:
     """Run the release binary on validation sizes; verify counts and schema."""
     from roml_bench.schema import validate_record
 
     binary = Path("target/release/roml-bench-core")
     entry = {
-        "implementation": "roml_core_rust",
-        "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
+        "implementation": implementation,
+        "construction_path": (
+            "rust: Model::named + scalar add_variable/add_constraint"
+            + (" (anonymous, no .named() calls)" if implementation.endswith("_anon") else "")
+        ),
         "workloads": {},
         "status": "ok",
         "problems": [],
@@ -163,7 +168,11 @@ def _check_rust_core(cases: dict) -> dict:
             "--benchmark-sha", git_sha(".") or "unknown",
             "--roml-sha", ROML_SHA,
             "--timestamp-utc", "validation",
+            "--implementation", implementation,
+            "--phase-breakdown",
         ]
+        if implementation == "roml_core_rust_anon":
+            cmd += ["--anonymous"]
         if workload == "bess_96":
             cmd += ["--prices-csv", prices_csv]
         try:
@@ -279,9 +288,12 @@ def run_validation() -> dict:
 
     rust_entry = _check_rust_core(cases)
     result["implementations"]["roml_core_rust"] = rust_entry
-    if rust_entry["status"] != "ok":
-        result["status"] = "failed"
-        result["problems"].extend(rust_entry["problems"])
+    anon_entry = _check_rust_core(cases, "roml_core_rust_anon")
+    result["implementations"]["roml_core_rust_anon"] = anon_entry
+    for check_entry in (rust_entry, anon_entry):
+        if check_entry["status"] != "ok":
+            result["status"] = "failed"
+            result["problems"].extend(check_entry["problems"])
 
     for impl_entry in result["implementations"].values():
         if impl_entry["status"] != "ok":

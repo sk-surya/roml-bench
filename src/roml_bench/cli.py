@@ -74,7 +74,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("validate", help="run the structural/equivalence validation gate")
     run_parser = sub.add_parser("run", help="run a benchmark profile")
-    run_parser.add_argument("--profile", choices=["quick", "standard"], required=True)
+    run_parser.add_argument(
+        "--profile", choices=["quick", "standard", "forensic"], required=True
+    )
     run_parser.add_argument("--run-id", default=None)
     sum_parser = sub.add_parser("summarize", help="derive summaries from raw results")
     sum_parser.add_argument("run_dir")

@@ -8,12 +8,24 @@ ROML_SHA = "6062398b418c4bc0c7718b2ce569da8b9e42766e"
 
 IMPLEMENTATIONS = (
     "roml_python_bulk",
-    "roml_python_scalar",
+    "roml_python_naive_chain",
+    "roml_python_csr",
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_python",
+    "pyoptinterface_scalar",
     "roml_core_rust",
+    "roml_core_rust_anon",
 )
+
+# IDs produced by older benchmark code. Accepted when validating historical
+# raw files, never produced by new runs. v1 `roml_python_scalar` is the same
+# code path now published as `roml_python_naive_chain`.
+LEGACY_IMPLEMENTATIONS = ("roml_python_scalar",)
+
+KNOWN_IMPLEMENTATIONS = IMPLEMENTATIONS + LEGACY_IMPLEMENTATIONS
+
+VARIANTS = ("canonical", "shuffled", "duplicated")
 
 WORKLOADS = ("sparse_rows", "bess_96")
 
@@ -53,8 +65,10 @@ def validate_record(record: dict) -> list[str]:
             problems.append(f"missing field: {field}")
     if record.get("schema_version") != SCHEMA_VERSION:
         problems.append(f"schema_version must be {SCHEMA_VERSION}")
-    if record.get("implementation") not in IMPLEMENTATIONS:
+    if record.get("implementation") not in KNOWN_IMPLEMENTATIONS:
         problems.append(f"unknown implementation: {record.get('implementation')}")
+    if record.get("variant", "canonical") not in VARIANTS:
+        problems.append(f"unknown variant: {record.get('variant')}")
     if record.get("workload") not in WORKLOADS:
         problems.append(f"unknown workload: {record.get('workload')}")
     if record.get("status") not in STATUSES:

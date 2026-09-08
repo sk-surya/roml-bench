@@ -19,6 +19,7 @@ import sys
 import time
 from pathlib import Path
 
+from roml_bench.adapters import supported_workloads
 from roml_bench.schema import ROML_SHA, validate_record
 from roml_bench.system import THREAD_ENV, collect_environment, git_sha
 from roml_bench.validate import validation_fingerprint
@@ -26,12 +27,23 @@ from roml_bench.workloads import CANONICAL_SEED, make_case, sizes_for
 
 PYTHON_IMPLEMENTATIONS = (
     "roml_python_bulk",
-    "roml_python_scalar",
+    "roml_python_naive_chain",
+    "roml_python_csr",
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_python",
+    "pyoptinterface_scalar",
 )
-ALL_IMPLEMENTATIONS = PYTHON_IMPLEMENTATIONS + ("roml_core_rust",)
+CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon")
+ALL_IMPLEMENTATIONS = PYTHON_IMPLEMENTATIONS + CORE_IMPLEMENTATIONS
+
+# Matrix-ingestion diagnostic variants: (implementation, workload, sizes).
+VARIANT_ARMS = (
+    "roml_python_bulk",
+    "pyoptinterface_python",
+)
+VARIANT_SIZES = {"sparse_rows": (100_000, 1_000_000)}
+VARIANT_KINDS = ("shuffled", "duplicated")
 
 PROFILES = {
     "quick": {
@@ -39,12 +51,21 @@ PROFILES = {
         "wall_timeout_s": 15,
         "rss_ceiling_bytes": 16 * 1024**3,
         "pilot_cap_s": None,
+        "variants": False,
     },
     "standard": {
         "replicates": 7,
         "wall_timeout_s": 120,
         "rss_ceiling_bytes": 16 * 1024**3,
         "pilot_cap_s": 60,
+        "variants": False,
+    },
+    "forensic": {
+        "replicates": 7,
+        "wall_timeout_s": 120,
+        "rss_ceiling_bytes": 16 * 1024**3,
+        "pilot_cap_s": 60,
+        "variants": True,
     },
 }
 
@@ -146,8 +167,12 @@ def censored_record(
     cpu: int | None,
     status: str,
     error: str,
+    csr_variant: str = "canonical",
 ) -> dict:
     case = make_case(workload, size, seed=seed)
+    actual_nnz = case.constraint_nnz
+    if csr_variant == "duplicated":
+        actual_nnz = 2 * actual_nnz
     return {
         "schema_version": 1,
         "run_id": run_id,
@@ -161,10 +186,11 @@ def censored_record(
         "size": size,
         "variables": case.variables,
         "constraints": case.constraints,
-        "constraint_nnz": case.constraint_nnz,
+        "constraint_nnz": actual_nnz,
         "objective_nnz": case.objective_nnz,
         "replicate": replicate,
         "seed": seed,
+        "variant": csr_variant,
         "container_init_ns": 0,
         "populate_ns": 0,
         "rss_before_bytes": 0,
@@ -187,13 +213,14 @@ def run_child(
     cpu: int | None,
     wall_timeout_s: int,
     rss_ceiling_bytes: int,
+    csr_variant: str = "canonical",
 ) -> dict:
     """Run one replicate in a fresh child; always return a record."""
     env = _child_env()
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     if implementation not in ALL_IMPLEMENTATIONS:
         raise ValueError(f"unknown implementation: {implementation}")
-    if implementation == "roml_core_rust":
+    if implementation in CORE_IMPLEMENTATIONS:
         if not RUST_BINARY.exists():
             return censored_record(
                 implementation, workload, size, replicate, run_id,
@@ -210,7 +237,11 @@ def run_child(
             "--benchmark-sha", benchmark_sha,
             "--roml-sha", ROML_SHA,
             "--timestamp-utc", timestamp,
+            "--implementation", implementation,
+            "--phase-breakdown",
         ]
+        if implementation == "roml_core_rust_anon":
+            cmd += ["--anonymous"]
         if cpu is not None:
             cmd += ["--cpu", str(cpu)]
         if workload == "bess_96":
@@ -230,6 +261,8 @@ def run_child(
         ]
         if cpu is not None:
             cmd += ["--cpu", str(cpu)]
+        if csr_variant != "canonical":
+            cmd += ["--csr-variant", csr_variant]
 
     def preexec():
         try:
@@ -345,6 +378,9 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
         "config": config,
         "plan": [{"workload": w, "size": s} for w, s in plan],
         "implementations": list(ALL_IMPLEMENTATIONS),
+        "support": {
+            impl: list(supported_workloads(impl)) for impl in ALL_IMPLEMENTATIONS
+        },
         "stopped": [],
         "points": {},
     }
@@ -366,27 +402,15 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
                 for implementation in order:
                     if (implementation, workload) in stopped:
                         continue
+                    if workload not in supported_workloads(implementation):
+                        continue
                     record = run_child(
                         implementation, workload, size, seed, replicate,
                         run_id, benchmark_sha, cpu,
                         config["wall_timeout_s"], config["rss_ceiling_bytes"],
                     )
-                    raw.write(json.dumps(record) + "\n")
-                    raw.flush()
-                    key = f"{workload}/{size}/{implementation}"
-                    run_meta["points"].setdefault(key, []).append(record["status"])
-                    if record["status"] != "ok":
-                        stopped.add((implementation, workload))
-                        run_meta["stopped"].append(
-                            {
-                                "implementation": implementation,
-                                "workload": workload,
-                                "size": size,
-                                "status": record["status"],
-                                "error": record["error"],
-                            }
-                        )
-                    elif pilot_first and (
+                    _handle_record(raw, run_dir, run_meta, stopped, record)
+                    if record["status"] == "ok" and pilot_first and (
                         record["populate_ns"] / 1e9 > config["pilot_cap_s"]
                     ):
                         stopped.add((implementation, workload))
@@ -404,9 +428,64 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
                             }
                         )
                 (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")
-                # Early exit for replicate loop when every implementation
-                # for this workload is stopped.
-                if all((impl, workload) in stopped for impl in ALL_IMPLEMENTATIONS):
+                # Early exit for replicate loop when every supported
+                # implementation for this workload is stopped.
+                supported = [
+                    impl for impl in ALL_IMPLEMENTATIONS
+                    if workload in supported_workloads(impl)
+                ]
+                if all((impl, workload) in stopped for impl in supported):
                     break
+        if config.get("variants"):
+            _run_variants(
+                raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config
+            )
     (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")
     return run_dir
+
+
+def _handle_record(raw, run_dir, run_meta, stopped, record, pilot_capped_ok=True) -> None:
+    """Append a record and update stop bookkeeping; shared by all loops."""
+    raw.write(json.dumps(record) + "\n")
+    raw.flush()
+    key = (
+        f"{record['workload']}/{record['size']}/{record['implementation']}"
+        f"/{record.get('variant', 'canonical')}"
+    )
+    run_meta["points"].setdefault(key, []).append(record["status"])
+    if record["status"] != "ok":
+        stopped.add((record["implementation"], record["workload"]))
+        run_meta["stopped"].append(
+            {
+                "implementation": record["implementation"],
+                "workload": record["workload"],
+                "size": record["size"],
+                "variant": record.get("variant", "canonical"),
+                "status": record["status"],
+                "error": record["error"],
+            }
+        )
+
+
+def _run_variants(raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config) -> None:
+    """Matrix-ingestion diagnostics: shuffled/duplicated CSR for CSR arms."""
+    for workload, sizes in VARIANT_SIZES.items():
+        for size in sizes:
+            for variant in VARIANT_KINDS:
+                for replicate in range(config["replicates"]):
+                    order = shuffled_order(
+                        VARIANT_ARMS, workload, size, replicate, seed + 7919
+                    )
+                    cpu = pick_cpu()
+                    for implementation in order:
+                        if (implementation, workload) in stopped:
+                            continue
+                        record = run_child(
+                            implementation, workload, size, seed, replicate,
+                            run_id, benchmark_sha, cpu,
+                            config["wall_timeout_s"],
+                            config["rss_ceiling_bytes"],
+                            csr_variant=variant,
+                        )
+                        _handle_record(raw, run_dir, run_meta, stopped, record)
+            (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")
