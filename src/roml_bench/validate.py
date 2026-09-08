@@ -242,9 +242,16 @@ def run_validation() -> dict:
             result["implementations"][impl] = impl_entry
             result["status"] = "failed"
             continue
+        supported = getattr(cls, "supported_workloads", ("sparse_rows", "bess_96"))
         for workload, size in VALIDATION_CASES:
             case = cases[(workload, size)]
             key = f"{workload}/{size}"
+            if workload not in supported:
+                impl_entry["workloads"][key] = {
+                    "status": "skipped",
+                    "problems": [f"{impl} supports {supported}; {workload} by design"],
+                }
+                continue
             try:
                 model = adapter.new_model(case)
                 artifact = adapter.populate(model, case)
