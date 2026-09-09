@@ -37,9 +37,17 @@ bash cpp/build.sh   # produces cpp/build/mathopt_bench (gitignored)
 ```
 
 The link needs the canonical OR-Tools defines
-(`-DOR_PROTO_DLL="" -DPROTOBUF_USE_DLLS -DUSE_HIGHS -DUSE_MATH_OPT`)
-and `-Wl,--unresolved-symbols=ignore-in-shared-libs`: `libortools.so`
-carries references to the disabled Gurobi/GLOP solver backends, which
-this benchmark can never reach (it hardcodes
-`SolverType::kHighs`). Scoped to shared-library symbols only; our own
-objects stay strict.
+(`-DOR_PROTO_DLL="" -DPROTOBUF_USE_DLLS -DUSE_HIGHS -DUSE_MATH_OPT`).
+Linking is strict (no `--unresolved-symbols` workaround):
+`libortools.so` references three Gurobi/GLOP solver symbols even though
+those backends are configured OFF; `solver_stubs.cc` provides
+abort-if-called definitions for exactly those symbols (this benchmark
+hardcodes `SolverType::kHighs` and can never reach them). Verify with:
+
+```bash
+ldd -r cpp/build/mathopt_bench | grep -c undefined  # expect 0
+LD_BIND_NOW=1 cpp/build/mathopt_bench --workload sparse_rows --size 100 \
+  --seed 20260908 --replicate 0 --run-id bindtest --benchmark-sha t \
+  --roml-sha <pin> --timestamp-utc t \
+  --implementation ortools_mathopt_cpp  # expect status ok
+```

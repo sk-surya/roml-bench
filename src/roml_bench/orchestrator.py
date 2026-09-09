@@ -21,7 +21,12 @@ from pathlib import Path
 
 from roml_bench.adapters import supported_workloads
 from roml_bench.schema import ROML_SHA, validate_record
-from roml_bench.system import THREAD_ENV, collect_environment, git_sha
+from roml_bench.system import (
+    THREAD_ENV,
+    collect_environment,
+    git_sha,
+    roml_artifact_fingerprint,
+)
 from roml_bench.validate import validation_fingerprint
 from roml_bench.workloads import CANONICAL_SEED, make_case, sizes_for
 
@@ -128,6 +133,7 @@ def check_validation_gate(repo: str = ".") -> dict:
         "benchmark_sha": git_sha(repo),
         "roml_checkout_sha": _roml_sha(repo),
         "packages": collect_environment()["packages"],
+        "roml_artifacts": roml_artifact_fingerprint(repo),
         "status": "ok",
     }
     expected = validation_fingerprint(validation)
@@ -140,6 +146,16 @@ def check_validation_gate(repo: str = ".") -> dict:
         raise RuntimeError("validation gate: ROML checkout changed; re-run roml-bench validate")
     if expected["packages"] != current["packages"]:
         raise RuntimeError("validation gate: package set changed; re-run roml-bench validate")
+    if expected.get("roml_artifacts") != current["roml_artifacts"]:
+        exp = expected.get("roml_artifacts") or {}
+        cur = current["roml_artifacts"]
+        drift = sorted(
+            k for k in set(exp) | set(cur) if exp.get(k) != cur.get(k)
+        )
+        raise RuntimeError(
+            f"validation gate: ROML artifacts changed ({', '.join(drift)}); "
+            "re-run roml-bench validate (stale wheel or core binary)"
+        )
     return validation
 
 
@@ -329,7 +345,8 @@ def run_child(
                 "julia launcher or julia/jump_bench.jl not available",
             )
         cmd = [
-            julia, f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
+            julia, "--startup-file=no", "--threads=1",
+            f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
             "--workload", workload,
             "--size", str(size),
             "--seed", str(seed),

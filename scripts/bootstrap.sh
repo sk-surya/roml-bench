@@ -11,10 +11,18 @@
 # 8. prints exact versions/SHAs
 set -euo pipefail
 
-ROML_SHA="d6afabd2988761fe9d5dd08597491a6f3fb73779"
+ROML_SHA="c590692ace5446cc20c7eb91cb8fa0d594a054b0"
 ROML_REPO="https://github.com/sk-surya/roml.git"
 
 cd "$(dirname "$0")/.."
+
+# The pin must match src/roml_bench/schema.py exactly; two sources of truth
+# caused the d6afabd-mislabeled provenance incident.
+SCHEMA_SHA="$(grep -o 'ROML_SHA = "[0-9a-f]*"' src/roml_bench/schema.py | grep -o '[0-9a-f]*')"
+if [ "$SCHEMA_SHA" != "$ROML_SHA" ]; then
+  echo "error: scripts/bootstrap.sh pins $ROML_SHA but schema.py pins $SCHEMA_SHA" >&2
+  exit 1
+fi
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "error: uv is required but not on PATH" >&2
@@ -44,11 +52,11 @@ fi
 
 # Build the ROML Python extension (release) with maturin and install into .venv.
 uv tool run --python 3.13 --with maturin maturin --version >/dev/null
+mkdir -p .cache/wheels
 (
   cd .cache/roml
   uv tool run --python 3.13 --with maturin maturin build --release --out ../../.cache/wheels
 )
-mkdir -p .cache/wheels
 WHEEL="$(ls -t .cache/wheels/roml_python-*.whl 2>/dev/null | head -n 1)"
 if [ -z "${WHEEL:-}" ]; then
   echo "error: no built wheel found in .cache/wheels" >&2
@@ -58,7 +66,7 @@ VIRTUAL_ENV="$PWD/.venv" uv pip install --python "$PWD/.venv/bin/python" --force
 
 uv run python -c 'import roml; print("roml", roml.__version__)'
 
-cargo build --release -p roml-bench-core
+cargo build --release --locked -p roml-bench-core -p roml-store-proto
 
 echo "=== provenance ==="
 uv run python --version
@@ -67,3 +75,6 @@ cargo --version
 rustc --version
 echo "benchmark_sha: $(git rev-parse HEAD)"
 echo "roml_sha: $ACTUAL_ROML_SHA"
+echo "wheel_sha256: $(sha256sum "$WHEEL" | cut -d' ' -f1)  $WHEEL"
+uv run python -c 'import roml, pathlib, hashlib; [print("native_ext_sha256:", hashlib.sha256(p.read_bytes()).hexdigest(), p.name) for p in [pathlib.Path(roml.__file__).parent] for p in p.iterdir() if p.suffix == ".so"]'
+echo "core_binary_sha256: $(sha256sum target/release/roml-bench-core | cut -d' ' -f1)"

@@ -36,8 +36,7 @@ function cli_arg(args, flag, default=nothing)
     return args[i+1]
 end
 
-function build_sparse(n)
-    model = Model()
+function build_sparse(model, n)
     t0 = time_ns()
     @variable(model, x[1:n], lower_bound = 0.0, upper_bound = 5.0)
     t_vars = time_ns() - t0
@@ -51,10 +50,9 @@ function build_sparse(n)
     return model, t_vars, t_cons, t_obj, n, rows, 10 * rows, n
 end
 
-function build_bess(b, prices)
+function build_bess(model, b, prices)
     @assert length(prices) == BESS_T
     t = BESS_T
-    model = Model()
     t0 = time_ns()
     @variable(model, charge[1:b, 1:t], lower_bound = 0.0, upper_bound = BESS_P)
     @variable(model, discharge[1:b, 1:t], lower_bound = 0.0, upper_bound = BESS_P)
@@ -96,20 +94,24 @@ function main()
         @objective(m, Min, sum(x))
     end
 
-    t_init = time_ns()
+    # Canonical data parsing happens before every timer.
     prices = Float64[]
     if workload == "bess_96"
         csv = cli_arg(args, "--prices-csv")
         csv === nothing && error("bess_96 requires --prices-csv")
         prices = parse.(Float64, split(csv, ","))
     end
+
+    # container_init measures only fresh Model() construction.
+    t_init = time_ns()
+    model = Model()
     container_init_ns = time_ns() - t_init
     rss_before, _ = rss_bytes()
 
     if workload == "sparse_rows"
-        model, t_vars, t_cons, t_obj, nvars, ncons, nnz, onnz = build_sparse(size)
+        _, t_vars, t_cons, t_obj, nvars, ncons, nnz, onnz = build_sparse(model, size)
     elseif workload == "bess_96"
-        model, t_vars, t_cons, t_obj, nvars, ncons, nnz, onnz = build_bess(size, prices)
+        _, t_vars, t_cons, t_obj, nvars, ncons, nnz, onnz = build_bess(model, size, prices)
     else
         error("unknown workload: $workload")
     end

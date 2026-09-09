@@ -219,6 +219,12 @@ def _write_validation(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     # Deterministic git identity: tmp dirs are not repos.
     monkeypatch.setattr(orchestrator, "git_sha", lambda repo=".": "unknown")
+    # Deterministic ROML artifacts: the gate fingerprints hashes of the real
+    # checkout/wheel/binary, none of which exist in the tmp repo.
+    sentinel = {"test": "artifacts"}
+    monkeypatch.setattr(
+        orchestrator, "roml_artifact_fingerprint", lambda repo=".": sentinel
+    )
     (tmp_path / "results").mkdir()
     (tmp_path / "results" / "validation.json").write_text(
         json.dumps(
@@ -226,6 +232,7 @@ def _write_validation(tmp_path, monkeypatch):
                 "status": "ok",
                 "benchmark_sha": "unknown",
                 "roml_checkout_sha": ROML_SHA,
+                "roml_artifacts": sentinel,
                 "environment": {
                     "packages": collect_environment()["packages"],
                 },

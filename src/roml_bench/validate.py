@@ -25,7 +25,12 @@ import roml_bench.adapters.pyoptinterface as poi_adapter
 from roml_bench.adapters import ADAPTERS
 from roml_bench.adapters.base import check_report_against_case
 from roml_bench.schema import ROML_SHA
-from roml_bench.system import collect_environment, git_sha, roml_checkout_sha
+from roml_bench.system import (
+    collect_environment,
+    git_sha,
+    roml_artifact_fingerprint,
+    roml_checkout_sha,
+)
 from roml_bench.workloads import CANONICAL_SEED, make_case
 
 ABS_TOL = 1e-7
@@ -172,7 +177,8 @@ def _check_external_runner(cases: dict, implementation: str, kind: str) -> dict:
                 entry["problems"].append(f"{key}: julia launcher or script unavailable")
                 continue
             base = [
-                julia, f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
+                julia, "--startup-file=no", "--threads=1",
+                f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
                 "--workload", workload,
                 "--size", str(size),
                 "--seed", str(CANONICAL_SEED),
@@ -405,6 +411,7 @@ def run_validation() -> dict:
         "seed": CANONICAL_SEED,
         "roml_sha_expected": ROML_SHA,
         "roml_checkout_sha": roml_checkout_sha(),
+        "roml_artifacts": roml_artifact_fingerprint(),
         "benchmark_sha": git_sha("."),
         "environment": collect_environment(),
         "implementations": {},
@@ -532,5 +539,6 @@ def validation_fingerprint(validation: dict) -> dict:
         "benchmark_sha": validation.get("benchmark_sha"),
         "roml_checkout_sha": validation.get("roml_checkout_sha"),
         "packages": packages,
+        "roml_artifacts": validation.get("roml_artifacts"),
         "status": validation.get("status"),
     }

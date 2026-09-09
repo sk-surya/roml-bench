@@ -24,5 +24,6 @@ def test_validation_fingerprint_selects_identity():
         "benchmark_sha": "abc",
         "roml_checkout_sha": "def",
         "packages": {"pulp": "3.3.1"},
+        "roml_artifacts": None,
         "status": "ok",
     }

@@ -1,10 +1,27 @@
 {
   "seed": 20260908,
-  "roml_sha_expected": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
-  "roml_checkout_sha": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
-  "benchmark_sha": "a645d57fed21ee33da49a645295c4f588c40201c",
+  "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_artifacts": {
+    "expected_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "checkout_head": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "cargo_revs": {
+      "rust-core": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+      "rust-store-proto": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+      "lock": [
+        "c590692ace5446cc20c7eb91cb8fa0d594a054b0"
+      ]
+    },
+    "installed_file": "/srv/repos/roml-bench/.venv/lib/python3.13/site-packages/roml/__init__.py",
+    "installed_wheel_url": "{\"url\":\"file:///srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl\",\"archive_info\":{}}",
+    "wheel_path": ".cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
+    "wheel_sha256": "da7950f98eb00b7140540645283ebdda321fca5d170b18cd657141b32899a432",
+    "native_ext_sha256": "56548e7b41a2cb8d0fc9c7819becbc888b715d396864d4a47352c497500139d7",
+    "core_binary_sha256": "2527d67ee6ff642380e9d6c2d35e07120be71d8e8b25146b5a0abbcabfae8d7d"
+  },
+  "benchmark_sha": "f85a34f99c453181f0e0b203d0fb21c9fbc14e8c",
   "environment": {
-    "timestamp_utc": "2026-09-08T19:27:51Z",
+    "timestamp_utc": "2026-09-09T04:42:34Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-30-generic",
@@ -12,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      1.24169921875,
-      0.99755859375,
-      0.9951171875
+      0.75390625,
+      1.0419921875,
+      1.1533203125
     ],
     "memory_total_bytes": 63843864576,
-    "memory_available_bytes": 51643392000,
+    "memory_available_bytes": 52020305920,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -33,16 +50,17 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "a645d57fed21ee33da49a645295c4f588c40201c",
-    "roml_sha_expected": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
-    "roml_checkout_sha": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
+    "benchmark_sha": "f85a34f99c453181f0e0b203d0fb21c9fbc14e8c",
+    "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
     "canonical_seed": 20260908,
     "thread_env": {
       "OMP_NUM_THREADS": "1",
       "OPENBLAS_NUM_THREADS": "1",
       "MKL_NUM_THREADS": "1",
       "NUMEXPR_NUM_THREADS": "1",
-      "RAYON_NUM_THREADS": "1"
+      "RAYON_NUM_THREADS": "1",
+      "JULIA_NUM_THREADS": "1"
     }
   },
   "implementations": {
@@ -186,18 +204,62 @@
       "status": "ok",
       "problems": []
     },
+    "jump_julia": {
+      "implementation": "jump_julia",
+      "construction_path": "JuMP containers + HiGHS.jl (Julia, pinned toolchain)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 28480,
+          "objective": 0.0
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 156523,
+          "objective": 651.9938455874309
+        }
+      },
+      "objectives": {
+        "sparse_rows/100": 0.0,
+        "bess_96/1": 651.9938455874309
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "ortools_mathopt_cpp": {
+      "implementation": "ortools_mathopt_cpp",
+      "construction_path": "MathOpt C++ modeling + HiGHS solver (pinned OR-Tools)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 29700,
+          "objective": 0.0
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 112222,
+          "objective": 651.993845587431
+        }
+      },
+      "objectives": {
+        "sparse_rows/100": 0.0,
+        "bess_96/1": 651.993845587431
+      },
+      "status": "ok",
+      "problems": []
+    },
     "roml_core_rust": {
       "implementation": "roml_core_rust",
       "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 90121,
+          "populate_ns": 85682,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 345896,
+          "populate_ns": 284255,
           "problems": []
         }
       },
@@ -210,12 +272,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 78082,
+          "populate_ns": 66491,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 293806,
+          "populate_ns": 236084,
           "problems": []
         }
       },
@@ -228,12 +290,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 22191,
+          "populate_ns": 21071,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 64181,
+          "populate_ns": 73921,
           "problems": []
         }
       },

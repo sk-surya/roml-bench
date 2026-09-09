@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <string>
 #include <vector>
 
 #include "ortools/math_opt/cpp/model.h"
@@ -110,7 +111,7 @@ int main(int argc, char** argv) {
 
   Warmup();
 
-  const int64_t t_init = NowNs();
+  // Canonical data parsing happens before every timer.
   std::vector<double> prices;
   if (workload == "bess_96") {
     const std::string csv = Arg(args, "--prices-csv");
@@ -124,13 +125,16 @@ int main(int argc, char** argv) {
       return 2;
     }
   }
+
+  // container_init measures only fresh Model() construction.
+  const int64_t t_init = NowNs();
+  math_opt::Model model("bench");
   const int64_t container_init_ns = NowNs() - t_init;
   uint64_t rss_before = 0, unused = 0;
   ReadRss(&rss_before, &unused);
 
   int64_t nvars = 0, ncons = 0, nnz = 0, onnz = 0;
   int64_t t_vars = 0, t_cons = 0, t_obj = 0;
-  math_opt::Model model("bench");
   double objective_value = 0.0;
   bool solved = false;
 
@@ -141,14 +145,15 @@ int main(int argc, char** argv) {
     std::vector<math_opt::Variable> x;
     x.reserve(n);
     for (int64_t i = 0; i < n; ++i) {
-      x.push_back(model.AddVariable(0.0, 5.0, /*is_integer=*/false, ""));
+      x.push_back(model.AddVariable(0.0, 5.0, /*is_integer=*/false,
+                                    "x[" + std::to_string(i) + "]"));
     }
     t_vars = NowNs() - t0;
     t0 = NowNs();
     for (int64_t r = 0; r < rows; ++r) {
       math_opt::LinearExpression lhs;
       for (int k = 0; k < 10; ++k) lhs += x[10 * r + k];
-      model.AddLinearConstraint(lhs <= 10.0, "");
+      model.AddLinearConstraint(lhs <= 10.0, "row[" + std::to_string(r) + "]");
     }
     t_cons = NowNs() - t0;
     t0 = NowNs();
@@ -179,25 +184,38 @@ int main(int argc, char** argv) {
     discharge.reserve(b * t);
     energy.reserve(b * (t + 1));
     for (int64_t i = 0; i < b * t; ++i) {
-      charge.push_back(model.AddVariable(0.0, kBessP, /*is_integer=*/false, ""));
-      discharge.push_back(
-          model.AddVariable(0.0, kBessP, /*is_integer=*/false, ""));
+      const int64_t bb = i / t;
+      const int64_t tt = i % t;
+      charge.push_back(model.AddVariable(
+          0.0, kBessP, /*is_integer=*/false,
+          "charge[" + std::to_string(bb) + "," + std::to_string(tt) + "]"));
+      discharge.push_back(model.AddVariable(
+          0.0, kBessP, /*is_integer=*/false,
+          "discharge[" + std::to_string(bb) + "," + std::to_string(tt) + "]"));
     }
     for (int64_t i = 0; i < b * (t + 1); ++i) {
-      energy.push_back(model.AddVariable(0.0, kBessE, /*is_integer=*/false, ""));
+      const int64_t bb = i / (t + 1);
+      const int64_t tt = i % (t + 1);
+      energy.push_back(model.AddVariable(
+          0.0, kBessE, /*is_integer=*/false,
+          "energy[" + std::to_string(bb) + "," + std::to_string(tt) + "]"));
     }
     t_vars = NowNs() - t0;
     t0 = NowNs();
     for (int64_t bb = 0; bb < b; ++bb) {
-      model.AddLinearConstraint(energy[bb * (t + 1)] == kBessE0, "");
+      model.AddLinearConstraint(energy[bb * (t + 1)] == kBessE0,
+                                "init[" + std::to_string(bb) + "]");
       for (int64_t tt = 0; tt < t; ++tt) {
         const auto ch = charge[bb * t + tt];
         const auto di = discharge[bb * t + tt];
         const auto en0 = energy[bb * (t + 1) + tt];
         const auto en1 = energy[bb * (t + 1) + tt + 1];
+        const std::string tag =
+            "[" + std::to_string(bb) + "," + std::to_string(tt) + "]";
         model.AddLinearConstraint(
-            en1 == en0 + kBessDt * (kBessEta * ch - di / kBessEta), "");
-        model.AddLinearConstraint(ch + di <= kBessP, "");
+            en1 == en0 + kBessDt * (kBessEta * ch - di / kBessEta),
+            "balance" + tag);
+        model.AddLinearConstraint(ch + di <= kBessP, "mode" + tag);
       }
     }
     t_cons = NowNs() - t0;

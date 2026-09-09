@@ -3,15 +3,12 @@
 # checkout in ../../.cache/or-tools-v9.15 (v9.15, minimal MathOpt+HiGHS
 # configuration; see that directory's cmake invocation history).
 #
-# Link notes (pinned toolchain behavior, recorded here rather than
-# discovered again):
-# - Canonical OR-Tools defines are required:
-#   -DOR_PROTO_DLL="" -DPROTOBUF_USE_DLLS -DUSE_HIGHS -DUSE_MATH_OPT
-# - libortools.so leaves Gurobi/GLOP solver symbols unresolved (those
-#   solver backends are disabled in our minimal build and this benchmark
-#   hardcodes SolverType::kHighs, so they can never be reached):
-#   -Wl,--unresolved-symbols=ignore-in-shared-libs scopes the allowance
-#   to shared-library symbols only; our own objects stay strict.
+# Disabled-backend stubs: libortools.so references three Gurobi/GLOP solver
+# symbols even when those backends are configured OFF. Our runner hardcodes
+# SolverType::kHighs and can never reach them, so cpp/solver_stubs.cc
+# provides abort-if-called definitions solely to complete the link graph.
+# Strict linking is intentional: the binary must pass ldd -r with no
+# undefined symbols and execute under LD_BIND_NOW=1.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -33,7 +30,7 @@ g++ -O2 -std=c++17 -fPIC -fwrapv \
   -isystem "$OT/build/_deps/eigen3-src" \
   -isystem "$OT/build/_deps/highs-src" \
   -isystem "$OT/build/_deps/re2-src" \
-  mathopt_bench.cc \
+  mathopt_bench.cc solver_stubs.cc \
   -L"$OT/build/lib" -Wl,-rpath,'$ORIGIN/../../.cache/or-tools-v9.15/build/lib' \
-  -Wl,--unresolved-symbols=ignore-in-shared-libs $LIBS
+  $LIBS
 echo "built cpp/build/mathopt_bench"
