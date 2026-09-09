@@ -58,6 +58,43 @@ CORE_ORDER = [
     "roml_core_bulk",
 ]
 
+# Marker symbol + line dash per arm so traces stay distinguishable
+# without relying on color alone.
+MARKERS = {
+    "roml_python_bulk": "circle",
+    "roml_python_naive_chain": "x",
+    "roml_python_scalar": "x",
+    "roml_python_csr": "diamond",
+    "roml_core_rust": "square",
+    "roml_core_rust_anon": "square-open",
+    "roml_core_bulk": "triangle-up",
+    "pulp_python": "cross",
+    "pyomo_python": "triangle-down",
+    "pyoptinterface_python": "star",
+    "pyoptinterface_scalar": "hexagon",
+}
+
+DASHES = {
+    "roml_python_bulk": "solid",
+    "roml_python_naive_chain": "dot",
+    "roml_python_scalar": "dot",
+    "roml_python_csr": "dashdot",
+    "roml_core_rust": "dash",
+    "roml_core_rust_anon": "dash",
+    "roml_core_bulk": "solid",
+    "pulp_python": "dot",
+    "pyomo_python": "dash",
+    "pyoptinterface_python": "solid",
+    "pyoptinterface_scalar": "dashdot",
+}
+
+
+def _trace_style(impl):
+    return (
+        {"color": COLORS[impl], "size": 9, "symbol": MARKERS.get(impl, "circle")},
+        {"color": COLORS[impl], "dash": DASHES.get(impl, "solid")},
+    )
+
 PYTHON_ORDER = FORMULATION_ORDER  # backward-compatible alias
 
 
@@ -111,11 +148,12 @@ def time_vs_size(
             )
         if not xs:
             continue
+        marker, line = _trace_style(impl)
         fig.add_trace(
             go.Scatter(
                 x=xs, y=ys, mode="lines+markers", name=LABELS[impl],
-                marker={"color": COLORS[impl], "size": 8},
-                line={"color": COLORS[impl]},
+                marker=marker,
+                line=line,
                 error_y={"type": "data", "array": hi, "arrayminus": lo, "visible": True},
                 hovertext=notes, hoverinfo="text",
             )
@@ -142,11 +180,12 @@ def time_vs_nnz(
             notes.append(f"{LABELS[impl]}<br>nnz {nnz}<br>median {group['median_ms']:.3g} ms")
         if not xs:
             continue
+        marker, line = _trace_style(impl)
         fig.add_trace(
             go.Scatter(
                 x=xs, y=ys, mode="lines+markers", name=LABELS[impl],
-                marker={"color": COLORS[impl], "size": 8},
-                line={"color": COLORS[impl]},
+                marker=marker,
+                line=line,
                 error_y={"type": "data", "array": hi, "arrayminus": lo, "visible": True},
                 hovertext=notes, hoverinfo="text",
             )
@@ -226,6 +265,55 @@ def memory_chart(summary: dict, workload: str, implementations: list[str], title
                 )
             )
     fig.update_layout(**_layout(title, "problem size", "child peak RSS, median MiB (log)"))
+    return fig
+
+
+def headline_bars(
+    summary: dict, workload: str, size: int, implementations: list[str], title: str
+) -> go.Figure:
+    """Linear-scale bar chart: median populate ms per implementation at one point.
+
+    Head-to-head at a fixed size reads better linear than log; the
+    scaling curves keep their log axes. Bars carry p25/p75 whiskers and
+    exact medians as text.
+    """
+    lookup = _canonical_lookup(summary)
+    names, vals, lo, hi, notes = [], [], [], [], []
+    for impl in implementations:
+        group = lookup.get((workload, size, impl))
+        if group is None or "median_ms" not in group:
+            continue
+        names.append(LABELS[impl])
+        vals.append(group["median_ms"])
+        lo.append(group["median_ms"] - group["p25_ms"])
+        hi.append(group["p75_ms"] - group["median_ms"])
+        notes.append(
+            f"{LABELS[impl]}<br>median {group['median_ms']:.3g} ms<br>"
+            f"p25 {group['p25_ms']:.3g} / p75 {group['p75_ms']:.3g} ms<br>"
+            f"n={group['replicates']}"
+        )
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=names, y=vals,
+            marker={"color": [
+                COLORS[i]
+                for i in implementations
+                if (workload, size, i) in lookup
+                and "median_ms" in lookup[(workload, size, i)]
+            ]},
+            error_y={"type": "data", "array": hi, "arrayminus": lo, "visible": True},
+            text=[f"{v:.3g}" for v in vals],
+            textposition="outside",
+            hovertext=notes, hoverinfo="text",
+        )
+    )
+    layout = _layout(title, "", "populate time, median ms (linear)")
+    layout["xaxis"] = {"tickangle": -25, "automargin": True}
+    layout["yaxis"] = {"type": "linear"}
+    layout["margin"] = {"b": 160}
+    layout["showlegend"] = False
+    fig.update_layout(**layout)
     return fig
 
 

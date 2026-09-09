@@ -15,6 +15,7 @@ from roml_bench.site.charts import (
     INGESTION_ORDER,
     LABELS,
     figure_div,
+    headline_bars,
     memory_chart,
     phase_breakdown_chart,
     speedup_chart,
@@ -295,6 +296,16 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
         },
         "python": {
             "charts": [
+                ("Headline: sparse_rows 1M, median ms (linear)",
+                 figure_div(headline_bars(
+                     summary, "sparse_rows", 1000000,
+                     python_impls + [i for i in core_impls if i not in python_impls],
+                     "Headline sparse_rows 1M"))),
+                ("Headline: bess_96 B=300, median ms (linear)",
+                 figure_div(headline_bars(
+                     summary, "bess_96", 300,
+                     python_impls + [i for i in core_impls if i not in python_impls],
+                     "Headline bess_96 B=300"))),
                 ("A. Formulation time vs size (sparse_rows)",
                  figure_div(time_vs_size(summary, "sparse_rows", python_impls,
                                          "sparse_rows formulation: populate time vs N"))),
