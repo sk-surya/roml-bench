@@ -506,7 +506,11 @@ def _check_native_equiv() -> list[str]:
                 problems.append(f"{workload}/{size}: bad JSON: {exc}")
                 continue
             equiv = record.get("equiv_scalar_bulk") or {}
-            bad = [k for k, v in equiv.items() if k not in ("scalar_delta_ops", "bulk_delta_ops") and v is not True]
+            bad = [
+                k
+                for k, v in equiv.items()
+                if k not in ("scalar_delta_ops", "bulk_delta_ops") and v is not True
+            ]
             if bad:
                 problems.append(f"{workload}/{size}: replay mismatch: {bad}")
     return problems

@@ -16,7 +16,7 @@ jobs:
       - name: Bootstrap (ROML wheel + Rust core)
         run: ./scripts/bootstrap.sh
       - name: Ruff
-        run: uv run ruff check .
+        run: uv run ruff check src tests
       - name: Python tests
         run: uv run pytest -q
       - name: Site smoke from fixture
