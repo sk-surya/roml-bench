@@ -76,6 +76,15 @@ IMPLEMENTATION_NOTES = {
         "ScalarAffineFunction constraints + ExprBuilder objective, driven "
         "from B/T/prices with no shared CSR."
     ),
+    "jump_julia": (
+        "JuMP (Julia, pinned toolchain): idiomatic containers + HiGHS.jl. "
+        "Each replicate is a fresh Julia process with an unrecorded JIT "
+        "warmup outside the timer."
+    ),
+    "ortools_mathopt_cpp": (
+        "OR-Tools MathOpt C++ (pinned source build) + HiGHS solver: "
+        "idiomatic Model/AddVariable/AddLinearConstraint construction."
+    ),
 }
 
 

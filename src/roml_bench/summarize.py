@@ -35,6 +35,8 @@ FORMULATION_ARMS = (
     "roml_core_rust",
     "roml_core_rust_anon",
     "roml_core_bulk",
+    "jump_julia",
+    "ortools_mathopt_cpp",
 )
 # Matrix-ingestion panel (shared canonical CSR input).
 INGESTION_ARMS = (

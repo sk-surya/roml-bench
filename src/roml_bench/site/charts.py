@@ -20,6 +20,8 @@ COLORS = {
     "pyomo_python": "#CC79A7",
     "pyoptinterface_python": "#E69F00",
     "pyoptinterface_scalar": "#8C564B",
+    "jump_julia": "#F58231",
+    "ortools_mathopt_cpp": "#911EB4",
 }
 
 LABELS = {
@@ -34,6 +36,8 @@ LABELS = {
     "pyomo_python": "Pyomo",
     "pyoptinterface_python": "PyOptInterface (matrix)",
     "pyoptinterface_scalar": "PyOptInterface (scalar)",
+    "jump_julia": "JuMP (Julia)",
+    "ortools_mathopt_cpp": "MathOpt (C++)",
 }
 
 FORMULATION_ORDER = [
@@ -42,6 +46,8 @@ FORMULATION_ORDER = [
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_scalar",
+    "jump_julia",
+    "ortools_mathopt_cpp",
 ]
 
 INGESTION_ORDER = [
@@ -64,6 +70,8 @@ MARKERS = {
     "roml_python_bulk": "circle",
     "roml_python_naive_chain": "x",
     "roml_python_scalar": "x",
+    "jump_julia": "diamond-open",
+    "ortools_mathopt_cpp": "pentagon",
     "roml_python_csr": "diamond",
     "roml_core_rust": "square",
     "roml_core_rust_anon": "square-open",
@@ -84,6 +92,8 @@ DASHES = {
     "roml_core_bulk": "solid",
     "pulp_python": "dot",
     "pyomo_python": "dash",
+    "jump_julia": "solid",
+    "ortools_mathopt_cpp": "longdash",
     "pyoptinterface_python": "solid",
     "pyoptinterface_scalar": "dashdot",
 }

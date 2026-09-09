@@ -35,7 +35,14 @@ PYTHON_IMPLEMENTATIONS = (
     "pyoptinterface_scalar",
 )
 CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon", "roml_core_bulk")
-ALL_IMPLEMENTATIONS = PYTHON_IMPLEMENTATIONS + CORE_IMPLEMENTATIONS
+JULIA_IMPLEMENTATIONS = ("jump_julia",)
+CPP_IMPLEMENTATIONS = ("ortools_mathopt_cpp",)
+ALL_IMPLEMENTATIONS = (
+    PYTHON_IMPLEMENTATIONS
+    + CORE_IMPLEMENTATIONS
+    + JULIA_IMPLEMENTATIONS
+    + CPP_IMPLEMENTATIONS
+)
 
 # Matrix-ingestion diagnostic variants: (implementation, workload, sizes).
 VARIANT_ARMS = (
@@ -72,6 +79,20 @@ PROFILES = {
 WORKLOADS = ("sparse_rows", "bess_96")
 
 RUST_BINARY = Path("target/release/roml-bench-core")
+JULIA_SCRIPT = Path("julia/jump_bench.jl")
+JULIA_PROJECT = Path("julia")
+CPP_BINARY = Path("cpp/build/mathopt_bench")
+
+
+def _julia_binary() -> str | None:
+    """Resolve the Julia launcher: PATH first, then the user juliaup install."""
+    import shutil
+
+    found = shutil.which("julia")
+    if found:
+        return found
+    home = Path.home() / ".juliaup" / "bin" / "julia"
+    return str(home) if home.exists() else None
 
 
 def make_run_id(benchmark_sha: str | None) -> str:
@@ -299,7 +320,58 @@ def run_child(
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     if implementation not in ALL_IMPLEMENTATIONS:
         raise ValueError(f"unknown implementation: {implementation}")
-    if implementation in CORE_IMPLEMENTATIONS:
+    if implementation in JULIA_IMPLEMENTATIONS:
+        julia = _julia_binary()
+        if julia is None or not JULIA_SCRIPT.exists():
+            return censored_record(
+                implementation, workload, size, replicate, run_id,
+                benchmark_sha, seed, cpu, "error",
+                "julia launcher or julia/jump_bench.jl not available",
+            )
+        cmd = [
+            julia, f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
+            "--workload", workload,
+            "--size", str(size),
+            "--seed", str(seed),
+            "--replicate", str(replicate),
+            "--run-id", run_id,
+            "--benchmark-sha", benchmark_sha,
+            "--roml-sha", ROML_SHA,
+            "--timestamp-utc", timestamp,
+            "--implementation", implementation,
+        ]
+        if cpu is not None:
+            cmd += ["--cpu", str(cpu)]
+        if workload == "bess_96":
+            case = make_case(workload, size, seed=seed)
+            prices = case.payload["prices"]
+            cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
+    elif implementation in CPP_IMPLEMENTATIONS:
+        if not CPP_BINARY.exists():
+            return censored_record(
+                implementation, workload, size, replicate, run_id,
+                benchmark_sha, seed, cpu, "error",
+                "cpp/build/mathopt_bench not built (see cpp/README.md)",
+            )
+        cmd = [
+            str(CPP_BINARY),
+            "--workload", workload,
+            "--size", str(size),
+            "--seed", str(seed),
+            "--replicate", str(replicate),
+            "--run-id", run_id,
+            "--benchmark-sha", benchmark_sha,
+            "--roml-sha", ROML_SHA,
+            "--timestamp-utc", timestamp,
+            "--implementation", implementation,
+        ]
+        if cpu is not None:
+            cmd += ["--cpu", str(cpu)]
+        if workload == "bess_96":
+            case = make_case(workload, size, seed=seed)
+            prices = case.payload["prices"]
+            cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
+    elif implementation in CORE_IMPLEMENTATIONS:
         if not RUST_BINARY.exists():
             return censored_record(
                 implementation, workload, size, replicate, run_id,

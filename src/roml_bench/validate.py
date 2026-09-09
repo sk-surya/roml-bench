@@ -41,6 +41,8 @@ PYTHON_SOLVERS = {
     "pyomo_python": "appsi-highs",
     "pyoptinterface_python": "highs-direct",
     "pyoptinterface_scalar": "highs-direct",
+    "jump_julia": "highs-julia",
+    "ortools_mathopt_cpp": "highs-mathopt",
 }
 
 
@@ -128,6 +130,136 @@ def _poi_bound_probe() -> tuple[float, float]:
     lb = m.get_variable_attribute(x[0], poi.VariableAttribute.LowerBound)
     ub = m.get_variable_attribute(x[0], poi.VariableAttribute.UpperBound)
     return (float(lb), float(ub))
+
+
+def _check_external_runner(cases: dict, implementation: str, kind: str) -> dict:
+    """Validate a Julia/C++ runner: counts, schema, and solve agreement.
+
+    Runs the external binary on the validation sizes (populate only),
+    then once more with --solve; solved objectives join the
+    cross-implementation agreement check through the returned
+    `objectives` map. `kind` selects the command construction.
+    """
+    from roml_bench.orchestrator import CPP_BINARY, JULIA_PROJECT, JULIA_SCRIPT, _julia_binary
+    from roml_bench.schema import validate_record
+
+    entry = {
+        "implementation": implementation,
+        "construction_path": (
+            "JuMP containers + HiGHS.jl (Julia, pinned toolchain)"
+            if kind == "julia"
+            else "MathOpt C++ modeling + HiGHS solver (pinned OR-Tools)"
+        ),
+        "workloads": {},
+        "objectives": {},
+        "status": "ok",
+        "problems": [],
+    }
+    import numpy as np
+
+    from roml_bench.workloads import bess_prices
+
+    prices_csv = ",".join(
+        repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
+    )
+    for workload, size in VALIDATION_CASES:
+        case = cases[(workload, size)]
+        key = f"{workload}/{size}"
+        if kind == "julia":
+            julia = _julia_binary()
+            if julia is None or not JULIA_SCRIPT.exists():
+                entry["status"] = "failed"
+                entry["problems"].append(f"{key}: julia launcher or script unavailable")
+                continue
+            base = [
+                julia, f"--project={JULIA_PROJECT}", str(JULIA_SCRIPT),
+                "--workload", workload,
+                "--size", str(size),
+                "--seed", str(CANONICAL_SEED),
+                "--replicate", "0",
+                "--run-id", "validation",
+                "--benchmark-sha", git_sha(".") or "unknown",
+                "--roml-sha", ROML_SHA,
+                "--timestamp-utc", "validation",
+                "--implementation", implementation,
+            ]
+        else:
+            if not CPP_BINARY.exists():
+                entry["status"] = "failed"
+                entry["problems"].append(f"{key}: cpp/build/mathopt_bench not built")
+                continue
+            base = [
+                str(CPP_BINARY),
+                "--workload", workload,
+                "--size", str(size),
+                "--seed", str(CANONICAL_SEED),
+                "--replicate", "0",
+                "--run-id", "validation",
+                "--benchmark-sha", git_sha(".") or "unknown",
+                "--roml-sha", ROML_SHA,
+                "--timestamp-utc", "validation",
+                "--implementation", implementation,
+            ]
+        if workload == "bess_96":
+            base += ["--prices-csv", prices_csv]
+        workload_problems: list[str] = []
+        try:
+            proc = subprocess.run(base, capture_output=True, text=True, timeout=300)
+        except subprocess.SubprocessError as exc:
+            entry["status"] = "failed"
+            entry["problems"].append(f"{key}: {exc}")
+            continue
+        if proc.returncode != 0:
+            entry["status"] = "failed"
+            entry["problems"].append(
+                f"{key}: exit {proc.returncode}: {proc.stderr[-500:]}"
+            )
+            continue
+        try:
+            record = json.loads(proc.stdout.strip().splitlines()[-1])
+        except ValueError as exc:
+            entry["status"] = "failed"
+            entry["problems"].append(f"{key}: bad JSON: {exc}")
+            continue
+        workload_problems += validate_record(record)
+        workload_problems += [
+            f"{k}: runner {record[k]}, canonical {getattr(case, k)}"
+            for k in ("variables", "constraints", "constraint_nnz", "objective_nnz")
+            if record[k] != getattr(case, k)
+        ]
+        if workload_problems:
+            entry["status"] = "failed"
+            entry["problems"].extend(f"{key}: {p}" for p in workload_problems)
+            continue
+        # Solve gate: same canonical model through HiGHS, objective joins
+        # the agreement check in run_validation.
+        try:
+            solved = subprocess.run(
+                base + ["--solve"], capture_output=True, text=True, timeout=300
+            )
+        except subprocess.SubprocessError as exc:
+            entry["status"] = "failed"
+            entry["problems"].append(f"{key}: solve {exc}")
+            continue
+        if solved.returncode != 0:
+            entry["status"] = "failed"
+            entry["problems"].append(
+                f"{key}: solve exit {solved.returncode}: {solved.stderr[-500:]}"
+            )
+            continue
+        try:
+            solved_record = json.loads(solved.stdout.strip().splitlines()[-1])
+            entry["objectives"][key] = float(solved_record["objective_value"])
+        except (ValueError, KeyError, TypeError) as exc:
+            entry["status"] = "failed"
+            entry["problems"].append(f"{key}: bad solve output: {exc}")
+            continue
+        entry["workloads"][key] = {
+            "status": "ok",
+            "populate_ns": record.get("populate_ns"),
+            "objective": entry["objectives"][key],
+        }
+    return entry
 
 
 def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dict:
@@ -334,6 +466,16 @@ def run_validation() -> dict:
                 impl_entry["status"] = "failed"
         result["implementations"][impl] = impl_entry
 
+    for impl, kind in (("jump_julia", "julia"), ("ortools_mathopt_cpp", "cpp")):
+        entry = _check_external_runner(cases, impl, kind)
+        result["implementations"][impl] = entry
+        for key, objective in entry.get("objectives", {}).items():
+            objectives.setdefault(key, {})[impl] = objective
+        if entry["status"] != "ok":
+            result["status"] = "failed"
+            result["problems"].extend(
+                f"{impl}: {p}" for p in entry.get("problems", [])
+            )
     # Cross-implementation objective agreement per validation case.
     for key, values in objectives.items():
         reference = values.get("roml_python_bulk")

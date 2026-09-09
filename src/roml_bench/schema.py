@@ -17,6 +17,8 @@ IMPLEMENTATIONS = (
     "roml_core_rust",
     "roml_core_rust_anon",
     "roml_core_bulk",
+    "jump_julia",
+    "ortools_mathopt_cpp",
 )
 
 # IDs produced by older benchmark code. Accepted when validating historical
