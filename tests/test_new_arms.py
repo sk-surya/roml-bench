@@ -33,6 +33,7 @@ def _assert_record_shape(record, workload, size, impl):
     assert record["phases"]["objective"] > 0
 
 
+@pytest.mark.external
 def test_jump_sparse_record():
     record = run_child(
         JULIA, "sparse_rows", 200, 20260908, 0, "test", "test",
@@ -44,6 +45,7 @@ def test_jump_sparse_record():
     assert record["objective_nnz"] == 200
 
 
+@pytest.mark.external
 def test_cpp_sparse_record():
     record = run_child(
         CPP, "sparse_rows", 200, 20260908, 0, "test", "test",
@@ -53,6 +55,7 @@ def test_cpp_sparse_record():
     assert (record["variables"], record["constraints"]) == (200, 20)
 
 
+@pytest.mark.external
 def test_jump_bess_record_and_counts():
     record = run_child(
         JULIA, "bess_96", 2, 20260908, 0, "test", "test",
@@ -63,6 +66,7 @@ def test_jump_bess_record_and_counts():
     assert record["constraints"] == 2 * (2 * 96 + 1)
 
 
+@pytest.mark.external
 def test_cpp_bess_record_and_counts():
     record = run_child(
         CPP, "bess_96", 2, 20260908, 0, "test", "test",
