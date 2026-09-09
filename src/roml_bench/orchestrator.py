@@ -132,11 +132,90 @@ def _roml_sha(repo: str) -> str | None:
 
 def pick_cpu() -> int | None:
     """One logical CPU from the current allowed set, or None if unsettable."""
-    try:
-        allowed = sorted(os.sched_affinity(0))
-        return allowed[0] if allowed else None
-    except (AttributeError, OSError):
-        return None
+    cpus = allowed_cpus()
+    return cpus[0] if cpus else None
+
+
+def allowed_cpus() -> list[int] | None:
+    """Sorted authoritative allowed logical CPUs, or None if unqueryable.
+
+    Prefers `os.sched_affinity`; some builds (like this repo's uv
+    Python) only expose the equivalent `os.sched_getaffinity`.
+    """
+    for query in ("sched_affinity", "sched_getaffinity"):
+        getter = getattr(os, query, None)
+        if getter is None:
+            continue
+        try:
+            allowed = sorted(getter(0))
+            return allowed if allowed else None
+        except OSError:
+            continue
+    return None
+
+
+class CpuPool:
+    """Exclusive single-CPU leases for concurrent benchmark children.
+
+    The pool owns the authoritative allowed set; every concurrently
+    active child holds a distinct CPU, and a CPU returns to the pool
+    when its child finishes. On platforms without queryable affinity
+    the pool is empty-by-design (`cpus is None`) and every lease is
+    None, preserving the existing best-effort behavior.
+    """
+
+    def __init__(self, cpus: list[int] | None) -> None:
+        import threading
+
+        self._all: list[int] | None = list(cpus) if cpus else None
+        # `cpus == []` and `cpus is None` both mean "unknown": an empty
+        # affinity set cannot usefully pin anything.
+        if not self._all:
+            self._all = None
+        self._free: list[int] = list(self._all) if self._all is not None else []
+        self._lock = threading.Lock()
+
+    @classmethod
+    def system(cls) -> CpuPool:
+        """Pool over this process's current affinity set (or unknown)."""
+        return cls(allowed_cpus())
+
+    def cpus_or_none(self) -> list[int] | None:
+        """The full authoritative set, or None when unknown."""
+        return list(self._all) if self._all is not None else None
+
+    def capacity(self) -> int | None:
+        """Number of distinct CPUs, or None when unknown."""
+        return len(self._all) if self._all is not None else None
+
+    def has_capacity_for(self, jobs: int) -> bool:
+        """True unless a known pool is smaller than the requested jobs."""
+        capacity = self.capacity()
+        return True if capacity is None else jobs <= capacity
+
+    def acquire(self) -> int | None:
+        """Take an exclusive CPU; None when affinity is unknown.
+
+        Callers must hold at most `jobs` concurrent leases with
+        `jobs <= capacity`, so a free CPU always exists; a missing one
+        is a programming error, not a silent share.
+        """
+        with self._lock:
+            if self._all is None:
+                return None
+            if not self._free:
+                raise RuntimeError("CpuPool exhausted: more active benchmark children than CPUs")
+            return self._free.pop(0)
+
+    def release(self, cpu: int | None) -> None:
+        """Return a CPU to the pool (None is a no-op)."""
+        if cpu is None:
+            return
+        with self._lock:
+            if cpu in self._free:
+                raise RuntimeError(f"CpuPool double-release of CPU {cpu}")
+            self._free.append(cpu)
+            self._free.sort()
 
 
 def _child_env() -> dict[str, str]:
@@ -347,10 +426,73 @@ def run_child(
     return record
 
 
-def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Path:
+def run_batch(tasks, *, jobs, pool, run_one):
+    """Execute one replicate batch with bounded concurrency.
+
+    `tasks` is a list of `(position, payload)` in deterministic scheduled
+    order; `run_one(payload, cpu)` runs one child (raising only on
+    unexpected programming errors — benchmark failures come back as
+    records). At most `jobs` children run concurrently, each holding an
+    exclusive pool CPU. Returns `(position, record)` pairs in scheduled
+    order regardless of completion order. Unexpected task exceptions are
+    collected without cancelling siblings, then the first is reraised.
+    """
+    import concurrent.futures
+
+    if jobs < 1:
+        raise ValueError(f"jobs must be >= 1, got {jobs}")
+    capacity = pool.capacity()
+    if capacity is not None and jobs > capacity:
+        raise ValueError(
+            f"jobs={jobs} exceeds the pool's {capacity} CPUs; "
+            f"concurrent leases could not stay exclusive"
+        )
+
+    results: dict[int, dict] = {}
+    errors: list[BaseException] = []
+
+    def supervise(position, payload):
+        cpu = pool.acquire()
+        try:
+            return position, run_one(payload, cpu)
+        finally:
+            pool.release(cpu)
+
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=max(1, min(jobs, len(tasks) or 1)),
+        thread_name_prefix="bench-batch",
+    ) as executor:
+        future_to_position = {
+            executor.submit(supervise, position, payload): position
+            for position, payload in tasks
+        }
+        for future in concurrent.futures.as_completed(future_to_position):
+            position = future_to_position[future]
+            try:
+                _, record = future.result()
+            except BaseException as exc:  # noqa: BLE001 - collected, reraised below
+                errors.append(exc)
+            else:
+                results[position] = record
+    if errors:
+        raise errors[0]
+    return [(position, results[position]) for position, _ in tasks]
+
+
+def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: int = 1) -> Path:
     """Execute a full benchmark profile; return the run directory."""
     if profile not in PROFILES:
         raise ValueError(f"unknown profile: {profile}")
+    if jobs < 1:
+        raise ValueError(f"jobs must be >= 1, got {jobs}")
+    pool = CpuPool.system()
+    if not pool.has_capacity_for(jobs):
+        raise RuntimeError(
+            f"cannot run {jobs} concurrent benchmark children: only "
+            f"{pool.capacity()} CPUs in the allowed affinity set "
+            f"{pool.cpus_or_none()}; oversubscribing a CPU shared with "
+            f"another benchmark child is refused"
+        )
     config = PROFILES[profile]
     check_validation_gate(repo)
     benchmark_sha = git_sha(repo) or "unknown"
@@ -375,6 +517,9 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
         "seed": seed,
         "benchmark_sha": benchmark_sha,
         "roml_sha": ROML_SHA,
+        "jobs": jobs,
+        "cpu_pool": pool.cpus_or_none(),
+        "timing_class": "canonical_serial" if jobs == 1 else "parallel_throughput",
         "config": config,
         "plan": [{"workload": w, "size": s} for w, s in plan],
         "implementations": list(ALL_IMPLEMENTATIONS),
@@ -398,25 +543,32 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
                 order = shuffled_order(
                     ALL_IMPLEMENTATIONS, workload, size, replicate, seed
                 )
-                cpu = pick_cpu()
-                for implementation in order:
-                    if (implementation, workload) in stopped:
-                        continue
-                    if workload not in supported_workloads(implementation):
-                        continue
-                    record = run_child(
-                        implementation, workload, size, seed, replicate,
+                batch = [
+                    implementation
+                    for implementation in order
+                    if (implementation, workload) not in stopped
+                    and workload in supported_workloads(implementation)
+                ]
+
+                def run_one(implementation, cpu,
+                            _workload=workload, _size=size, _replicate=replicate):
+                    return run_child(
+                        implementation, _workload, _size, seed, _replicate,
                         run_id, benchmark_sha, cpu,
                         config["wall_timeout_s"], config["rss_ceiling_bytes"],
                     )
+
+                for _, record in run_batch(
+                    list(enumerate(batch)), jobs=jobs, pool=pool, run_one=run_one
+                ):
                     _handle_record(raw, run_dir, run_meta, stopped, record)
                     if record["status"] == "ok" and pilot_first and (
                         record["populate_ns"] / 1e9 > config["pilot_cap_s"]
                     ):
-                        stopped.add((implementation, workload))
+                        stopped.add((record["implementation"], workload))
                         run_meta["stopped"].append(
                             {
-                                "implementation": implementation,
+                                "implementation": record["implementation"],
                                 "workload": workload,
                                 "size": size,
                                 "status": "pilot_capped",
@@ -438,7 +590,8 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".") -> Pat
                     break
         if config.get("variants"):
             _run_variants(
-                raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config
+                raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config,
+                jobs=jobs, pool=pool,
             )
     (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")
     return run_dir
@@ -478,8 +631,11 @@ def _handle_record(raw, run_dir, run_meta, stopped, record, variant_scoped=False
         )
 
 
-def _run_variants(raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config) -> None:
+def _run_variants(raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, config,
+                  jobs=1, pool=None) -> None:
     """Matrix-ingestion diagnostics: shuffled/duplicated CSR for CSR arms."""
+    if pool is None:
+        pool = CpuPool.system()
     for workload, sizes in VARIANT_SIZES.items():
         for size in sizes:
             for variant in VARIANT_KINDS:
@@ -487,18 +643,26 @@ def _run_variants(raw, run_dir, run_meta, stopped, seed, run_id, benchmark_sha, 
                     order = shuffled_order(
                         VARIANT_ARMS, workload, size, replicate, seed + 7919
                     )
-                    cpu = pick_cpu()
-                    for implementation in order:
-                        if (implementation, workload) in stopped:
-                            continue
-                        if (implementation, workload, variant) in stopped:
-                            continue
-                        record = run_child(
-                            implementation, workload, size, seed, replicate,
+                    batch = [
+                        implementation
+                        for implementation in order
+                        if (implementation, workload) not in stopped
+                        and (implementation, workload, variant) not in stopped
+                    ]
+
+                    def run_one(implementation, cpu,
+                                _workload=workload, _size=size, _replicate=replicate,
+                                _variant=variant):
+                        return run_child(
+                            implementation, _workload, _size, seed, _replicate,
                             run_id, benchmark_sha, cpu,
                             config["wall_timeout_s"],
                             config["rss_ceiling_bytes"],
-                            csr_variant=variant,
+                            csr_variant=_variant,
                         )
+
+                    for _, record in run_batch(
+                        list(enumerate(batch)), jobs=jobs, pool=pool, run_one=run_one
+                    ):
                         _handle_record(raw, run_dir, run_meta, stopped, record)
             (run_dir / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n")

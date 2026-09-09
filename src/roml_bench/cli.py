@@ -27,11 +27,21 @@ def _cmd_validate(_args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 1
 
 
+def _jobs_type(value: str) -> int:
+    try:
+        jobs = int(value)
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError(f"-j/--jobs must be an integer >= 1, got {value!r}")
+    if jobs < 1:
+        raise argparse.ArgumentTypeError(f"-j/--jobs must be >= 1, got {jobs}")
+    return jobs
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     from roml_bench.orchestrator import run_profile
 
     try:
-        run_dir = run_profile(args.profile, run_id=args.run_id)
+        run_dir = run_profile(args.profile, run_id=args.run_id, jobs=args.jobs)
     except RuntimeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
@@ -78,6 +88,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--profile", choices=["quick", "standard", "forensic"], required=True
     )
     run_parser.add_argument("--run-id", default=None)
+    run_parser.add_argument(
+        "-j", "--jobs", type=_jobs_type, default=1,
+        help=(
+            "benchmark child processes to run concurrently (default 1). "
+            "-j 1 is the canonical serial timing mode; -j N is "
+            "throughput mode (individual timings may be affected by "
+            "shared caches/bandwidth/boost, so parallel timings must not "
+            "replace serial forensic evidence; ensure aggregate memory "
+            "fits: per-child RSS ceilings are NOT divided by jobs)."
+        ),
+    )
     sum_parser = sub.add_parser("summarize", help="derive summaries from raw results")
     sum_parser.add_argument("run_dir")
     site_parser = sub.add_parser("site", help="generate the offline static site")
