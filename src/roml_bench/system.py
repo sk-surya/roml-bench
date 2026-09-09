@@ -152,7 +152,10 @@ def roml_artifact_fingerprint(repo: str = ".") -> dict:
     try:
         wheels = sorted(wheels_dir.glob("roml_python-*.whl"))
         if wheels:
-            wheel_path = str(wheels[-1])
+            # Absolute: installed direct_url.json records an absolute
+            # file:// URL, so a relative fingerprint path would mismatch
+            # a correct install (false red).
+            wheel_path = str(wheels[-1].resolve())
             wheel_sha = _sha256_file(wheel_path)
     except Exception:
         pass

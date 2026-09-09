@@ -116,3 +116,13 @@ def test_artifacts_direct_url_mismatch_fails(tmp_path):
 def test_artifacts_outside_venv_fails(tmp_path):
     artifacts, _venv = _good_artifacts(tmp_path)
     assert validate_roml_artifacts(artifacts, venv_prefix="/elsewhere") != []
+
+
+def test_artifacts_relative_wheel_vs_absolute_url_fails(tmp_path, monkeypatch):
+    """Regression: a relative wheel_path must never match an absolute
+    direct_url (false-red incident: fingerprint emitted a relative path)."""
+    artifacts, venv = _good_artifacts(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    artifacts["wheel_path"] = "roml_python-0.1.0-py3-none-any.whl"
+    problems = validate_roml_artifacts(artifacts, venv_prefix=venv)
+    assert any("direct_url" in p for p in problems)
