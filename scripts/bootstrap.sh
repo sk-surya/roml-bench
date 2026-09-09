@@ -70,7 +70,7 @@ cargo build --release --locked -p roml-bench-core -p roml-store-proto
 
 echo "=== provenance ==="
 uv run python --version
-uv run python -c 'import pulp, pyomo, pyoptinterface; print("pulp", pulp.__version__); import pyomo.version as _pv; print("pyomo", _pv.__version__); print("pyoptinterface", pyoptinterface.__version__)'
+uv run python -c 'import importlib.metadata as md; import pulp, pyomo; print("pulp", pulp.__version__); import pyomo.version as _pv; print("pyomo", _pv.__version__); print("pyoptinterface", md.version("pyoptinterface"))'
 cargo --version
 rustc --version
 echo "benchmark_sha: $(git rev-parse HEAD)"
