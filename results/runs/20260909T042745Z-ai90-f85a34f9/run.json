@@ -1,9 +1,9 @@
 {
-  "run_id": "20260909T045453Z-ai90-92b9ea00",
+  "run_id": "20260909T042745Z-ai90-f85a34f9",
   "profile": "forensic",
   "seed": 20260908,
-  "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
-  "roml_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "benchmark_sha": "f85a34f99c453181f0e0b203d0fb21c9fbc14e8c",
+  "roml_sha": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
   "jobs": 1,
   "cpu_pool": [
     0,
