@@ -137,6 +137,113 @@ def _poi_bound_probe() -> tuple[float, float]:
     return (float(lb), float(ub))
 
 
+def validate_roml_artifacts(
+    artifacts: dict,
+    expected_sha: str = ROML_SHA,
+    venv_prefix: str | None = None,
+) -> list[str]:
+    """Assert every ROML representation matches the pinned SHA.
+
+    Recording hashes is not enough: a stale wheel validated once would
+    stay green forever, which is the exact incident class this closes.
+    Every mismatch fails validation. Pure over its inputs (plus
+    filesystem reads) so mutation tests can drive it directly.
+    """
+    import sys
+    import urllib.parse
+    import zipfile
+    from pathlib import Path
+
+    problems: list[str] = []
+    if venv_prefix is None:
+        venv_prefix = sys.prefix
+    if artifacts.get("expected_sha") != expected_sha:
+        problems.append(
+            f"expected_sha {artifacts.get('expected_sha')} != pinned {expected_sha}"
+        )
+    if artifacts.get("checkout_head") != expected_sha:
+        problems.append(
+            f".cache/roml HEAD {artifacts.get('checkout_head')} != pinned {expected_sha}"
+        )
+    cargo_revs = artifacts.get("cargo_revs") or {}
+    for member in ("rust-core", "rust-store-proto"):
+        if cargo_revs.get(member) != expected_sha:
+            problems.append(
+                f"{member}/Cargo.toml rev {cargo_revs.get(member)} != pinned {expected_sha}"
+            )
+    if cargo_revs.get("lock") != [expected_sha]:
+        problems.append(
+            f"Cargo.lock ROML revisions {cargo_revs.get('lock')} != exactly [{expected_sha}]"
+        )
+    installed = artifacts.get("installed_file")
+    try:
+        in_venv = (
+            installed is not None
+            and Path(installed).exists()
+            and Path(installed).is_relative_to(venv_prefix)
+        )
+    except (OSError, ValueError):
+        in_venv = False
+    if not in_venv:
+        problems.append(
+            f"installed roml {installed} is not inside the benchmark venv {venv_prefix}"
+        )
+    wheel_path = artifacts.get("wheel_path")
+    if not wheel_path or not Path(wheel_path).exists():
+        problems.append(f"pinned wheel missing: {wheel_path}")
+    if not artifacts.get("wheel_sha256"):
+        problems.append("pinned wheel has no SHA256")
+    if not artifacts.get("native_ext_sha256"):
+        problems.append("loaded native extension has no SHA256")
+    if not artifacts.get("core_binary_sha256"):
+        problems.append("roml-bench-core binary has no SHA256")
+    direct_url = artifacts.get("installed_wheel_url")
+    try:
+        url_path = (
+            Path(urllib.parse.urlparse(json.loads(direct_url)["url"]).path)
+            if direct_url
+            else None
+        )
+    except (ValueError, KeyError, TypeError):
+        url_path = None
+    if (
+        url_path is None
+        or wheel_path is None
+        or url_path != Path(wheel_path)
+    ):
+        problems.append(
+            "installed direct_url.json does not resolve to the fingerprinted wheel"
+        )
+    if wheel_path and Path(wheel_path).exists() and artifacts.get("native_ext_sha256"):
+        try:
+            with zipfile.ZipFile(wheel_path) as zf:
+                so_hashes = {
+                    _wheel_member_sha256(zf, name)
+                    for name in zf.namelist()
+                    if name.endswith(".so")
+                }
+        except zipfile.BadZipFile:
+            so_hashes = set()
+        if not so_hashes:
+            problems.append(f"no native extension found inside wheel {wheel_path}")
+        elif artifacts["native_ext_sha256"] not in so_hashes:
+            problems.append(
+                "wheel-contained native extension != loaded native extension "
+                "(stale install: reinstall the fingerprinted wheel)"
+            )
+    return problems
+
+
+def _wheel_member_sha256(zf, name: str) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    with zf.open(name) as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def _check_external_runner(cases: dict, implementation: str, kind: str) -> dict:
     """Validate a Julia/C++ runner: counts, schema, and solve agreement.
 
@@ -521,6 +628,14 @@ def run_validation() -> dict:
     for impl_entry in result["implementations"].values():
         if impl_entry["status"] != "ok":
             result["status"] = "failed"
+    # Provenance assertion (not just recording): a stale wheel or binary
+    # must fail validation even if every mathematical check passes.
+    artifact_problems = validate_roml_artifacts(result["roml_artifacts"])
+    if artifact_problems:
+        result["status"] = "failed"
+        result["problems"].extend(
+            f"roml-artifacts: {p}" for p in artifact_problems
+        )
     return result
 
 

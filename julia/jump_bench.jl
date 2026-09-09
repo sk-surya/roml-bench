@@ -87,19 +87,23 @@ function main()
     impl = cli_arg(args, "--implementation", "jump_julia")
     do_solve = "--solve" in args
 
-    # Unrecorded warmup: settle JIT compilation outside the timer.
-    let m = Model()
-        @variable(m, x[1:3], lower_bound = 0.0, upper_bound = 1.0)
-        @constraint(m, x[1] + x[2] <= 1.0)
-        @objective(m, Min, sum(x))
-    end
-
     # Canonical data parsing happens before every timer.
     prices = Float64[]
     if workload == "bess_96"
         csv = cli_arg(args, "--prices-csv")
         csv === nothing && error("bess_96 requires --prices-csv")
         prices = parse.(Float64, split(csv, ","))
+    end
+
+    # Workload-specific warmup on a discarded model: first-use method
+    # compilation for the actual containers/expression paths used below
+    # must not leak into the phase timers.
+    if workload == "sparse_rows"
+        build_sparse(Model(), 10)
+    elseif workload == "bess_96"
+        build_bess(Model(), 1, prices)
+    else
+        error("unknown workload: $workload")
     end
 
     # container_init measures only fresh Model() construction.

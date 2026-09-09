@@ -11,7 +11,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <string>
 #include <vector>
 
 #include "ortools/math_opt/cpp/model.h"
@@ -85,10 +84,14 @@ std::vector<double> ParseCsv(const std::string& csv) {
 }
 
 void Warmup() {
+  // Named like the target: naming-related lazy initialization must not be
+  // first encountered inside the measured timer.
   math_opt::Model m("warmup");
-  const math_opt::Variable x = m.AddVariable(0.0, 1.0, /*is_integer=*/false, "");
-  const math_opt::Variable y = m.AddVariable(0.0, 1.0, /*is_integer=*/false, "");
-  m.AddLinearConstraint(x + y <= 1.0, "");
+  const math_opt::Variable x =
+      m.AddVariable(0.0, 1.0, /*is_integer=*/false, "x[0]");
+  const math_opt::Variable y =
+      m.AddVariable(0.0, 1.0, /*is_integer=*/false, "x[1]");
+  m.AddLinearConstraint(x + y <= 1.0, "row[0]");
   m.Minimize(x);
 }
 
