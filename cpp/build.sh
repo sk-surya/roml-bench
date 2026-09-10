@@ -12,6 +12,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+mkdir -p build
+
 OT=../.cache/or-tools-v9.15
 if [ ! -f "$OT/build/lib/libortools.so" ]; then
   echo "error: $OT/build/lib/libortools.so missing;" >&2
