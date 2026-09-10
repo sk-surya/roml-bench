@@ -1,0 +1,46 @@
+[project]
+name = "roml-bench"
+version = "0.1.0"
+description = "ROML model-building benchmark v1: ROML Python vs PuLP/Pyomo/PyOptInterface and ROML Python vs native core"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "pulp==3.3.1",
+    "pyomo==6.10.1",
+    "pyoptinterface==0.6.1",
+    "highspy>=1.9",
+    "jinja2>=3.1",
+    "plotly>=5.24",
+    "psutil>=6.0",
+]
+
+[project.scripts]
+roml-bench = "roml_bench.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/roml_bench"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "external: executes the Julia/C++ benchmark runners (needs provisioned toolchain)",
+]

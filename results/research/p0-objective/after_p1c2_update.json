@@ -1,0 +1,68 @@
+[
+ {
+  "model": "packed-parametric",
+  "build_ms": 59.4,
+  "solve1_ms": 515.6,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 22.8,
+  "solve2_ms": 4100.0,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ },
+ {
+  "model": "scalar-general",
+  "build_ms": 18340.9,
+  "solve1_ms": 1791.9,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 29.0,
+  "solve2_ms": 4075.6,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ },
+ {
+  "model": "packed-parametric",
+  "build_ms": 40.6,
+  "solve1_ms": 471.1,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 22.1,
+  "solve2_ms": 4104.7,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ },
+ {
+  "model": "scalar-general",
+  "build_ms": 18358.1,
+  "solve1_ms": 1771.1,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 27.5,
+  "solve2_ms": 4109.1,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ },
+ {
+  "model": "packed-parametric",
+  "build_ms": 38.9,
+  "solve1_ms": 469.3,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 22.5,
+  "solve2_ms": 4113.7,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ },
+ {
+  "model": "scalar-general",
+  "build_ms": 18678.7,
+  "solve1_ms": 1773.2,
+  "obj1": 814312.8205903117,
+  "optimal1": true,
+  "update_ms": 25.8,
+  "solve2_ms": 4094.7,
+  "obj2": 895744.1026493417,
+  "optimal2": true
+ }
+]

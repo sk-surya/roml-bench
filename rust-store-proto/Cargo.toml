@@ -1,0 +1,15 @@
+[package]
+name = "roml-store-proto"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+
+[[bin]]
+name = "store-proto"
+path = "src/main.rs"
+
+[dependencies]
+roml = { git = "https://github.com/sk-surya/roml", rev = "c590692ace5446cc20c7eb91cb8fa0d594a054b0" }
+
+[profile.release]
+opt-level = 3

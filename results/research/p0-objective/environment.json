@@ -1,0 +1,13 @@
+{
+  "run_id": "p0-objective-20260908T063953Z",
+  "bench_sha": "0747311",
+  "roml_sha": "6062398b418c4bc0c7718b2ce569da8b9e42766e",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
+  "cpu_model": "AMD Ryzen 9 9950X 16-Core Processor",
+  "mem_total": "MemTotal:       62347524 kB",
+  "kernel": "7.0.0-30-generic",
+  "pinned_cpu": "4",
+  "build": "cargo build --release -p roml-bench-core --offline",
+  "note": "timings: roml-bench-core (clean). probes: roml-ops-probe (counting allocator; timings non-authoritative)."
+}

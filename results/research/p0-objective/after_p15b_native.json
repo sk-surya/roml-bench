@@ -1,0 +1,1 @@
+{"arm":"bulk-1m-packed-store","api_ms":43.7,"store_append_1m_ms":6.8,"scalar_api_total_ms":601.0,"commit_ms":221.4,"snapshot_ms":507.2,"rss_construct_mb":714,"rss_peak_mb":1432,"cells":2000000}

@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% block title %}Python comparison — ROML model-build benchmark{% endblock %}
+{% block body %}
+<h1>ROML Python vs PuLP / Pyomo / PyOptInterface</h1>
+<div class="notice">
+<strong>Two panels, two questions.</strong> Section A compares
+<strong>formulation</strong>: each arm derives rows and objective from the
+same high-level inputs (N, or B/T/prices) during timing. Section B compares
+<strong>matrix ingestion</strong>: each arm consumes the same preassembled
+CSR matrix, bounds, and objective vector. PyOptInterface's model is
+solver-backed — its calls insert directly into HiGHS — while the others
+build a separate modeling representation first. PuLP and Pyomo expose no
+matrix API and appear in panel A only, by design.
+</div>
+{% for title, div in charts %}
+<div class="chart"><h2>{{ title }}</h2>{{ div | safe }}</div>
+{% endfor %}
+<h2>Construction paths</h2>
+<ul>
+<li><strong>ROML Python (bulk)</strong> — {{ impl_notes['roml_python_bulk'] }}</li>
+<li><strong>ROML Python (naive chain)</strong> — {{ impl_notes['roml_python_naive_chain'] }}</li>
+<li><strong>ROML Python (CSR ingest)</strong> — {{ impl_notes['roml_python_csr'] }}</li>
+<li><strong>PuLP</strong> — {{ impl_notes['pulp_python'] }}</li>
+<li><strong>Pyomo</strong> — {{ impl_notes['pyomo_python'] }}</li>
+<li><strong>PyOptInterface (matrix)</strong> — {{ impl_notes['pyoptinterface_python'] }}</li>
+<li><strong>PyOptInterface (scalar)</strong> — {{ impl_notes['pyoptinterface_scalar'] }}</li>
+</ul>
+<h2>Ingestion diagnostics</h2>
+<p>The canonical/shuffled/duplicated CSR charts are diagnostics for the
+ingestion path (shuffled defeats sorted-input assumptions; duplicated
+exercises duplicate accumulation at 2x nnz). They are not leaderboards.</p>
+{% endblock %}

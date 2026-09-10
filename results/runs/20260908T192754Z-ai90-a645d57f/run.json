@@ -1,0 +1,1290 @@
+{
+  "run_id": "20260908T192754Z-ai90-a645d57f",
+  "profile": "forensic",
+  "seed": 20260908,
+  "benchmark_sha": "a645d57fed21ee33da49a645295c4f588c40201c",
+  "roml_sha": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
+  "config": {
+    "replicates": 7,
+    "wall_timeout_s": 120,
+    "rss_ceiling_bytes": 17179869184,
+    "pilot_cap_s": 60,
+    "variants": true
+  },
+  "plan": [
+    {
+      "workload": "sparse_rows",
+      "size": 1000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000
+    },
+    {
+      "workload": "bess_96",
+      "size": 1
+    },
+    {
+      "workload": "bess_96",
+      "size": 3
+    },
+    {
+      "workload": "bess_96",
+      "size": 10
+    },
+    {
+      "workload": "bess_96",
+      "size": 30
+    },
+    {
+      "workload": "bess_96",
+      "size": 100
+    },
+    {
+      "workload": "bess_96",
+      "size": 300
+    }
+  ],
+  "implementations": [
+    "roml_python_bulk",
+    "roml_python_naive_chain",
+    "roml_python_csr",
+    "pulp_python",
+    "pyomo_python",
+    "pyoptinterface_python",
+    "pyoptinterface_scalar",
+    "roml_core_rust",
+    "roml_core_rust_anon",
+    "roml_core_bulk"
+  ],
+  "support": {
+    "roml_python_bulk": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_python_naive_chain": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_python_csr": [
+      "bess_96"
+    ],
+    "pulp_python": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "pyomo_python": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "pyoptinterface_python": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "pyoptinterface_scalar": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_rust": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_rust_anon": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_bulk": [
+      "sparse_rows",
+      "bess_96"
+    ]
+  },
+  "stopped": [
+    {
+      "implementation": "roml_python_naive_chain",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "variant": "canonical",
+      "status": "timeout",
+      "error": "wall timeout after 120s"
+    },
+    {
+      "implementation": "pyoptinterface_python",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "variant": "duplicated",
+      "status": "error",
+      "error": "RuntimeError: Encountered an error in HiGHS (Status -1). Check the log for details."
+    }
+  ],
+  "points": {
+    "sparse_rows/1000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_python_naive_chain/canonical": [
+      "timeout"
+    ],
+    "sparse_rows/300000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_python/shuffled": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_python_bulk/shuffled": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_python/duplicated": [
+      "error"
+    ],
+    "sparse_rows/100000/roml_python_bulk/duplicated": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_python_bulk/shuffled": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyoptinterface_python/shuffled": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_python_bulk/duplicated": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  }
+}

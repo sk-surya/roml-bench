@@ -1,0 +1,43 @@
+{
+  "timestamp_utc": "2026-09-09T04:54:53Z",
+  "python": "3.13.14",
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
+  "kernel": "7.0.0-30-generic",
+  "cpu_model": "AMD Ryzen 9 9950X 16-Core Processor",
+  "cpu_count": 32,
+  "cpu_governor": "powersave",
+  "load_average": [
+    1.3046875,
+    0.90869140625,
+    0.98779296875
+  ],
+  "memory_total_bytes": 63843864576,
+  "memory_available_bytes": 50799538176,
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
+  "packages": {
+    "roml-python": "0.1.0",
+    "pulp": "3.3.1",
+    "pyomo": "6.10.1",
+    "pyoptinterface": "0.6.1",
+    "highspy": "1.15.1",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "jinja2": "3.1.6",
+    "plotly": "7.0.0",
+    "psutil": "7.2.2",
+    "roml_import": "0.1.0"
+  },
+  "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
+  "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "canonical_seed": 20260908,
+  "thread_env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": "1",
+    "JULIA_NUM_THREADS": "1"
+  }
+}

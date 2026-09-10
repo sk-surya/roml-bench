@@ -1,0 +1,41 @@
+[
+ {
+  "vars": 20.2,
+  "init_expr": 0.1,
+  "init_add": 0.1,
+  "balance_expr": 0.3,
+  "balance_add": 10.9,
+  "mode_expr": 0.0,
+  "mode_add": 13.4,
+  "obj_expr": 11.7,
+  "obj_add": 22.9,
+  "total": 79.6,
+  "peak_rss_mb": 138
+ },
+ {
+  "vars": 15.0,
+  "init_expr": 0.1,
+  "init_add": 0.1,
+  "balance_expr": 0.2,
+  "balance_add": 7.1,
+  "mode_expr": 0.0,
+  "mode_add": 9.8,
+  "obj_expr": 8.6,
+  "obj_add": 19.1,
+  "total": 59.9,
+  "peak_rss_mb": 142
+ },
+ {
+  "vars": 16.1,
+  "init_expr": 0.1,
+  "init_add": 0.1,
+  "balance_expr": 0.2,
+  "balance_add": 7.2,
+  "mode_expr": 0.0,
+  "mode_add": 10.3,
+  "obj_expr": 8.8,
+  "obj_add": 19.9,
+  "total": 62.7,
+  "peak_rss_mb": 144
+ }
+]

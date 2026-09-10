@@ -1,0 +1,125 @@
+{% extends "base.html.j2" %}
+{% block title %}Methodology — ROML model-build benchmark{% endblock %}
+{% block body %}
+<h1>Methodology</h1>
+<p>This page states the exact benchmark contract, semantic boundaries, pins,
+and host provenance for run <code>{{ provenance.run_id }}</code>.</p>
+
+<h2>Workloads</h2>
+<h3>sparse_rows</h3>
+<p>Isolates primitive linear-model construction overhead with fixed sparsity.
+For size <code>N</code>: continuous variables <code>x[0:N]</code> with
+<code>0 &lt;= x &lt;= 5</code>; <code>R = floor(N/10)</code> rows, each
+<code>sum(x[10r+k], k=0..9) &lt;= 10</code>; objective <code>min sum x</code>.
+Variables <code>N</code>, constraints <code>floor(N/10)</code>, row nonzeros
+<code>10·floor(N/10)</code>, objective nonzeros <code>N</code>.</p>
+<h3>bess_96</h3>
+<p>Realistic indexed linear algebra: <code>T = 96</code> periods,
+<code>dt = 0.25</code>, leg efficiency <code>eta = 0.95</code>, power limit
+<code>P = 2.0</code>, energy limit <code>E = 4.0</code>, initial energy
+<code>E0 = 2.0</code>. Per battery: <code>charge[t]</code>,
+<code>discharge[t]</code> in <code>[0, P]</code>, <code>energy[t]</code> in
+<code>[0, E]</code>; <code>energy[0] == E0</code>;
+<code>energy[t+1] == energy[t] + dt·(eta·charge[t] − discharge[t]/eta)</code>;
+<code>charge[t] + discharge[t] &lt;= P</code>. Objective
+<code>max dt·Σ price[t]·(discharge[t] − charge[t])</code> with a deterministic
+price vector uniform on [20, 80) generated once per run from seed
+<code>{{ provenance.seed }}</code> and shared across implementations. Per
+battery: 289 variables, 193 constraints, 577 row nonzeros, 192 objective
+nonzeros. No ROML mutable parameters are used: this milestone is model
+construction, not parameter updates.</p>
+
+<h2>Timed boundary</h2>
+<p>Primary metric <code>populate_ms</code>: the timer starts immediately
+before the first variable insertion into an already-created empty
+model/container and stops immediately after the objective is installed.
+Excluded: process startup, imports, canonical data generation, RNG, version
+detection, logging, validation, solver optimization, serialization, and HTML
+generation. <code>container_init_ms</code> is measured separately;
+<code>user_build_total_ms = container_init_ms + populate_ms</code>. The main
+scaling charts use <code>populate_ms</code>.</p>
+
+<h2>Implementations and construction paths</h2>
+<ul>
+{% for impl in all_impls %}<li><strong>{{ labels[impl] }}</strong> — {{ impl_notes[impl] }}</li>{% endfor %}
+</ul>
+<p>Python primary comparison uses each library's documented efficient public
+API while preserving workload mathematics and semantic naming
+(<code>x</code> for sparse_rows; <code>charge</code>,
+<code>discharge</code>, <code>energy</code> for bess_96). ROML Python exposes
+no public model-count introspection, so its structural counts are exact
+adapter construction bookkeeping; PuLP and Pyomo counts are library
+introspection. Mathematical equivalence is proven by the validation solve
+gate, not by counts alone.</p>
+
+<h2>Semantic boundaries</h2>
+<p>PyOptInterface's model is solver-backed: population calls insert directly
+into HiGHS. ROML, PuLP, and Pyomo maintain a separate modeling
+representation. <code>populate_ms</code> is elapsed user-facing
+construction-API work under each architecture, not identical internal work.
+Memory figures are child-process RSS (peak high-water mark) — a secondary
+metric, not allocator-independent efficiency evidence.</p>
+
+<h2>Process isolation and runtime controls</h2>
+<p>Every replicate runs in a fresh child process: import dependencies, apply
+thread limits, generate canonical input outside timing, run a tiny unrecorded
+warmup, create the empty model (<code>container_init</code>), time the full
+population, emit one machine-readable JSON record, exit. Implementation order
+is randomized per workload/size/replicate from the run seed. Children are
+pinned to one logical CPU when the platform allows; thread environment is
+limited (<code>OMP_NUM_THREADS=1</code>, <code>OPENBLAS_NUM_THREADS=1</code>,
+<code>MKL_NUM_THREADS=1</code>, <code>NUMEXPR_NUM_THREADS=1</code>,
+<code>RAYON_NUM_THREADS=1</code>).</p>
+
+<h2>Replicates, stop policy, statistics</h2>
+<p>Quick profile: 3 replicates, 15&nbsp;s per-process wall limit. Standard
+profile: 7 replicates, 120&nbsp;s hard wall limit, 16&nbsp;GiB child RSS
+ceiling, plus a 60&nbsp;s pilot budget (an implementation whose own first
+replicate exceeds it is stopped for larger sizes). Timeouts, RSS breaches,
+and errors are recorded as data; larger sizes stop for that
+implementation/workload; nothing is extrapolated. Summaries report median,
+p25, p75, min, max, MAD, and replicate count. Speedup is
+<code>competitor_median / roml_median</code> on paired points only.</p>
+
+<h2>Pins and provenance</h2>
+<ul>
+<li>Benchmark SHA: <code>{{ provenance.benchmark_sha }}</code></li>
+<li>ROML SHA: <code>{{ provenance.roml_sha }}</code> (exact pinned source; never a moving main)</li>
+<li>Python {{ provenance.python }} · roml-python {{ provenance.packages['roml-python'] }} · PuLP {{ provenance.packages.pulp }} · Pyomo {{ provenance.packages.pyomo }} · PyOptInterface {{ provenance.packages.pyoptinterface }} · HiGHS {{ provenance.packages.highspy }} · NumPy {{ provenance.packages.numpy }}</li>
+<li>Host: {{ provenance.host }}{% if provenance.cpu %} — {{ provenance.cpu }}{% endif %}</li>
+<li>Validation: structural counts, bound/domain spot checks, and a small
+deterministic HiGHS-compatible solve per implementation/workload with
+objective agreement within 1e-7 absolute + 1e-7 relative —
+{% if validation.status == 'ok' %}passed{% else %}{{ validation.status }}{% endif %}
+(see <a href="data/validation.json">validation.json</a>).</li>
+</ul>
+
+<h2>Forensic pass (v2) addendum</h2>
+<p>The v1 report mixed two questions. The forensic pass splits them:</p>
+<ul>
+<li><strong>Formulation panel.</strong> Timed input is N (sparse) or
+B/T/prices/dt/eta/limits (bess). New arms: <code>roml_python_naive_chain</code>
+(the renamed v1 scalar path; O(n^2) chaining disclosed),
+<code>pyoptinterface_scalar</code> (scalar formulation with no shared CSR).
+The BESS bulk objective is one fused <code>rm.dot(price_grid,
+discharge − charge)</code> call over a precomputed contiguous grid.</li>
+<li><strong>Matrix-ingestion panel.</strong> Timed input is the shared CSR
+matrix, row bounds, objective vector, and variable bounds. Arms:
+ROML bulk (sparse), <code>roml_python_csr</code> (bess, flat namespace
+with exact per-element bounds), PyOptInterface matrix. PuLP/Pyomo expose
+no matrix API and are excluded here by design.</li>
+<li><strong>Phase decomposition.</strong> Adapters expose
+<code>variables</code> / <code>constraints</code> / <code>objective</code>
+phases timed separately inside the worker (Rust: <code>--phase-breakdown</code>).</li>
+<li><strong>Ingestion diagnostics.</strong> <code>shuffled</code> permutes
+in-row column order; <code>duplicated</code> doubles entries (2x nnz,
+recorded). Canonical only for leaderboards and speedups.</li>
+<li><strong>Named vs anonymous core.</strong> <code>roml_core_rust_anon</code>
+skips every <code>.named()</code> call to isolate name-registration cost.</li>
+</ul>
+
+<h2>Interpretation discipline</h2>
+<p>ROML may be called faster/slower only for the measured workloads, size
+range, versions, and construction boundary. These numbers say nothing about
+solve performance, and no single-number overall winner is claimed.</p>
+{% endblock %}

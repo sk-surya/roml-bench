@@ -1,0 +1,2 @@
+{"arm":"rowsbulk-100kx10","vars_ms":43.8,"api_ms":27.4,"store_append_100kx10_ms":2.5,"commit_ms":92.9,"snapshot_ms":391.2,"rss_construct_mb":323,"rss_peak_mb":846,"cells":1000000}
+{"arm":"rowsbulk-10kx10","vars_ms":4.3,"api_ms":2.6,"commit_ms":9.2,"snapshot_ms":26.3,"rss_construct_mb":35,"rss_peak_mb":82,"cells":100000}

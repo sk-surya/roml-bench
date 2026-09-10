@@ -1,0 +1,18 @@
+timer sparse_rows 1000000 constant roml_core_rust rep=0
+timer sparse_rows 1000000 constant roml_core_rust rep=1
+timer sparse_rows 1000000 constant roml_core_rust rep=2
+timer sparse_rows 100000 constant roml_core_rust rep=0
+timer sparse_rows 100000 parameterized roml_core_rust rep=0
+timer sparse_rows 100000 constant roml_core_rust rep=1
+timer sparse_rows 100000 parameterized roml_core_rust rep=1
+timer sparse_rows 100000 constant roml_core_rust rep=2
+timer sparse_rows 100000 parameterized roml_core_rust rep=2
+timer sparse_rows 100000 constant roml_core_rust rep=3
+timer sparse_rows 100000 parameterized roml_core_rust rep=3
+timer sparse_rows 100000 constant roml_core_rust rep=4
+timer sparse_rows 100000 parameterized roml_core_rust rep=4
+timer sparse_rows 1000000 constant roml_core_rust_anon rep=0
+timer bess_96 300 constant roml_core_rust rep=0
+probe sparse_rows 1000000 constant named
+probe sparse_rows 100000 constant named
+probe sparse_rows 100000 parameterized named

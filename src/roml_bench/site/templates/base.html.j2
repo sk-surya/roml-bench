@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}ROML model-build benchmark{% endblock %}</title>
+<style>
+:root { color-scheme: light; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0; color: #1a1a1a; background: #fff; line-height: 1.5; }
+header.nav { background: #102a43; color: #fff; padding: 0.6rem 1rem; }
+header.nav nav { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem;
+  max-width: 72rem; margin: 0 auto; align-items: baseline; }
+header.nav a { color: #d9e2ec; text-decoration: none; padding: 0.2rem 0.1rem; }
+header.nav a.active { color: #fff; font-weight: 700; border-bottom: 2px solid #fff; }
+header.nav .brand { color: #fff; font-weight: 700; margin-right: 1rem; }
+main { max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.provenance { background: #f0f4f8; border: 1px solid #bcccdc;
+  border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+.provenance dl { display: grid; grid-template-columns: auto 1fr;
+  gap: 0.15rem 1rem; margin: 0; font-size: 0.92rem; }
+.provenance dt { font-weight: 600; color: #334e68; }
+.provenance dd { margin: 0; overflow-wrap: anywhere; }
+.findings { background: #fffbea; border: 1px solid #e3c878;
+  border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+.chart { margin: 2rem 0; }
+.chart h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+table.data { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+table.data th, table.data td { border: 1px solid #bcccdc; padding: 0.3rem 0.5rem;
+  text-align: right; }
+table.data th:first-child, table.data td:first-child,
+table.data th:nth-child(2), table.data td:nth-child(2),
+table.data th:nth-child(3), table.data td:nth-child(3) { text-align: left; }
+table.data thead { background: #d9e2ec; }
+.notice { background: #f0f4f8; border-left: 4px solid #0072B2;
+  padding: 0.6rem 1rem; margin: 1rem 0; }
+code { background: #f0f4f8; padding: 0.1rem 0.3rem; border-radius: 4px; }
+footer { border-top: 1px solid #bcccdc; padding: 1rem; font-size: 0.85rem;
+  color: #334e68; max-width: 72rem; margin: 0 auto; }
+@media (max-width: 50rem) {
+  .provenance dl { grid-template-columns: 1fr; }
+  table.data { font-size: 0.75rem; }
+}
+</style>
+<script src="static/plotly.min.js"></script>
+</head>
+<body>
+<header class="nav"><nav>
+<span class="brand">ROML model-build bench</span>
+<a href="index.html" class="{% if page == 'index' %}active{% endif %}">Summary</a>
+<a href="python.html" class="{% if page == 'python' %}active{% endif %}">Python comparison</a>
+<a href="roml-core.html" class="{% if page == 'roml-core' %}active{% endif %}">ROML core</a>
+<a href="methodology.html" class="{% if page == 'methodology' %}active{% endif %}">Methodology</a>
+<a href="data.html" class="{% if page == 'data' %}active{% endif %}">Data</a>
+</nav></header>
+<main>
+{% block provenance %}
+<div class="provenance">
+<dl>
+<dt>Run</dt><dd>{{ provenance.run_id }} (profile {{ provenance.profile }}, seed {{ provenance.seed }})</dd>
+<dt>Timestamp (UTC)</dt><dd>{{ provenance.timestamp }}</dd>
+<dt>Host</dt><dd>{{ provenance.host }}{% if provenance.cpu %} — {{ provenance.cpu }}{% endif %}{% if provenance.memory_gb %} — {{ provenance.memory_gb }} GiB RAM{% endif %}</dd>
+<dt>Benchmark SHA</dt><dd>{{ provenance.benchmark_sha }}</dd>
+<dt>ROML SHA</dt><dd>{{ provenance.roml_sha }}</dd>
+<dt>Packages</dt><dd>Python {{ provenance.python }} · roml-python {{ provenance.packages['roml-python'] }} · PuLP {{ provenance.packages.pulp }} · Pyomo {{ provenance.packages.pyomo }} · PyOptInterface {{ provenance.packages.pyoptinterface }} · HiGHS {{ provenance.packages.highspy }} · NumPy {{ provenance.packages.numpy }}</dd>
+</dl>
+</div>
+{% endblock %}
+{% block body %}{% endblock %}
+</main>
+<footer>
+Model-construction benchmark only — no solve-time or solution-quality claims.
+Raw measurements: <a href="data/raw.jsonl">raw.jsonl</a> ·
+<a href="data/summary.csv">summary.csv</a> · <a href="data.html">data page</a>.
+</footer>
+</body>
+</html>

@@ -1,0 +1,308 @@
+{
+  "seed": 20260908,
+  "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_artifacts": {
+    "expected_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "checkout_head": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "cargo_revs": {
+      "rust-core": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+      "rust-store-proto": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+      "lock": [
+        "c590692ace5446cc20c7eb91cb8fa0d594a054b0"
+      ]
+    },
+    "installed_file": "/srv/repos/roml-bench/.venv/lib/python3.13/site-packages/roml/__init__.py",
+    "installed_wheel_url": "{\"url\":\"file:///srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl\",\"archive_info\":{}}",
+    "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
+    "wheel_sha256": "da7950f98eb00b7140540645283ebdda321fca5d170b18cd657141b32899a432",
+    "native_ext_sha256": "56548e7b41a2cb8d0fc9c7819becbc888b715d396864d4a47352c497500139d7",
+    "core_binary_sha256": "2527d67ee6ff642380e9d6c2d35e07120be71d8e8b25146b5a0abbcabfae8d7d"
+  },
+  "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
+  "environment": {
+    "timestamp_utc": "2026-09-09T04:54:43Z",
+    "python": "3.13.14",
+    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
+    "kernel": "7.0.0-30-generic",
+    "cpu_model": "AMD Ryzen 9 9950X 16-Core Processor",
+    "cpu_count": 32,
+    "cpu_governor": "powersave",
+    "load_average": [
+      0.91650390625,
+      0.8203125,
+      0.9599609375
+    ],
+    "memory_total_bytes": 63843864576,
+    "memory_available_bytes": 51982016512,
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
+    "packages": {
+      "roml-python": "0.1.0",
+      "pulp": "3.3.1",
+      "pyomo": "6.10.1",
+      "pyoptinterface": "0.6.1",
+      "highspy": "1.15.1",
+      "numpy": "2.5.3",
+      "scipy": "1.18.1",
+      "jinja2": "3.1.6",
+      "plotly": "7.0.0",
+      "psutil": "7.2.2",
+      "roml_import": "0.1.0"
+    },
+    "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
+    "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "canonical_seed": 20260908,
+    "thread_env": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "JULIA_NUM_THREADS": "1"
+    }
+  },
+  "implementations": {
+    "roml_python_bulk": {
+      "construction_path": "bulk: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add over array expressions with one fused rm.dot objective call (bess_96)",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "roml-highs",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874309,
+          "solver": "roml-highs",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_python_naive_chain": {
+      "construction_path": "naive scalar chain: Model.var + repeated `total = total + v` expression chaining (O(n^2) accumulation; measures the naive path, not binding overhead)",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "roml-highs",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874309,
+          "solver": "roml-highs",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_python_csr": {
+      "construction_path": "matrix ingestion: one flat Model.vars + add_linear_rows from the shared canonical CSR (bess_96 only); objective from the shared coefficient vector via rm.dot",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_csr supports ('bess_96',); sparse_rows by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874309,
+          "solver": "roml-highs",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "pulp_python": {
+      "construction_path": "LpProblem.add_variable_dicts + lpSum + LpProblem",
+      "count_source": "introspection",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "bundled-cbc",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455405661,
+          "solver": "bundled-cbc",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "pyomo_python": {
+      "construction_path": "ConcreteModel + indexed Var/Constraint rules + quicksum",
+      "count_source": "introspection",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "appsi-highs",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874311,
+          "solver": "appsi-highs",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "pyoptinterface_python": {
+      "construction_path": "matrix ingestion: add_m_variables per family + add_m_linear_constraints per sense group + ExprBuilder objective",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "highs-direct",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874309,
+          "solver": "highs-direct",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "pyoptinterface_scalar": {
+      "construction_path": "formulation: add_variable loop + per-row ScalarAffineFunction constraints + ExprBuilder objective",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "objective": 0.0,
+          "solver": "highs-direct",
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "objective": 651.9938455874309,
+          "solver": "highs-direct",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "jump_julia": {
+      "implementation": "jump_julia",
+      "construction_path": "JuMP containers + HiGHS.jl (Julia, pinned toolchain)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 27290,
+          "objective": 0.0
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 128372,
+          "objective": 651.9938455874309
+        }
+      },
+      "objectives": {
+        "sparse_rows/100": 0.0,
+        "bess_96/1": 651.9938455874309
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "ortools_mathopt_cpp": {
+      "implementation": "ortools_mathopt_cpp",
+      "construction_path": "MathOpt C++ modeling + HiGHS solver (pinned OR-Tools)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 28770,
+          "objective": 0.0
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 123982,
+          "objective": 651.993845587431
+        }
+      },
+      "objectives": {
+        "sparse_rows/100": 0.0,
+        "bess_96/1": 651.993845587431
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_rust": {
+      "implementation": "roml_core_rust",
+      "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 73801,
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 278684,
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_rust_anon": {
+      "implementation": "roml_core_rust_anon",
+      "construction_path": "rust: Model::named + scalar add_variable/add_constraint (anonymous, no .named() calls)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 69882,
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 250325,
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_bulk": {
+      "implementation": "roml_core_bulk",
+      "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "ok",
+          "populate_ns": 20350,
+          "problems": []
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 61101,
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    }
+  },
+  "status": "ok",
+  "problems": []
+}
