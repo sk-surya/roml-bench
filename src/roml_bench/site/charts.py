@@ -111,8 +111,8 @@ PYTHON_ORDER = FORMULATION_ORDER  # backward-compatible alias
 def _layout(title: str, xtitle: str, ytitle: str) -> dict:
     return {
         "title": title,
-        "xaxis": {"title": xtitle, "type": "log"},
-        "yaxis": {"title": ytitle, "type": "log"},
+        "xaxis": {"title": xtitle, "type": "linear"},
+        "yaxis": {"title": ytitle, "type": "linear"},
         "template": "plotly_white",
         "legend": {"orientation": "h", "y": -0.25},
         "margin": {"b": 100},
@@ -168,7 +168,7 @@ def time_vs_size(
                 hovertext=notes, hoverinfo="text",
             )
         )
-    fig.update_layout(**_layout(title, "problem size", "populate time, median ms (log)"))
+    fig.update_layout(**_layout(title, "problem size", "populate time, median ms (linear)"))
     return fig
 
 
@@ -204,7 +204,7 @@ def time_vs_nnz(
         **_layout(
             title,
             "model nonzeros (constraints + objective)",
-            "populate time, median ms (log)",
+            "populate time, median ms (linear)",
         )
     )
     return fig
@@ -235,8 +235,8 @@ def speedup_chart(summary: dict, panel: str, title: str, subtitle: str) -> go.Fi
         )
     fig.update_layout(
         title=title + "<br><sub>" + subtitle + "</sub>",
-        xaxis={"title": "problem size", "type": "log"},
-        yaxis={"title": "speedup vs baseline, median ratio (log)", "type": "log"},
+        xaxis={"title": "problem size", "type": "linear"},
+        yaxis={"title": "speedup vs baseline, median ratio (linear)", "type": "linear"},
         template="plotly_white",
         legend={"orientation": "h", "y": -0.3},
         margin={"b": 110},
@@ -274,7 +274,7 @@ def memory_chart(summary: dict, workload: str, implementations: list[str], title
                     hoverinfo="text",
                 )
             )
-    fig.update_layout(**_layout(title, "problem size", "child peak RSS, median MiB (log)"))
+    fig.update_layout(**_layout(title, "problem size", "child peak RSS, median MiB (linear)"))
     return fig
 
 
@@ -283,8 +283,7 @@ def headline_bars(
 ) -> go.Figure:
     """Linear-scale bar chart: median populate ms per implementation at one point.
 
-    Head-to-head at a fixed size reads better linear than log; the
-    scaling curves keep their log axes. Bars carry p25/p75 whiskers and
+    All site charts use linear axes. Bars carry p25/p75 whiskers and
     exact medians as text.
     """
     lookup = _canonical_lookup(summary)
@@ -356,7 +355,7 @@ def phase_breakdown_chart(
         title=title,
         barmode="stack",
         xaxis={"title": "implementation"},
-        yaxis={"title": "phase median ms (log)", "type": "log"},
+        yaxis={"title": "phase median ms (linear)", "type": "linear"},
         template="plotly_white",
         margin={"b": 110},
     )
@@ -386,7 +385,7 @@ def variant_chart(
         "duplicated rows carry 2x nnz</sub>",
         barmode="group",
         xaxis={"title": "implementation"},
-        yaxis={"title": "populate median ms (log)", "type": "log"},
+        yaxis={"title": "populate median ms (linear)", "type": "linear"},
         template="plotly_white",
         margin={"b": 110},
     )
