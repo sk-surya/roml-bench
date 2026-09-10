@@ -39,6 +39,13 @@ echo "python3.13: $PY313 ($("$PY313" --version))"
 export UV_PROJECT_ENVIRONMENT=".venv"
 uv sync
 
+# Defensive pin: never let a resolver default (e.g. system 3.14) replace the
+# project's 3.13 environment out from under the pinned ROML wheel.
+if [ "$("$PWD/.venv/bin/python" -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")')" != "3.13" ]; then
+  echo "error: .venv is not Python 3.13; delete it and re-run bootstrap" >&2
+  exit 1
+fi
+
 if [ ! -d .cache/roml ]; then
   git clone "$ROML_REPO" .cache/roml
 fi
