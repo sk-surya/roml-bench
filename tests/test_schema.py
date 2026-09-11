@@ -10,7 +10,7 @@ def _ok_record() -> dict:
         "timestamp_utc": "2026-09-08T00:00:00Z",
         "benchmark_sha": "deadbeef",
         "roml_sha": ROML_SHA,
-        "implementation": "roml_python_bulk",
+        "implementation": "roml_python_vectorized",
         "workload": "sparse_rows",
         "size": 1000,
         "variables": 1000,

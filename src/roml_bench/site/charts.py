@@ -9,7 +9,7 @@ from __future__ import annotations
 import plotly.graph_objects as go
 
 COLORS = {
-    "roml_python_bulk": "#0072B2",
+    "roml_python_vectorized": "#0072B2",
     "roml_python_naive_chain": "#56B4E9",
     "roml_python_scalar": "#56B4E9",
     "roml_python_csr": "#9467BD",
@@ -25,7 +25,7 @@ COLORS = {
 }
 
 LABELS = {
-    "roml_python_bulk": "ROML Python (bulk)",
+    "roml_python_vectorized": "ROML Python (vectorized)",
     "roml_python_naive_chain": "ROML Python (naive chain)",
     "roml_python_scalar": "ROML Python (scalar, v1 legacy)",
     "roml_python_csr": "ROML Python (CSR ingest)",
@@ -41,7 +41,7 @@ LABELS = {
 }
 
 FORMULATION_ORDER = [
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_naive_chain",
     "pulp_python",
     "pyomo_python",
@@ -51,14 +51,14 @@ FORMULATION_ORDER = [
 ]
 
 INGESTION_ORDER = [
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_csr",
     "pyoptinterface_python",
 ]
 
 CORE_ORDER = [
     "roml_python_naive_chain",
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_core_rust",
     "roml_core_rust_anon",
     "roml_core_bulk",
@@ -67,7 +67,7 @@ CORE_ORDER = [
 # Marker symbol + line dash per arm so traces stay distinguishable
 # without relying on color alone.
 MARKERS = {
-    "roml_python_bulk": "circle",
+    "roml_python_vectorized": "circle",
     "roml_python_naive_chain": "x",
     "roml_python_scalar": "x",
     "jump_julia": "diamond-open",
@@ -83,7 +83,7 @@ MARKERS = {
 }
 
 DASHES = {
-    "roml_python_bulk": "solid",
+    "roml_python_vectorized": "solid",
     "roml_python_naive_chain": "dot",
     "roml_python_scalar": "dot",
     "roml_python_csr": "dashdot",

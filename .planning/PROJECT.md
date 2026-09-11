@@ -45,10 +45,10 @@ This is intentionally a user-observable API benchmark, not a claim that all libr
 Compare mathematically identical ROML construction paths:
 
 - `roml_python_scalar`
-- `roml_python_bulk`
+- `roml_python_vectorized`
 - `roml_core_rust`
 
-The scalar-vs-scalar comparison isolates Python/binding/modeling overhead most cleanly. The bulk-vs-core comparison answers the practical user question: how close can the public Python fast path get to native core construction?
+The scalar-vs-scalar comparison isolates Python/binding/modeling overhead most cleanly. The vectorized-vs-core comparison answers the practical user question: how close can the public Python fast path get to native core construction?
 
 ## End state
 

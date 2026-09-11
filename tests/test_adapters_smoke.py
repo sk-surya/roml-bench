@@ -43,7 +43,7 @@ def test_sparse_rows_bulk_matches_scalar_objective():
     case = make_case("sparse_rows", 100, seed=CANONICAL_SEED)
     from roml_bench.adapters import get_adapter as get
 
-    bulk = get("roml_python_bulk")
+    bulk = get("roml_python_vectorized")
     art = bulk.populate(bulk.new_model(case), case)
     with rm.Highs() as solver:
         roml_obj = solver.solve(art.model).objective
@@ -78,7 +78,7 @@ def test_bess_all_arms_agree():
     )
 
     case = make_case("bess_96", 2, seed=CANONICAL_SEED)
-    bulk = get("roml_python_bulk")
+    bulk = get("roml_python_vectorized")
     with rm.Highs() as solver:
         reference = solver.solve(bulk.populate(bulk.new_model(case), case).model).objective
     assert reference > 0

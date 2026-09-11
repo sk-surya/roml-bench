@@ -71,7 +71,7 @@ pub fn con_spec(expr: LinExpr, name: Option<String>, upper: f64) -> ConstraintSp
 /// (it needs per-sub-phase allocator snapshots), so this function is dead
 /// code in that binary by design; the timing runner is its consumer.
 /// Sparse workload through the documented efficient bulk core API
-/// (native mirror of the Python `roml_python_bulk` arm, which reaches
+/// (native mirror of the Python `roml_python_vectorized` arm, which reaches
 /// these same primitives).
 ///
 /// Mathematically identical to [`build_sparse`]: `n` variables
@@ -278,7 +278,7 @@ pub fn build_bess(
 }
 
 /// BESS workload through the documented efficient bulk core API (native
-/// mirror of the Python `roml_python_bulk` arm).
+/// mirror of the Python `roml_python_vectorized` arm).
 ///
 /// Same model as [`build_bess`]: `charge`/`discharge` on `[0, P]`,
 /// `energy` on `[0, E]`, init/balance/mode groups, numeric-price

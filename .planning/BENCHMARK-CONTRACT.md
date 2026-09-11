@@ -84,7 +84,7 @@ Do not introduce ROML mutable parameters in this v1 workload. This milestone is 
 
 Required implementation IDs:
 
-- `roml_python_bulk`
+- `roml_python_vectorized`
 - `roml_python_scalar`
 - `pulp_python`
 - `pyomo_python`
@@ -95,7 +95,7 @@ Required implementation IDs:
 
 Use each library's documented efficient public API while preserving the workload mathematics and semantic naming. Do not intentionally force competitors through known slow paths.
 
-- ROML: shaped/bulk public API where available (`vars`, array expressions, CSR/bulk rows as appropriate).
+- ROML: vectorized public API where available (`vars`, array expressions, CSR/bulk rows as appropriate).
 - PuLP: efficient supported linear-expression helpers rather than repeated immutable expression rebuilding when a faster documented helper exists.
 - Pyomo: indexed variables/constraints and efficient linear summation/expression construction.
 - PyOptInterface: documented matrix/bulk APIs when supported by the HiGHS model in the pinned release; otherwise use `ExprBuilder`/efficient scalar construction. Record the exact path in site methodology.
@@ -108,7 +108,7 @@ Use each library's documented efficient public API while preserving the workload
 
 Both `roml_python_scalar` and `roml_core_rust` must create the same variables, constraints, coefficients, bounds, objective, and naming policy. This is the cleanest language/binding-overhead comparison.
 
-`roml_python_bulk` vs `roml_core_rust` is the practical public-fast-path comparison and must be presented separately from scalar-vs-scalar.
+`roml_python_vectorized` vs `roml_core_rust` is the practical public-fast-path comparison and must be presented separately from scalar-vs-scalar.
 
 ## 3. Naming policy
 
@@ -257,7 +257,7 @@ Each measured result JSON object must contain at least:
   "timestamp_utc": "...",
   "benchmark_sha": "...",
   "roml_sha": "6062398b418c4bc0c7718b2ce569da8b9e42766e",
-  "implementation": "roml_python_bulk",
+  "implementation": "roml_python_vectorized",
   "workload": "sparse_rows",
   "size": 10000,
   "variables": 10000,
@@ -301,7 +301,7 @@ Required pages:
 
 - `index.html` — executive result summary and headline charts
 - `python.html` — ROML Python vs PuLP/Pyomo/PyOptInterface
-- `roml-core.html` — ROML Python scalar/bulk vs native Rust core
+- `roml-core.html` — ROML Python scalar/vectorized vs native Rust core
 - `methodology.html` — exact benchmark contract, semantic boundaries, pins, host provenance
 - `data.html` — run table and links to raw JSONL/CSV/metadata
 
@@ -310,7 +310,7 @@ Required primary visualizations:
 1. log-scaled build/population time versus problem size for Python libraries
 2. same comparison against model nonzeros or a clearly defined model-size measure
 3. speedup versus ROML Python on paired sizes
-4. ROML Python scalar vs bulk vs Rust core
+4. ROML Python scalar vs vectorized vs Rust core
 5. secondary memory chart or table, clearly labeled as RSS-based
 
 Charts must show measured points, not smoothed/interpolated invented values. Error presentation should use p25/p75 or raw replicate distribution where practical.

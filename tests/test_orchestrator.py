@@ -53,7 +53,7 @@ def test_check_validation_gate_refuses_absent(tmp_path, monkeypatch):
 def test_worker_smoke_subprocess():
     cmd = [
         sys.executable, "-m", "roml_bench.worker",
-        "--implementation", "roml_python_bulk",
+        "--implementation", "roml_python_vectorized",
         "--workload", "sparse_rows",
         "--size", "20",
         "--seed", "20260908",
@@ -90,7 +90,7 @@ def test_run_child_rust_core_smoke():
 
 def test_run_child_reports_phases():
     record = run_child(
-        "roml_python_bulk", "sparse_rows", 20, 20260908, 0, "test", "test",
+        "roml_python_vectorized", "sparse_rows", 20, 20260908, 0, "test", "test",
         None, 30, 16 * 1024**3,
     )
     assert record["status"] == "ok", record.get("error")
@@ -102,7 +102,7 @@ def test_run_child_reports_phases():
 
 def test_run_child_csr_variant_record():
     record = run_child(
-        "roml_python_bulk", "sparse_rows", 20, 20260908, 0, "test", "test",
+        "roml_python_vectorized", "sparse_rows", 20, 20260908, 0, "test", "test",
         None, 30, 16 * 1024**3, csr_variant="duplicated",
     )
     assert record["status"] == "ok", record.get("error")

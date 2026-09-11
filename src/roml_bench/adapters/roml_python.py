@@ -1,10 +1,10 @@
-"""ROML Python adapters: naive chain, shaped/bulk, and CSR ingestion.
+"""ROML Python adapters: naive chain, vectorized, and CSR ingestion.
 
 - `roml_python_naive_chain`: `Model.var` + repeated `total = total + v`
   chaining. Each `+` clones the accumulated expression and linearly scans
   its terms, so long chains are O(n^2); this arm measures that naive path,
   not binding overhead.
-- `roml_python_bulk`: `Model.vars` + `add_linear_rows` CSR (sparse_rows) or
+- `roml_python_vectorized`: `Model.vars` + `add_linear_rows` CSR (sparse_rows) or
   vectorized `Model.add` over array expressions with one fused `rm.dot`
   objective call (bess_96).
 - `roml_python_csr`: BESS matrix ingestion from the shared canonical CSR
@@ -160,9 +160,9 @@ def _naive_bess_obj(model: rm.Model, case: WorkloadCase, handles) -> None:
 
 
 class RomlPythonBulkAdapter:
-    implementation_id = "roml_python_bulk"
+    implementation_id = "roml_python_vectorized"
     construction_path = (
-        "bulk: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized "
+        "vectorized: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized "
         "Model.add over array expressions with one fused rm.dot objective "
         "call (bess_96)"
     )
