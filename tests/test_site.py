@@ -153,8 +153,12 @@ def test_forensic_panels_render(tmp_path, monkeypatch):
         ("roml_core_rust", 7.0), ("roml_core_rust_anon", 5.0),
     ):
         records.append(_record(impl, "sparse_rows", 100000, med))
-    records.append(_record("roml_python_vectorized", "sparse_rows", 100000, 30.0, variant="shuffled"))
-    records.append(_record("roml_python_vectorized", "sparse_rows", 100000, 50.0, variant="duplicated"))
+    records.append(
+        _record("roml_python_vectorized", "sparse_rows", 100000, 30.0, variant="shuffled")
+    )
+    records.append(
+        _record("roml_python_vectorized", "sparse_rows", 100000, 50.0, variant="duplicated")
+    )
     (run_dir / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in records) + "\n")
     write_summary(run_dir)
     out = generate_site(run_dir, tmp_path / "site")
