@@ -21,14 +21,14 @@ pass. ROML itself is not modified; only `roml-bench` changes.
 
 - **Formulation panel.** Input outside the timer: B, T, prices, dt, eta,
   limits (BESS) or N (sparse). Each arm derives rows/objective during
-  timing. Arms: `roml_python_bulk` (fixed fused-dot BESS objective),
+  timing. Arms: `roml_python_vectorized` (fixed fused-dot BESS objective),
   `roml_python_naive_chain` (renamed v1 scalar; O(n^2) chaining disclosed),
   `pulp_python`, `pyomo_python`, `pyoptinterface_scalar` (new: scalar
   `add_variable` + per-row `ExprBuilder` formulation),
   `roml_core_rust`, `roml_core_rust_anon` (new: no `.named()` calls).
 - **Matrix-ingestion panel.** Input outside the timer: shared CSR A,
   lower/upper, objective vector, variable bounds. Arms:
-  `roml_python_bulk` (sparse CSR), `roml_python_csr` (new: BESS CSR via
+  `roml_python_vectorized` (sparse CSR), `roml_python_csr` (new: BESS CSR via
   `add_linear_rows`), `pyoptinterface_python` (matrix). PuLP/Pyomo have no
   matrix API and are excluded here by design (stated on site, not hidden).
 

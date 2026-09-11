@@ -201,7 +201,7 @@ fn main() {
     if bulk && args.anonymous {
         fail(
             &args,
-            "roml_core_bulk is always named (mirrors the Python bulk arm)".to_string(),
+            "roml_core_bulk is always named (mirrors the Python vectorized arm)".to_string(),
             container_init_ns,
         );
     }

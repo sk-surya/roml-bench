@@ -20,13 +20,13 @@ PYTHON_PANEL = (
     "pyoptinterface_python",
     "pyoptinterface_scalar",
 )
-PYTHON_BASELINE = "roml_python_bulk"
+PYTHON_BASELINE = "roml_python_vectorized"
 CORE_BASELINE = "roml_core_rust"
 CORE_BULK_BASELINE = "roml_core_bulk"
 
 # Formulation panel (high-level modeling from B/T/prices or N).
 FORMULATION_ARMS = (
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_naive_chain",
     "roml_python_scalar",  # legacy v1 ID, present in historical runs only
     "pulp_python",
@@ -40,7 +40,7 @@ FORMULATION_ARMS = (
 )
 # Matrix-ingestion panel (shared canonical CSR input).
 INGESTION_ARMS = (
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_csr",
     "pyoptinterface_python",
 )
@@ -148,7 +148,7 @@ def summarize_run(run_dir: str | Path) -> dict:
         # interface overhead. The scalar arm keeps its trace (general-path cost).
         if implementation in (
             "roml_python_naive_chain",
-            "roml_python_bulk",
+            "roml_python_vectorized",
             "roml_core_rust",
             "roml_core_rust_anon",
         ):
@@ -213,7 +213,7 @@ def write_summary(run_dir: str | Path) -> dict:
             ]
         )
         for group in summary["groups"]:
-            if group["implementation"] in ("roml_python_bulk", CORE_BASELINE):
+            if group["implementation"] in ("roml_python_vectorized", CORE_BASELINE):
                 speedup = 1.0 if group.get("median_ms") is not None else ""
             else:
                 speedup = speedup_lookup.get(

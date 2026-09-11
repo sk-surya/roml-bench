@@ -28,8 +28,8 @@ from roml_bench.workloads import make_case
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 
 IMPLEMENTATION_NOTES = {
-    "roml_python_bulk": (
-        "ROML Python shaped/bulk path: Model.vars + add_linear_rows CSR "
+    "roml_python_vectorized": (
+        "ROML Python vectorized path: Model.vars + add_linear_rows CSR "
         "(sparse_rows) or vectorized Model.add with one fused rm.dot "
         "objective call (bess_96, corrected in the forensic pass)."
     ),
@@ -182,11 +182,11 @@ def _finding_text(summary: dict, run_meta: dict) -> list[str]:
         else:
             size = paired["size"]
             meds = paired["medians"]
-            base = meds.get("roml_python_bulk")
+            base = meds.get("roml_python_vectorized")
             parts = []
             for impl in FORMULATION_ORDER:
-                if impl in meds and impl != "roml_python_bulk" and base:
-                    parts.append(f"{LABELS[impl]} {meds[impl] / base:.2f}x vs ROML bulk")
+                if impl in meds and impl != "roml_python_vectorized" and base:
+                    parts.append(f"{LABELS[impl]} {meds[impl] / base:.2f}x vs ROML vectorized")
             fastest = LABELS[paired["fastest"]]
             findings.append(
                 f"{workload} formulation at paired size {size}: fastest was "
@@ -335,15 +335,15 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
                 ("B. Matrix ingestion time vs size (bess_96)",
                  figure_div(time_vs_size(summary, "bess_96", ingest_impls,
                                          "bess_96 ingestion: shared CSR input"))),
-                ("Speedup vs ROML Python bulk, formulation (paired sizes only)",
+                ("Speedup vs ROML Python vectorized, formulation (paired sizes only)",
                  figure_div(speedup_chart(
                      summary, "formulation",
-                     "Speedup vs ROML Python bulk (formulation)",
+                     "Speedup vs ROML Python vectorized (formulation)",
                      "competitor median / ROML-bulk median; paired points only"))),
-                ("Speedup vs ROML Python bulk, ingestion (paired sizes only)",
+                ("Speedup vs ROML Python vectorized, ingestion (paired sizes only)",
                  figure_div(speedup_chart(
                      summary, "ingestion",
-                     "Speedup vs ROML Python bulk (ingestion)",
+                     "Speedup vs ROML Python vectorized (ingestion)",
                      "median ratio on shared CSR input; paired points only"))),
                 ("Phase decomposition (sparse_rows, 100k)",
                  figure_div(phase_breakdown_chart(
@@ -364,12 +364,12 @@ def generate_site(run_dir: str | Path, out_dir: str | Path = "site") -> Path:
                 ("CSR ingestion diagnostics (sparse_rows, 100k)",
                  figure_div(variant_chart(
                      summary, "sparse_rows", 100000,
-                     ["roml_python_bulk", "pyoptinterface_python"],
+                     ["roml_python_vectorized", "pyoptinterface_python"],
                      "Canonical vs shuffled vs duplicated CSR at 100k"))),
                 ("CSR ingestion diagnostics (sparse_rows, 1M)",
                  figure_div(variant_chart(
                      summary, "sparse_rows", 1000000,
-                     ["roml_python_bulk", "pyoptinterface_python"],
+                     ["roml_python_vectorized", "pyoptinterface_python"],
                      "Canonical vs shuffled vs duplicated CSR at 1M"))),
                 ("Child peak RSS vs size (sparse_rows, secondary metric)",
                  figure_div(memory_chart(summary, "sparse_rows", python_impls,

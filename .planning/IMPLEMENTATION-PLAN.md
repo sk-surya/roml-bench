@@ -204,7 +204,7 @@ class Adapter(Protocol):
 
 ### Implementation requirements
 
-- `roml_python_bulk`: use public array/bulk ROML constructs; for `sparse_rows`, use bulk vars + CSR/bulk-row path where it expresses the canonical model directly.
+- `roml_python_vectorized`: use public array/bulk ROML constructs; for `sparse_rows`, use bulk vars + CSR/bulk-row path where it expresses the canonical model directly.
 - `roml_python_scalar`: use `Model.var`/scalar expressions/`Model.add` without bulk shortcuts.
 - `pulp_python`: use the pinned stable public PuLP API and efficient supported expression helpers.
 - `pyomo_python`: use `ConcreteModel`, indexed `Var`/`Constraint`, and efficient documented summation/expression construction.

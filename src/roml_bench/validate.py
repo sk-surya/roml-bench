@@ -39,7 +39,7 @@ REL_TOL = 1e-7
 VALIDATION_CASES = (("sparse_rows", 100), ("bess_96", 1))
 
 PYTHON_SOLVERS = {
-    "roml_python_bulk": "roml-highs",
+    "roml_python_vectorized": "roml-highs",
     "roml_python_naive_chain": "roml-highs",
     "roml_python_csr": "roml-highs",
     "pulp_python": "bundled-cbc",
@@ -596,7 +596,7 @@ def run_validation() -> dict:
             )
     # Cross-implementation objective agreement per validation case.
     for key, values in objectives.items():
-        reference = values.get("roml_python_bulk")
+        reference = values.get("roml_python_vectorized")
         if reference is None:
             result["status"] = "failed"
             result["problems"].append(f"{key}: no ROML bulk reference objective")

@@ -40,9 +40,9 @@ def _fixture_dir(tmp_path):
         "benchmark_sha": "abc", "roml_sha": "x", "stopped": [],
     }))
     records = [
-        _record("sparse_rows", 100, "roml_python_bulk", 10.0, replicate=0),
-        _record("sparse_rows", 100, "roml_python_bulk", 12.0, replicate=1),
-        _record("sparse_rows", 100, "roml_python_bulk", 14.0, replicate=2),
+        _record("sparse_rows", 100, "roml_python_vectorized", 10.0, replicate=0),
+        _record("sparse_rows", 100, "roml_python_vectorized", 12.0, replicate=1),
+        _record("sparse_rows", 100, "roml_python_vectorized", 14.0, replicate=2),
         _record("sparse_rows", 100, "pulp_python", 20.0, replicate=0),
         _record("sparse_rows", 100, "pulp_python", 24.0, replicate=1),
         _record("sparse_rows", 100, "pyomo_python", status="timeout", replicate=0),
@@ -56,7 +56,7 @@ def test_summary_statistics(tmp_path):
     summary = summarize_run(_fixture_dir(tmp_path))
     bulk = next(
         g for g in summary["groups"]
-        if g["implementation"] == "roml_python_bulk"
+        if g["implementation"] == "roml_python_vectorized"
     )
     assert bulk["median_ms"] == 12.0
     assert bulk["min_ms"] == 10.0
@@ -83,7 +83,7 @@ def test_no_extrapolated_speedup_for_missing_or_censored(tmp_path):
     assert not any(n == "roml_core_rust" for n, _ in pairs)
     pulp = next(s for s in summary["speedups"] if s["numerator"] == "pulp_python")
     assert pulp["speedup"] == 22.0 / 12.0
-    assert pulp["denominator"] == "roml_python_bulk"
+    assert pulp["denominator"] == "roml_python_vectorized"
 
 
 def test_write_summary_outputs_json_and_csv(tmp_path):
@@ -99,17 +99,17 @@ def test_write_summary_outputs_json_and_csv(tmp_path):
 
 def test_phases_aggregated_as_medians(tmp_path):
     run_dir = _fixture_dir(tmp_path)
-    extra = _record("sparse_rows", 100, "roml_python_bulk", 11.0, replicate=0)
+    extra = _record("sparse_rows", 100, "roml_python_vectorized", 11.0, replicate=0)
     records = [
         dict(r, phases={"variables": 1_000_000, "constraints": 2_000_000, "objective": 3_000_000})
-        if r["status"] == "ok" and r["implementation"] == "roml_python_bulk"
+        if r["status"] == "ok" and r["implementation"] == "roml_python_vectorized"
         else r
         for r in [json.loads(line) for line in (run_dir / "raw.jsonl").read_text().splitlines()]
     ]
     assert extra  # fixture helper shape guard
     (run_dir / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in records) + "\n")
     summary = summarize_run(run_dir)
-    bulk = next(g for g in summary["groups"] if g["implementation"] == "roml_python_bulk")
+    bulk = next(g for g in summary["groups"] if g["implementation"] == "roml_python_vectorized")
     assert bulk["phase_median_ms"] == {"variables": 1.0, "constraints": 2.0, "objective": 3.0}
 
 
@@ -122,13 +122,13 @@ def test_variants_form_separate_groups_without_speedups(tmp_path):
     (run_dir / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in records) + "\n")
     summary = summarize_run(run_dir)
     variants = {(g["implementation"], g["variant"]) for g in summary["groups"]}
-    assert ("roml_python_bulk", "duplicated") in variants
+    assert ("roml_python_vectorized", "duplicated") in variants
     dup_group = next(
         g for g in summary["groups"]
-        if g["implementation"] == "roml_python_bulk" and g["variant"] == "duplicated"
+        if g["implementation"] == "roml_python_vectorized" and g["variant"] == "duplicated"
     )
     assert dup_group["median_ms"] == 30.0
     assert not any(
-        s["numerator"] == "roml_python_bulk" and s["panel"] == "ingestion"
+        s["numerator"] == "roml_python_vectorized" and s["panel"] == "ingestion"
         for s in summary["speedups"]
     )

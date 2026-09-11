@@ -31,7 +31,7 @@ from roml_bench.validate import validation_fingerprint
 from roml_bench.workloads import CANONICAL_SEED, make_case, sizes_for
 
 PYTHON_IMPLEMENTATIONS = (
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_naive_chain",
     "roml_python_csr",
     "pulp_python",
@@ -51,7 +51,7 @@ ALL_IMPLEMENTATIONS = (
 
 # Matrix-ingestion diagnostic variants: (implementation, workload, sizes).
 VARIANT_ARMS = (
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "pyoptinterface_python",
 )
 VARIANT_SIZES = {"sparse_rows": (100_000, 1_000_000)}

@@ -7,7 +7,7 @@ SCHEMA_VERSION = 1
 ROML_SHA = "c590692ace5446cc20c7eb91cb8fa0d594a054b0"
 
 IMPLEMENTATIONS = (
-    "roml_python_bulk",
+    "roml_python_vectorized",
     "roml_python_naive_chain",
     "roml_python_csr",
     "pulp_python",
@@ -23,8 +23,10 @@ IMPLEMENTATIONS = (
 
 # IDs produced by older benchmark code. Accepted when validating historical
 # raw files, never produced by new runs. v1 `roml_python_scalar` is the same
-# code path now published as `roml_python_naive_chain`.
-LEGACY_IMPLEMENTATIONS = ("roml_python_scalar",)
+# code path now published as `roml_python_naive_chain`; `roml_python_bulk` was
+# renamed to `roml_python_vectorized` because the BESS arm is the idiomatic
+# vectorized API, not an expert-only bulk escape hatch.
+LEGACY_IMPLEMENTATIONS = ("roml_python_scalar", "roml_python_bulk")
 
 KNOWN_IMPLEMENTATIONS = IMPLEMENTATIONS + LEGACY_IMPLEMENTATIONS
 
