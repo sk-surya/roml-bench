@@ -17,11 +17,11 @@
     "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
     "wheel_sha256": "5ab946959b74c73b2f03f162781347673c9440cb7ae34abb7565c5aef8819a52",
     "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
-    "core_binary_sha256": "0afc204fc883944b03750c596a6a581ba04e90a8c266d897ad0bd9e58322f2d5"
+    "core_binary_sha256": "e739acd8c1140f7ef88df641a377935fa87c7acf5081ebe02868d5b0684f1d4e"
   },
-  "benchmark_sha": "5ffc9b35fd2f8ca5a9acc31c2b45355286dc1308",
+  "benchmark_sha": "116c1be902bd5d0d277f54e5a3c091c0c1a1a292",
   "environment": {
-    "timestamp_utc": "2026-09-17T18:42:55Z",
+    "timestamp_utc": "2026-09-17T19:06:48Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-31-generic",
@@ -29,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      1.029296875,
-      1.0478515625,
-      0.76611328125
+      0.771484375,
+      0.99560546875,
+      1.0107421875
     ],
     "memory_total_bytes": 63846858752,
-    "memory_available_bytes": 54240862208,
+    "memory_available_bytes": 54146482176,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,7 +50,7 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "5ffc9b35fd2f8ca5a9acc31c2b45355286dc1308",
+    "benchmark_sha": "116c1be902bd5d0d277f54e5a3c091c0c1a1a292",
     "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
@@ -390,12 +390,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 26820,
+          "populate_ns": 27161,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 122582,
+          "populate_ns": 125043,
           "objective": 651.9938455874309
         }
       },
@@ -412,12 +412,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 29430,
+          "populate_ns": 27180,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 111622,
+          "populate_ns": 108552,
           "objective": 651.993845587431
         }
       },
@@ -434,12 +434,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 73561,
+          "populate_ns": 75252,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 265055,
+          "populate_ns": 271525,
           "problems": []
         },
         "rule_rows/1000": {
@@ -464,12 +464,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 70022,
+          "populate_ns": 69721,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 229504,
+          "populate_ns": 244344,
           "problems": []
         },
         "rule_rows/1000": {
@@ -494,12 +494,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 17020,
+          "populate_ns": 16390,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 51291,
+          "populate_ns": 53221,
           "problems": []
         },
         "rule_rows/1000": {
@@ -530,7 +530,7 @@
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 80291,
+          "populate_ns": 83321,
           "problems": []
         },
         "rule_rows/1000": {
@@ -567,7 +567,7 @@
         },
         "rule_rows/1000": {
           "status": "ok",
-          "populate_ns": 3255518,
+          "populate_ns": 3021724,
           "problems": []
         },
         "param_bess/10": {
@@ -604,7 +604,7 @@
         },
         "param_bess/10": {
           "status": "ok",
-          "populate_ns": 171483,
+          "populate_ns": 162743,
           "problems": []
         }
       },
@@ -635,7 +635,7 @@
         },
         "param_bess/10": {
           "status": "ok",
-          "populate_ns": 152033,
+          "populate_ns": 150853,
           "problems": []
         }
       },

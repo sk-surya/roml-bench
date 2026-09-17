@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect width="760" height="360" fill="#ffffff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Scale — BESS formulation construction</text>
+<text x="16" y="46" font-size="12" fill="#6b7280">median construction time vs batteries B (T=96); lower is better</text>
+<line x1="200" y1="326.0" x2="670" y2="326.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="330.0" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+<line x1="200" y1="259.0" x2="670" y2="259.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="263.0" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+<line x1="200" y1="192.0" x2="670" y2="192.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="196.0" font-size="11" fill="#6b7280" text-anchor="end">6</text>
+<line x1="200" y1="125.0" x2="670" y2="125.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="129.0" font-size="11" fill="#6b7280" text-anchor="end">60</text>
+<line x1="200" y1="58.0" x2="670" y2="58.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="62.0" font-size="11" fill="#6b7280" text-anchor="end">588</text>
+<text x="200.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+<text x="294.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+<text x="388.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">10</text>
+<text x="482.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">30</text>
+<text x="576.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">100</text>
+<text x="670.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">300</text>
+<polyline points="200.0,319.4 294.0,299.0 388.0,268.7 482.0,237.2 576.0,201.9 670.0,166.5" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+<circle cx="200.0" cy="319.4" r="3" fill="#2563eb"/>
+<circle cx="294.0" cy="299.0" r="3" fill="#2563eb"/>
+<circle cx="388.0" cy="268.7" r="3" fill="#2563eb"/>
+<circle cx="482.0" cy="237.2" r="3" fill="#2563eb"/>
+<circle cx="576.0" cy="201.9" r="3" fill="#2563eb"/>
+<circle cx="670.0" cy="166.5" r="3" fill="#2563eb"/>
+<polyline points="200.0,283.9 294.0,266.9 388.0,240.8 482.0,214.2 576.0,179.0 670.0,141.9" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+<circle cx="200.0" cy="283.9" r="3" fill="#1d4ed8"/>
+<circle cx="294.0" cy="266.9" r="3" fill="#1d4ed8"/>
+<circle cx="388.0" cy="240.8" r="3" fill="#1d4ed8"/>
+<circle cx="482.0" cy="214.2" r="3" fill="#1d4ed8"/>
+<circle cx="576.0" cy="179.0" r="3" fill="#1d4ed8"/>
+<circle cx="670.0" cy="141.9" r="3" fill="#1d4ed8"/>
+<polyline points="200.0,268.1 294.0,238.5 388.0,204.0 482.0,171.5 576.0,136.5 670.0,103.5" fill="none" stroke="#4b5563" stroke-width="2.2"/>
+<circle cx="200.0" cy="268.1" r="3" fill="#4b5563"/>
+<circle cx="294.0" cy="238.5" r="3" fill="#4b5563"/>
+<circle cx="388.0" cy="204.0" r="3" fill="#4b5563"/>
+<circle cx="482.0" cy="171.5" r="3" fill="#4b5563"/>
+<circle cx="576.0" cy="136.5" r="3" fill="#4b5563"/>
+<circle cx="670.0" cy="103.5" r="3" fill="#4b5563"/>
+<polyline points="200.0,246.8 294.0,215.1 388.0,191.0 482.0,141.8 576.0,120.9 670.0,74.4" fill="none" stroke="#6b7280" stroke-width="2.2"/>
+<circle cx="200.0" cy="246.8" r="3" fill="#6b7280"/>
+<circle cx="294.0" cy="215.1" r="3" fill="#6b7280"/>
+<circle cx="388.0" cy="191.0" r="3" fill="#6b7280"/>
+<circle cx="482.0" cy="141.8" r="3" fill="#6b7280"/>
+<circle cx="576.0" cy="120.9" r="3" fill="#6b7280"/>
+<circle cx="670.0" cy="74.4" r="3" fill="#6b7280"/>
+<polyline points="200.0,233.9 294.0,202.0 388.0,165.2 482.0,134.3 576.0,94.5 670.0,64.6" fill="none" stroke="#9ca3af" stroke-width="2.2"/>
+<circle cx="200.0" cy="233.9" r="3" fill="#9ca3af"/>
+<circle cx="294.0" cy="202.0" r="3" fill="#9ca3af"/>
+<circle cx="388.0" cy="165.2" r="3" fill="#9ca3af"/>
+<circle cx="482.0" cy="134.3" r="3" fill="#9ca3af"/>
+<circle cx="576.0" cy="94.5" r="3" fill="#9ca3af"/>
+<circle cx="670.0" cy="64.6" r="3" fill="#9ca3af"/>
+<rect x="200" y="32" width="12" height="12" rx="2" fill="#2563eb"/>
+<text x="217" y="43" font-size="12" fill="#1f2937">ROML Rust L1</text>
+<rect x="318" y="32" width="12" height="12" rx="2" fill="#1d4ed8"/>
+<text x="335" y="43" font-size="12" fill="#1f2937">ROML Python vectorized</text>
+<rect x="516" y="32" width="12" height="12" rx="2" fill="#4b5563"/>
+<text x="533" y="43" font-size="12" fill="#1f2937">PyOptInterface (scalar)</text>
+<rect x="722" y="32" width="12" height="12" rx="2" fill="#6b7280"/>
+<text x="739" y="43" font-size="12" fill="#1f2937">Pyomo</text>
+<rect x="784" y="32" width="12" height="12" rx="2" fill="#9ca3af"/>
+<text x="801" y="43" font-size="12" fill="#1f2937">PuLP</text>
+<text x="744" y="352" font-size="11" fill="#6b7280" text-anchor="end">ms (log scale)</text>
+</svg>
