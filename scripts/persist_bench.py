@@ -36,6 +36,13 @@ import roml as rm
 
 P_PRODUCTS = 4
 P_PERIODS = 24
+SOLVE_CALL_NOTE = (
+    "solve_call_ms times the whole framework solve call. It includes whatever "
+    "synchronization / model transfer the framework performs inside that call; "
+    "backend synchronization and optimizer execution are NOT independently "
+    "instrumented by this benchmark. end_to_end_ms = update/bind/rebuild + "
+    "solve_call."
+)
 HOLDING = 0.4
 CAPACITY = 20.0
 SEED = 20260908
@@ -92,7 +99,7 @@ def roml_direct(cycles: int) -> dict:
     cold_solve_ms = _ms(solver0)
     assert first.is_optimal
 
-    update_ms, sync_ms, warm_solve_ms, end_to_end = [], [], [], []
+    update_ms, solve_call_ms, end_to_end = [], [], []
     for k in range(1, cycles + 1):
         demand, margin = forecast(SEED, k)
         t0 = time.perf_counter()
@@ -102,17 +109,16 @@ def roml_direct(cycles: int) -> dict:
         t2 = time.perf_counter()
         assert result.is_optimal
         update_ms.append((t1 - t0) * 1000.0)
-        sync_ms.append((t2 - t1) * 1000.0)
-        warm_solve_ms.append((t2 - t0) * 1000.0)
+        solve_call_ms.append((t2 - t1) * 1000.0)
         end_to_end.append((t2 - t0) * 1000.0)
     solver.close()
     return {
         "cold_build_ms": build_ms,
         "cold_solve_ms": cold_solve_ms,
         "update_ms": summary(update_ms),
-        "sync_ms": summary(sync_ms),
-        "warm_solve_ms": summary(warm_solve_ms),
+        "solve_call_ms": summary(solve_call_ms),
         "end_to_end_ms": summary(end_to_end),
+        "measurement_notes": SOLVE_CALL_NOTE,
         "retention": {
             "model_retained": True,
             "solver_object_retained": True,
@@ -137,7 +143,7 @@ def roml_template(cycles: int) -> dict:
     cold_solve_ms = _ms(t0)
     assert first.is_optimal
 
-    same_structure_bind_ms, solve_ms, end_to_end = [], [], []
+    same_structure_bind_ms, solve_call_ms, end_to_end = [], [], []
     for k in range(1, cycles + 1):
         demand, margin = forecast(SEED, k)
         t0 = time.perf_counter()
@@ -148,7 +154,7 @@ def roml_template(cycles: int) -> dict:
         t2 = time.perf_counter()
         assert result.is_optimal
         same_structure_bind_ms.append((t1 - t0) * 1000.0)
-        solve_ms.append((t2 - t1) * 1000.0)
+        solve_call_ms.append((t2 - t1) * 1000.0)
         end_to_end.append((t2 - t0) * 1000.0)
     generation = tpl.generation
     tpl.close()
@@ -156,8 +162,9 @@ def roml_template(cycles: int) -> dict:
         "cold_build_and_first_bind_ms": build_ms,
         "cold_solve_ms": cold_solve_ms,
         "same_structure_bind_ms": summary(same_structure_bind_ms),
-        "warm_solve_ms": summary(solve_ms),
+        "solve_call_ms": summary(solve_call_ms),
         "end_to_end_ms": summary(end_to_end),
+        "measurement_notes": SOLVE_CALL_NOTE,
         "generation_after_warm_cycles": generation,
         "retention": {
             "model_retained": True,
@@ -217,7 +224,7 @@ def pyomo_rebuild(cycles: int) -> dict:
     solver.solve(model)
     cold_solve_ms = _ms(t0)
 
-    rebuild_ms, solve_ms, end_to_end = [], [], []
+    rebuild_ms, solve_call_ms, end_to_end = [], [], []
     for k in range(1, cycles + 1):
         demand, margin = forecast(SEED, k)
         t0 = time.perf_counter()
@@ -226,14 +233,15 @@ def pyomo_rebuild(cycles: int) -> dict:
         solver.solve(model)
         t2 = time.perf_counter()
         rebuild_ms.append((t1 - t0) * 1000.0)
-        solve_ms.append((t2 - t1) * 1000.0)
+        solve_call_ms.append((t2 - t1) * 1000.0)
         end_to_end.append((t2 - t0) * 1000.0)
     return {
         "cold_build_ms": build_ms,
         "cold_solve_ms": cold_solve_ms,
         "rebuild_ms": summary(rebuild_ms),
-        "solve_ms": summary(solve_ms),
+        "solve_call_ms": summary(solve_call_ms),
         "end_to_end_ms": summary(end_to_end),
+        "measurement_notes": SOLVE_CALL_NOTE,
         "retention": {
             "model_retained": False,
             "solver_object_retained": True,
@@ -280,7 +288,7 @@ def pulp_rebuild(cycles: int) -> dict:
     prob.solve(solver)
     cold_solve_ms = _ms(t0)
 
-    rebuild_ms, solve_ms, end_to_end = [], [], []
+    rebuild_ms, solve_call_ms, end_to_end = [], [], []
     for k in range(1, cycles + 1):
         demand, margin = forecast(SEED, k)
         t0 = time.perf_counter()
@@ -289,14 +297,15 @@ def pulp_rebuild(cycles: int) -> dict:
         prob.solve(solver)
         t2 = time.perf_counter()
         rebuild_ms.append((t1 - t0) * 1000.0)
-        solve_ms.append((t2 - t1) * 1000.0)
+        solve_call_ms.append((t2 - t1) * 1000.0)
         end_to_end.append((t2 - t0) * 1000.0)
     return {
         "cold_build_ms": build_ms,
         "cold_solve_ms": cold_solve_ms,
         "rebuild_ms": summary(rebuild_ms),
-        "solve_ms": summary(solve_ms),
+        "solve_call_ms": summary(solve_call_ms),
         "end_to_end_ms": summary(end_to_end),
+        "measurement_notes": SOLVE_CALL_NOTE,
         "retention": {
             "model_retained": False,
             "solver_object_retained": True,

@@ -38,9 +38,11 @@ run: **176/176 canonical groups ok, 0 errors/timeouts.**
 | PuLP | 470.41 |
 | _(raw L2 block, internal lower bound)_ | _11.84_ |
 
-Ratios: ROML Rust L1 is **23.1×** Pyomo, **9.9×** on the Python vectorized path
-(vs Pyomo), and **2.3×** the internal raw-L2 bound. Current-ROM ROML is the
-fastest compared user-facing formulation at this point.
+Ratios: ROML Rust L1 is **23.1×** Pyomo and **9.9×** on the Python vectorized
+path (vs Pyomo); on this fixture ROML Rust L1 is only **~23% over the raw-L2
+lower bound** (14.59 vs 11.84 ms — raw L2 is an internal lower bound, not a
+competitor). Current-ROM ROML is the fastest compared user-facing formulation
+at this point.
 
 ### 2. Matrix / CSR ingestion (separate panel)
 
@@ -77,17 +79,25 @@ superlinear blow-up beyond the workload's own growth).
 
 ### 5. Dynamic / persistent — 4-product × 24-period plan, 50 cycles (ms)
 
+Measured intervals per arm: `update_ms` (direct) / `same_structure_bind_ms`
+(Template) / `rebuild_ms` (competitors); then `solve_call_ms`; then
+`end_to_end_ms = primary + solve_call`. `solve_call_ms` times the whole
+framework solve call and includes whatever synchronization / model transfer the
+framework performs inside that call — **backend synchronization and optimizer
+execution are not independently instrumented by this benchmark.**
+
 | arm | mechanism | end-to-end p50 | rebuild? |
 | --- | --- | ---: | --- |
-| ROML direct `Model.update` | persistent | **0.290** | no |
-| ROML `Template.bind` (same structure) | persistent | 0.306 | no |
+| ROML direct `Model.update` | persistent update + solve | **0.290** | no |
+| ROML `Template.bind` (same structure) | persistent update + solve | 0.306 | no |
 | PuLP | rebuild + solve | 3.230 | **yes** |
 | Pyomo | rebuild + solve | 7.713 | **yes** |
 
-ROML persistent update is **26.6×** faster per cycle than Pyomo's rebuild+solve
-and **11.1×** PuLP's. Retention is disclosed per arm (`model_retained`,
-`solver_object_retained`, `backend_solver_model_retained`). Rebuild arms are
-never presented as equivalent to a persistent update.
+ROML's persistent update + solve is **26.6×** faster per cycle than Pyomo's
+rebuild + solve and **11.1×** PuLP's. This compares *persistent update + solve*
+against *rebuild + solve*; it is **not** a claim that the two mechanisms are
+equivalent. Retention is disclosed per arm (`model_retained`,
+`solver_object_retained`, `backend_solver_model_retained`).
 
 ## Plot inventory (generated, no hand values)
 

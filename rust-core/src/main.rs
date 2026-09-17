@@ -90,7 +90,9 @@ fn parse_args() -> Args {
         None => usage(),
     };
     let workload = req("--workload");
-    if workload != "sparse_rows" && workload != "bess_96" && workload != "rule_rows"
+    if workload != "sparse_rows"
+        && workload != "bess_96"
+        && workload != "rule_rows"
         && workload != "param_bess"
     {
         usage();
@@ -270,7 +272,11 @@ fn main() {
             .split(',')
             .map(|s| {
                 s.trim().parse().unwrap_or_else(|_| {
-                    fail(&args, format!("bad prices-csv value: {s}"), container_init_ns)
+                    fail(
+                        &args,
+                        format!("bad prices-csv value: {s}"),
+                        container_init_ns,
+                    )
                 })
             })
             .collect();
@@ -281,20 +287,30 @@ fn main() {
         }
     } else if args.workload == "rule_rows" {
         let caps: Vec<f64> = if let Some(v) = &args.caps_csv {
-            v.split(',').map(|s| {
-                s.trim().parse().unwrap_or_else(|_| {
-                    fail(&args, format!("bad caps-csv value: {s}"), container_init_ns)
+            v.split(',')
+                .map(|s| {
+                    s.trim().parse().unwrap_or_else(|_| {
+                        fail(&args, format!("bad caps-csv value: {s}"), container_init_ns)
+                    })
                 })
-            }).collect()
+                .collect()
         } else if let Some(path) = &args.caps_file {
             let text = std::fs::read_to_string(path).unwrap_or_else(|e| {
-                fail(&args, format!("cannot read caps-file {path}: {e}"), container_init_ns)
+                fail(
+                    &args,
+                    format!("cannot read caps-file {path}: {e}"),
+                    container_init_ns,
+                )
             });
             text.split(|c: char| c == ',' || c.is_whitespace())
                 .filter(|s| !s.is_empty())
                 .map(|s| {
                     s.parse().unwrap_or_else(|_| {
-                        fail(&args, format!("bad caps-file value: {s}"), container_init_ns)
+                        fail(
+                            &args,
+                            format!("bad caps-file value: {s}"),
+                            container_init_ns,
+                        )
                     })
                 })
                 .collect()
