@@ -442,6 +442,10 @@ def run_child(
             caps = case.payload["cap"]
             caps_path = _write_caps_file(run_id, size, caps)
             cmd += ["--caps-file", caps_path]
+        if workload == "param_bess":
+            case = make_case(workload, size, seed=seed)
+            prices = case.payload["prices"]
+            cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
     else:
         cmd = [
             sys.executable, "-m", "roml_bench.worker",
