@@ -82,15 +82,16 @@ pub fn con_spec(expr: LinExpr, name: Option<String>, upper: f64) -> ConstraintSp
 /// deterministic `row r = x[10r..10r+9]` the suite pre-generates for
 /// Python) and inserted with one [`Model::add_linear_rows_bulk`] call;
 /// the objective goes through
-/// [`Model::set_linear_objective_bulk`]. Variable creation is the
-/// ordinary scalar [`Model::add_variable`] — the core exposes no
-/// variable-bulk primitive, and none is invented here.
+/// [`Model::set_linear_objective_bulk`]. Variable creation uses the current
+/// packed block primitive [`Model::add_variable_array_block`] — one packed
+/// variable-block op; block creation materializes no per-element names
+/// (MIR-01/MIR-04). The `named` flag is retained for interface symmetry with
+/// the scalar-builder arms but has no effect on block creation.
 ///
-/// Fairness disclosure: [`Model::add_linear_rows_bulk`] takes no row
-/// names, so bulk rows are anonymous while the Python arm registers
-/// `rows[i]` element names. The naming-work delta is quantified in the
-/// parity evidence, not hidden: it is the only structural work the
-/// Python arm performs that this arm cannot express.
+/// Fairness disclosure: neither the variable block nor
+/// [`Model::add_linear_rows_bulk`] takes names, so this arm is anonymous
+/// while the Python arm registers `x[i]`/`rows[i]` element names. The
+/// naming-work delta is quantified in the parity evidence, not hidden.
 #[allow(dead_code)]
 pub fn build_sparse_bulk(
     model: &mut Model,
@@ -98,13 +99,18 @@ pub fn build_sparse_bulk(
     named: bool,
     phases: Option<&mut BTreeMap<String, u64>>,
 ) -> Result<(usize, usize, usize), ModelError> {
-    use roml::ConstraintBounds;
+    use roml::{BlockBounds, Bounds, ConstraintBounds, VarType};
+    let _ = named;
     let rows = n / 10;
     let t0 = Instant::now();
+    let x = model.add_variable_array_block(
+        [n],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, 5.0)),
+    )?;
     let mut vars = Vec::with_capacity(n);
     for i in 0..n {
-        let name = named.then(|| format!("x[{i}]"));
-        vars.push(model.add_variable(var_def(name, 0.0, 5.0))?);
+        vars.push(x.get(i).expect("block member"));
     }
     let t_vars = t0.elapsed().as_nanos() as u64;
     let t1 = Instant::now();
@@ -283,8 +289,9 @@ pub fn build_bess(
 /// Same model as [`build_bess`]: `charge`/`discharge` on `[0, P]`,
 /// `energy` on `[0, E]`, init/balance/mode groups, numeric-price
 /// `maximize` with coefficients `±dt * price` and constant `0`.
-/// Variables use the ordinary scalar [`Model::add_variable`] with the
-/// same flat `base[i]` element names Python registers. Constraint
+/// Variables use the current packed block primitive
+/// [`Model::add_variable_array_block`] (one packed op per family, no
+/// per-element names). Constraint
 /// groups are derived inside the timer (the contract derives rows
 /// during timing) and inserted with one
 /// [`Model::add_linear_rows_bulk`] call per group — mirroring the
@@ -304,24 +311,35 @@ pub fn build_bess_bulk(
     named: bool,
     phases: Option<&mut BTreeMap<String, u64>>,
 ) -> Result<(usize, usize, usize, usize), ModelError> {
-    use roml::ConstraintBounds;
+    use roml::{BlockBounds, Bounds, ConstraintBounds, VarType};
+    let _ = named;
     assert_eq!(prices.len(), BESS_T);
     let t = BESS_T;
     let t0 = Instant::now();
+    let charge_arr = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let discharge_arr = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let energy_arr = model.add_variable_array_block(
+        [b, t + 1],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_E)),
+    )?;
     let mut charge = Vec::with_capacity(b * t);
     let mut discharge = Vec::with_capacity(b * t);
     let mut energy = Vec::with_capacity(b * (t + 1));
     for i in 0..b * t {
-        let name = named.then(|| format!("charge[{i}]"));
-        charge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
-    }
-    for i in 0..b * t {
-        let name = named.then(|| format!("discharge[{i}]"));
-        discharge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
+        charge.push(charge_arr.get(i).expect("block member"));
+        discharge.push(discharge_arr.get(i).expect("block member"));
     }
     for i in 0..b * (t + 1) {
-        let name = named.then(|| format!("energy[{i}]"));
-        energy.push(model.add_variable(var_def(name, 0.0, BESS_E))?);
+        energy.push(energy_arr.get(i).expect("block member"));
     }
     let t_vars = t0.elapsed().as_nanos() as u64;
     let t1 = Instant::now();

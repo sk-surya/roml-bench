@@ -1,0 +1,45 @@
+# Benchmark-v2 adapter / API-currency audit
+
+Gate: no authoritative public run is accepted until every arm below is either
+current, relabelled, or retired. The committed adapters predate MIR-04–08, so
+continuity with v1 is **not** a reason to keep stale API usage. Historical v1
+results already provide continuity.
+
+Status legend: **CURRENT** (no change) · **UPDATED** (this tranche) ·
+**STALE → TODO** (must be fixed before measurement) · **COMPETITOR**.
+
+| Benchmark arm | Public/internal API | Current ROML API? | Formulation vs ingestion | Parameterized? | Expected lowering path | Justification / action |
+| --- | --- | --- | --- | --- | --- | --- |
+| `roml_core_bulk` | `add_variable_array_block` + `add_linear_rows_bulk` + `set_linear_objective_bulk` | **UPDATED** (vars are block-native; stale "no variable-bulk primitive" claim removed) | ingestion / **internal lower bound** | no (numeric) | packed variable-block op → bulk CSR rows → bulk objective | The raw L2 denominator for the abstraction-tax panel. Never a public competitor. Still to do: exercise parameter blocks / packed parametric objective where the fixture is parameterized. |
+| `roml_core_rust` | `add_variable` + `add_constraint` (scalar builder) | **STALE → TODO** (relabelled "legacy scalar builder, not current L1") | formulation (internal) | no | scalar journal path | Represents the *legacy* Rust builder, not current Rust modeling performance. Do not headline. |
+| `roml_core_rust_anon` | scalar builder, anonymous | **STALE → TODO** (relabelled) | formulation (internal) | no | scalar journal | Same as above; keep only as a named-vs-anon diagnostic. |
+| **`roml_core_l1` (new)** | `model.var(..).build()`, `model.param(..)`, slicing/array algebra, `add_row`, `maximize_array` | **MISSING → TODO** | formulation | depends on fixture | shared L1 `LinArray` → packed rows/objective | Current idiomatic Rust L1 construction arm. Required (item 2). |
+| `roml_python_vectorized` | sparse: `Model.vars` + `add_linear_rows`; bess: `Model.vars` + array `Model.add` + fused `rm.dot` | CURRENT (validate lowering) | **ingestion for sparse, formulation for bess** | no (numeric) | shared `LinArray`; packed parameterized objective for bess | Keep the efficient public path. Must not appear in the sparse *formulation* panel (item 5). |
+| `roml_python_naive_chain` | `var` + `total = total + v` chaining | CURRENT (disclosed pathology) | formulation (diagnostic) | no | O(n²) scalar accumulation | Disclosed diagnostic only; never a binding-overhead claim. |
+| `roml_python_csr` | `Model.vars` + `add_linear_rows` from shared CSR | CURRENT | **ingestion** (bess only) | no | packed CSR rows | Matrix/CSR ingestion; never headline vs algebraic formulation (item 5). |
+| **`roml_python_rules` (new)** | `@rm.rules` / `add_indexed_rules` | **MISSING → TODO** | formulation | no | one packed `BulkMixedRows` per component | Current Python rule API (item 3). |
+| **`roml_core_rules` (new)** | `Model::add_indexed_rules` | **MISSING → TODO** | formulation | no | one packed mixed-row commit | Current Rust rule API (item 3). |
+| `pulp_python` | `add_variable_dicts` + `lpSum` | COMPETITOR | formulation | no | — | Compare only under equivalent semantics. |
+| `pyomo_python` | `ConcreteModel` + indexed `Constraint` rules + `quicksum` | COMPETITOR | formulation (indexed rules) | no | — | Natural comparator for the rules arm. |
+| `pyoptinterface_python` | `add_m_variables` + matrix constraints | COMPETITOR | ingestion | no | — | Ingestion panel only. |
+| `pyoptinterface_scalar` | scalar `add_variable` + `ExprBuilder` rows | COMPETITOR | formulation | no | — | Formulation panel only. |
+| `jump_julia`, `ortools_mathopt_cpp` | JuMP / OR-Tools MathOpt | COMPETITOR | formulation | no | — | Kept as-is. |
+
+## Additional ROML-only measurements to add (non-competitive)
+
+| Measurement | Arms | Purpose |
+| --- | --- | --- |
+| ConcreteModel ergonomics (item 6) | raw L2 · Rust L1 · Python `Model` vectorized · Python `ConcreteModel`/labeled | Bounded (one workload, no full grid) check that high-level Python performance claims also hold on the labeled surface. Report overhead, not a ranking. |
+| Persistent update (item 7) | direct `Model` + params + `update`; `Template.bind`; rebuild path | Report convenience-layer overhead of `Template.bind` vs direct update; never silently pick the faster one. Separate build / update / sync / solve / end-to-end. |
+| Parameterized construction (item 8) | ROML block-parameter construction + packed parametric objective | The BESS `price_grid` dense-numeric arm does **not** establish parametric-construction performance; at least one ROML benchmark must exercise first-class parameter blocks. |
+
+## Rules of the audit
+
+- One chart = one coherent comparison; formulation and ingestion panels stay
+  separate, and raw L2 never appears beside competitor public APIs.
+- Every added/updated arm must pass `roml-bench validate` (structural counts +
+  cross-solver objective agreement) before its timing is published.
+- Competitor arms are compared only where their public API supports the same
+  workload semantics.
+- No arm is added or changed to improve a ROML number; stale arms are updated
+  for API currency, and any resulting performance change is reported honestly.

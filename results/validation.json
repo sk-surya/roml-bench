@@ -17,11 +17,11 @@
     "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
     "wheel_sha256": "5ab946959b74c73b2f03f162781347673c9440cb7ae34abb7565c5aef8819a52",
     "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
-    "core_binary_sha256": "418b92c28a37018ea2e7c25e69dbf18196bb22c117ca2051609ca3ac4de0d420"
+    "core_binary_sha256": "ff65c0cec99818d15fb2f0caf16395f2d01ca57cc4240c570dd849236d35518c"
   },
-  "benchmark_sha": "13bfde4d3a5d5f2173ffb72d88c1c423008b1d55",
+  "benchmark_sha": "aaf5e8aedb82ae8f817f0a0f3b34cf4928a33ba3",
   "environment": {
-    "timestamp_utc": "2026-09-17T17:55:46Z",
+    "timestamp_utc": "2026-09-17T18:08:45Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-31-generic",
@@ -29,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      0.26025390625,
-      0.18798828125,
-      0.23681640625
+      0.5703125,
+      0.859375,
+      0.68505859375
     ],
     "memory_total_bytes": 63846858752,
-    "memory_available_bytes": 53757218816,
+    "memory_available_bytes": 53818499072,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,7 +50,7 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "13bfde4d3a5d5f2173ffb72d88c1c423008b1d55",
+    "benchmark_sha": "aaf5e8aedb82ae8f817f0a0f3b34cf4928a33ba3",
     "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
@@ -210,12 +210,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27010,
+          "populate_ns": 27731,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 123142,
+          "populate_ns": 124882,
           "objective": 651.9938455874309
         }
       },
@@ -232,12 +232,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 28590,
+          "populate_ns": 28391,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 108511,
+          "populate_ns": 108742,
           "objective": 651.993845587431
         }
       },
@@ -254,12 +254,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 76661,
+          "populate_ns": 71771,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 259634,
+          "populate_ns": 275395,
           "problems": []
         }
       },
@@ -272,12 +272,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 93351,
+          "populate_ns": 69081,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 251005,
+          "populate_ns": 253165,
           "problems": []
         }
       },
@@ -290,12 +290,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 22231,
+          "populate_ns": 14721,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 58951,
+          "populate_ns": 51941,
           "problems": []
         }
       },

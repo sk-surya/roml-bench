@@ -384,12 +384,20 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
     from roml_bench.schema import validate_record
 
     binary = Path("target/release/roml-bench-core")
+    if implementation == "roml_core_bulk":
+        construction_path = (
+            "rust raw L2 (internal lower bound): add_variable_array_block + "
+            "add_linear_rows_bulk + set_linear_objective_bulk"
+        )
+    else:
+        construction_path = (
+            "rust legacy scalar builder: Model::named + scalar "
+            "add_variable/add_constraint (historical interface, not current L1)"
+            + (" (anonymous, no .named() calls)" if implementation.endswith("_anon") else "")
+        )
     entry = {
         "implementation": implementation,
-        "construction_path": (
-            "rust: Model::named + scalar add_variable/add_constraint"
-            + (" (anonymous, no .named() calls)" if implementation.endswith("_anon") else "")
-        ),
+        "construction_path": construction_path,
         "workloads": {},
         "status": "ok",
         "problems": [],
