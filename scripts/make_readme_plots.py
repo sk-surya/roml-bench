@@ -325,32 +325,66 @@ def main() -> int:
                 ),
             )
 
-    # 5. Scale curve — BESS formulation panel (the coherent comparison with a
-    # current ROML formulation arm). Sparse_rows is an ingestion panel and is
-    # deliberately not mixed with competitor algebraic formulations here.
+    # 5. Large-scale BESS construction — time and peak memory vs model size.
+    # x-axis is variables (B * (3T+1)); time is in seconds; log scale labelled.
     bs = sorted({g["size"] for g in summary["groups"] if g["workload"] == "bess_96"})
     if len(bs) >= 2:
+        x_labels = [b * (3 * 96 + 1) for b in bs]
         scale_arms = [
             ("roml_core_l1", "ROML Rust L1", BLUE),
             ("roml_python_vectorized", "ROML Python vectorized", "#1d4ed8"),
             ("pyoptinterface_scalar", "PyOptInterface (scalar)", "#4b5563"),
             ("pyomo_python", "Pyomo", GRAY),
             ("pulp_python", "PuLP", LIGHT),
+            ("ortools_mathopt_cpp", "OR-Tools MathOpt", "#0891b2"),
         ]
-        series = []
+        time_series = []
+        mem_series = []
         for impl, label, color in scale_arms:
-            vals = [groups(summary, "bess_96", s).get(impl, {}).get("median_ms") for s in bs]
-            if any(vals):
-                series.append({"label": label, "values": vals, "color": color})
-        if series:
+            ms = [
+                (groups(summary, "bess_96", b).get(impl, {}).get("median_ms"))
+                for b in bs
+            ]
+            mb = [
+                (groups(summary, "bess_96", b).get(impl, {}).get("peak_rss_median_bytes"))
+                for b in bs
+            ]
+            if any(ms):
+                time_series.append(
+                    {
+                        "label": label,
+                        "values": [v / 1000.0 if v else None for v in ms],
+                        "color": color,
+                    }
+                )
+            if any(mb):
+                mem_series.append(
+                    {
+                        "label": label,
+                        "values": [v / (1024 * 1024) if v else None for v in mb],
+                        "color": color,
+                    }
+                )
+        if time_series:
             write(
-                "scale_curve.svg",
+                "scale_time.svg",
                 line_chart(
-                    "Scale — BESS formulation construction",
-                    "median construction time vs batteries B (T=96); lower is better",
-                    bs,
-                    series,
-                    "ms",
+                    "Day-ahead battery fleet dispatch — 96 intervals",
+                    "model construction time vs variables (median, no solve); lower is better",
+                    x_labels,
+                    time_series,
+                    "s",
+                ),
+            )
+        if mem_series:
+            write(
+                "scale_memory.svg",
+                line_chart(
+                    "Day-ahead battery fleet dispatch — peak memory",
+                    "process peak RSS vs variables (median of replicates); lower is better",
+                    x_labels,
+                    mem_series,
+                    "MiB",
                 ),
             )
     return 0

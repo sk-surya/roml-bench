@@ -19,9 +19,9 @@
     "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
     "core_binary_sha256": "e739acd8c1140f7ef88df641a377935fa87c7acf5081ebe02868d5b0684f1d4e"
   },
-  "benchmark_sha": "116c1be902bd5d0d277f54e5a3c091c0c1a1a292",
+  "benchmark_sha": "d1686765d0ba077a81e2e490c47058fcb70fb301",
   "environment": {
-    "timestamp_utc": "2026-09-17T19:06:48Z",
+    "timestamp_utc": "2026-09-17T19:47:24Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-31-generic",
@@ -29,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      0.771484375,
-      0.99560546875,
-      1.0107421875
+      0.5,
+      0.34375,
+      0.37890625
     ],
     "memory_total_bytes": 63846858752,
-    "memory_available_bytes": 54146482176,
+    "memory_available_bytes": 54141870080,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,7 +50,7 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "116c1be902bd5d0d277f54e5a3c091c0c1a1a292",
+    "benchmark_sha": "d1686765d0ba077a81e2e490c47058fcb70fb301",
     "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
@@ -390,12 +390,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27161,
+          "populate_ns": 25510,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 125043,
+          "populate_ns": 131613,
           "objective": 651.9938455874309
         }
       },
@@ -412,12 +412,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27180,
+          "populate_ns": 26951,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 108552,
+          "populate_ns": 106522,
           "objective": 651.993845587431
         }
       },
@@ -434,12 +434,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 75252,
+          "populate_ns": 80771,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 271525,
+          "populate_ns": 275115,
           "problems": []
         },
         "rule_rows/1000": {
@@ -464,12 +464,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 69721,
+          "populate_ns": 70701,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 244344,
+          "populate_ns": 227324,
           "problems": []
         },
         "rule_rows/1000": {
@@ -494,12 +494,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 16390,
+          "populate_ns": 15831,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 53221,
+          "populate_ns": 52271,
           "problems": []
         },
         "rule_rows/1000": {
@@ -530,7 +530,7 @@
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 83321,
+          "populate_ns": 76321,
           "problems": []
         },
         "rule_rows/1000": {
@@ -567,7 +567,7 @@
         },
         "rule_rows/1000": {
           "status": "ok",
-          "populate_ns": 3021724,
+          "populate_ns": 3059456,
           "problems": []
         },
         "param_bess/10": {
@@ -604,7 +604,7 @@
         },
         "param_bess/10": {
           "status": "ok",
-          "populate_ns": 162743,
+          "populate_ns": 154453,
           "problems": []
         }
       },
@@ -635,7 +635,7 @@
         },
         "param_bess/10": {
           "status": "ok",
-          "populate_ns": 150853,
+          "populate_ns": 144502,
           "problems": []
         }
       },

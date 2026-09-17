@@ -90,9 +90,22 @@ PROFILES = {
         "pilot_cap_s": 60,
         "variants": True,
     },
+    # Large-scale BESS construction (no solving): fewer replicates, longer
+    # wall timeout so million-variable builds are captured, not censored.
+    "scale": {
+        "replicates": 5,
+        "wall_timeout_s": 900,
+        "rss_ceiling_bytes": 24 * 1024**3,
+        "pilot_cap_s": None,
+        "variants": False,
+    },
 }
 
 WORKLOADS = ("sparse_rows", "bess_96", "rule_rows", "param_bess")
+
+
+def workloads_for(profile: str) -> tuple[str, ...]:
+    return ("bess_96",) if profile == "scale" else WORKLOADS
 
 RUST_BINARY = Path("target/release/roml-bench-core")
 JULIA_SCRIPT = Path("julia/jump_bench.jl")
@@ -627,7 +640,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
     seed = CANONICAL_SEED
     plan = [
         (workload, size)
-        for workload in WORKLOADS
+        for workload in workloads_for(profile)
         for size in sizes_for(workload, profile)
     ]
     run_meta = {

@@ -44,6 +44,30 @@ lower bound** (14.59 vs 11.84 ms — raw L2 is an internal lower bound, not a
 competitor). Current-ROM ROML is the fastest compared user-facing formulation
 at this point.
 
+### 2b. Large-scale BESS construction (scale profile, no solve)
+
+Day-ahead battery fleet dispatch, `T=96`, `B = 10 … 10,000`
+(`B=10,000` → **2,890,000 variables, 1,930,000 constraints**).
+5 replicates; wall timeout 900 s, RSS ceiling 24 GiB — every arm completed
+(no timeouts, no OOM). Median construction seconds (peak RSS MiB in
+parentheses):
+
+| B (vars) | ROML Rust L1 | ROML Python | OR-Tools | POI scalar | Pyomo | PuLP |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 (2,890) | 0.000 | 0.001 | 0.001 | 0.004 | 0.006 | 0.015 |
+| 100 (28,900) | 0.004 | 0.010 | 0.010 | 0.041 | 0.068 | 0.168 |
+| 300 (86,700) | 0.015 | 0.033 | 0.033 | 0.125 | 0.335 | 0.471 |
+| 1,000 (289k) | 0.049 | 0.116 | 0.133 | 0.444 | 1.369 | 1.680 |
+| 3,000 (867k) | 0.172 | 0.427 | 0.485 | 1.438 | 4.424 | 5.493 |
+| 10,000 (2.89M) | **0.617** | **1.641** | 1.896 | 5.072 | **15.789** | **18.852** |
+
+At 2.89M variables ROML Rust L1 is **25.6×** Pyomo and **9.6×** the Python
+vectorized path vs Pyomo; scaling is near-linear across the grid.
+
+Peak RSS at B=10,000 (MiB): ROML Rust L1 **1357**, POI scalar 1395, OR-Tools
+1479, ROML Python 1822, Pyomo 2550, PuLP 3191. ROML's packed representation
+uses the least memory, and the Python path ~1.4× less than Pyomo.
+
 ### 2. Matrix / CSR ingestion (separate panel)
 
 `sparse_rows` N=1M: ROML Python CSR (`add_linear_rows`) **128.70 ms**; ROML
@@ -107,7 +131,8 @@ equivalent. Retention is disclosed per arm (`model_retained`,
 | `abstraction_tax.svg` | run `summary.json` (param_bess/300) |
 | `rules_scaling.svg` | run `summary.json` (rule_rows 1k/10k/100k) |
 | `persistent.svg` | `results/v2/persistent.json` |
-| `scale_curve.svg` | run `summary.json` (bess_96 1..300) |
+| `scale_time.svg` | scale run `summary.json` (bess_96 10..10,000; seconds, log) |
+| `scale_memory.svg` | scale run `summary.json` (bess_96; peak RSS MiB, log) |
 
 ## Superseded v1 claims
 
@@ -134,6 +159,7 @@ equivalent. Retention is disclosed per arm (`model_retained`,
 
 - Run: `results/runs/20260917T190702Z-ai90-116c1be9/` (raw.jsonl, run.json,
   summary.json, summary.csv).
+- Scale run: `results/runs/20260917T194738Z-ai90-d1686765/` (`--profile scale`).
 - Persistence: `results/v2/persistent.json`.
 - Plots: `results/v2/plots/*.svg`.
 - Adapter audit: `.planning/ADAPTER-AUDIT.md`.

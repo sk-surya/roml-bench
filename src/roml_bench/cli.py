@@ -85,7 +85,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("validate", help="run the structural/equivalence validation gate")
     run_parser = sub.add_parser("run", help="run a benchmark profile")
     run_parser.add_argument(
-        "--profile", choices=["quick", "standard", "forensic"], required=True
+        "--profile", choices=["quick", "standard", "forensic", "scale"], required=True
     )
     run_parser.add_argument("--run-id", default=None)
     run_parser.add_argument(

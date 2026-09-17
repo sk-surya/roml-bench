@@ -26,6 +26,9 @@ BESS_E0 = 2.0
 
 BESS_STANDARD_SIZES = (1, 3, 10, 30, 100, 300)
 BESS_QUICK_SIZES = (1, 10)
+# Large-scale BESS fleet dispatch grid (day-ahead battery fleet, 96 intervals):
+# B=10k -> 2.89M variables / 1.93M constraints.
+BESS_SCALE_SIZES = (10, 30, 100, 300, 1_000, 3_000, 10_000)
 
 # Parameterized construction fixture (ROML-only): B batteries x T periods,
 # one price parameter per (battery, period) driving the packed objective.
@@ -141,8 +144,12 @@ def make_case(workload: str, size: int, seed: int = CANONICAL_SEED) -> WorkloadC
 
 
 def sizes_for(workload: str, profile: str) -> tuple[int, ...]:
-    if profile not in ("quick", "standard", "forensic"):
+    if profile not in ("quick", "standard", "forensic", "scale"):
         raise ValueError(f"unknown profile: {profile}")
+    if profile == "scale":
+        if workload != "bess_96":
+            raise ValueError(f"scale profile covers bess_96 only, not {workload}")
+        return BESS_SCALE_SIZES
     standard = profile in ("standard", "forensic")
     if workload == "sparse_rows":
         grid = SPARSE_STANDARD_SIZES if standard else SPARSE_QUICK_SIZES
