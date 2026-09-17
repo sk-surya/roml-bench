@@ -155,6 +155,28 @@ equivalent. Retention is disclosed per arm (`model_retained`,
 - `roml_python_naive_chain` is a disclosed pathology arm (O(n²)), not a
   binding-overhead claim.
 
+## Provenance classification (`116c1be9..HEAD`, `d1686765..HEAD`)
+
+The standard authoritative run was measured at benchmark SHA `116c1be9`. The
+scale run was launched with the scale-profile additions in the working tree, so
+its executed code equals commit `22bf8c1` (the commit that contains those
+additions); its `run.json` records the git HEAD at launch (`d1686765`).
+
+Post-measurement changes, classified:
+
+| change | classification | affects measured semantics? |
+| --- | --- | --- |
+| `rust-core/src/main.rs` (rustfmt) | formatting only — identical after stripping whitespace and optional trailing commas | no |
+| `scripts/persist_bench.py` (field rename) | harness schema only; artifact reprocessed from unchanged samples | no |
+| `src/roml_bench/site/templates/data.html.j2` | site presentation guard for missing phase keys | no |
+| research/scripts lint fixes | lint only | no |
+| `workloads.py` / `orchestrator.py` / `cli.py` (scale profile) | additive `scale` profile; for `profile != "scale"` `workloads_for` returns the same workloads and `sizes_for` is unchanged | no (standard run unaffected) |
+| evidence/results/plots/report | evidence | no |
+
+No adapter, timing boundary, or benchmark input used by the standard run
+changed after `116c1be9`; no rerun was required. The scale run is new evidence
+measured with the scale-profile code.
+
 ## Artifacts
 
 - Run: `results/runs/20260917T190702Z-ai90-116c1be9/` (raw.jsonl, run.json,
