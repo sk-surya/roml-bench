@@ -9,7 +9,7 @@ name = "store-proto"
 path = "src/main.rs"
 
 [dependencies]
-roml = { git = "https://github.com/sk-surya/roml", rev = "c590692ace5446cc20c7eb91cb8fa0d594a054b0" }
+roml = { git = "https://github.com/sk-surya/roml", rev = "8be9d35a76900f999e44e153b22a3ed0e0366bb5" }
 
 [profile.release]
 opt-level = 3
