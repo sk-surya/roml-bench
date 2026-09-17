@@ -43,11 +43,27 @@ and fingerprints for the two core arms; both match exactly
 (`ordinal=8311104305927858589`). Item 6's primary number is
 `roml_python_concrete median / roml_python_param median`.
 
-## Additional ROML-only measurements to add (non-competitive)
+## Persistent-update family (item 7)
 
-| Measurement | Arms | Purpose |
+`scripts/persist_bench.py` — one fixed-structure production/inventory planning
+model (4 products × 24 periods; `demand`/`margin` parameters), separate cold
+(construct + session + initial sync + initial solve) and warm (update + sync +
+solve + end-to-end) timings, cycles = N.
+
+| Arm | Mechanism | Retention disclosed |
 | --- | --- | --- |
-| Persistent update (item 7) | direct `Model` + params + `update`; `Template.bind`; rebuild path | Report convenience-layer overhead of `Template.bind` vs direct update; never silently pick the faster one. Separate build / update / sync / solve / end-to-end. |
+| `roml_direct` | `Model.update(...)` + `solver.solve(model)` | model + solver + backend model retained; revisioned delta; no rebuild |
+| `roml_template` | `Template.bind(shapes=same, data=new)` + `template.solve()` | model + solver + backend model retained; one atomic `Model.update`; first structural bind reported separately |
+| `pyomo_rebuild` | rebuild `ConcreteModel` + appsi_highs solve | model not retained; **rebuild + solve** |
+| `pulp_rebuild` | rebuild `LpProblem` + CBC solve | model not retained; **rebuild + solve** |
+
+Smoke (8 cycles): end-to-end p50 — `roml_direct` 0.48 ms, `roml_template`
+0.47 ms, `pulp_rebuild` 3.24 ms, `pyomo_rebuild` 7.83 ms. Rebuild arms are
+never presented as equivalent to a persistent update.
+
+## Additional ROML-only measurements
+
+None remaining; all audit arms are CURRENT / LEGACY DIAGNOSTIC / COMPETITOR.
 
 ## Rules of the audit
 
