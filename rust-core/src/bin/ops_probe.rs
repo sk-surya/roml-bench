@@ -11,6 +11,7 @@
 //! come from `roml-bench-core` built without this shim. Records emitted here
 //! carry `status: "ok-counting"` and must never enter benchmark runs.
 
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 
@@ -21,7 +22,7 @@ use std::alloc::{GlobalAlloc, Layout, System};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
 
-const ROML_SHA: &str = "c590692ace5446cc20c7eb91cb8fa0d594a054b0";
+const ROML_SHA: &str = "f1dc3e6df181b638623f59726bd03c15729d568e";
 
 static ALLOC_CALLS: AtomicU64 = AtomicU64::new(0);
 static ALLOC_BYTES: AtomicU64 = AtomicU64::new(0);

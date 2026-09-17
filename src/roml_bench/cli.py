@@ -41,7 +41,14 @@ def _cmd_run(args: argparse.Namespace) -> int:
     from roml_bench.orchestrator import run_profile
 
     try:
-        run_dir = run_profile(args.profile, run_id=args.run_id, jobs=args.jobs)
+        arms = tuple(a.strip() for a in args.arms.split(",")) if args.arms else None
+        run_dir = run_profile(
+            args.profile,
+            run_id=args.run_id,
+            jobs=args.jobs,
+            size=args.size,
+            arms=arms,
+        )
     except RuntimeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
@@ -85,9 +92,20 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("validate", help="run the structural/equivalence validation gate")
     run_parser = sub.add_parser("run", help="run a benchmark profile")
     run_parser.add_argument(
-        "--profile", choices=["quick", "standard", "forensic"], required=True
+        "--profile", choices=["quick", "standard", "forensic", "scale"], required=True
     )
     run_parser.add_argument("--run-id", default=None)
+    run_parser.add_argument(
+        "--size",
+        type=int,
+        default=None,
+        help="single BESS size override (--profile scale only)",
+    )
+    run_parser.add_argument(
+        "--arms",
+        default=None,
+        help="comma-separated implementation ids to measure (default: all)",
+    )
     run_parser.add_argument(
         "-j", "--jobs", type=_jobs_type, default=1,
         help=(

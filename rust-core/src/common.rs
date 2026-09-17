@@ -16,6 +16,9 @@ pub const BESS_P: f64 = 2.0;
 pub const BESS_E: f64 = 4.0;
 pub const BESS_E0: f64 = 2.0;
 
+/// Variables per row in the indexed-rule workload.
+pub const RULE_J: usize = 10;
+
 /// Current VmRSS and process peak (VmHWM) in bytes from /proc/self/status.
 pub fn rss_bytes() -> (u64, u64) {
     let mut rss = 0u64;
@@ -82,15 +85,16 @@ pub fn con_spec(expr: LinExpr, name: Option<String>, upper: f64) -> ConstraintSp
 /// deterministic `row r = x[10r..10r+9]` the suite pre-generates for
 /// Python) and inserted with one [`Model::add_linear_rows_bulk`] call;
 /// the objective goes through
-/// [`Model::set_linear_objective_bulk`]. Variable creation is the
-/// ordinary scalar [`Model::add_variable`] — the core exposes no
-/// variable-bulk primitive, and none is invented here.
+/// [`Model::set_linear_objective_bulk`]. Variable creation uses the current
+/// packed block primitive [`Model::add_variable_array_block`] — one packed
+/// variable-block op; block creation materializes no per-element names
+/// (MIR-01/MIR-04). The `named` flag is retained for interface symmetry with
+/// the scalar-builder arms but has no effect on block creation.
 ///
-/// Fairness disclosure: [`Model::add_linear_rows_bulk`] takes no row
-/// names, so bulk rows are anonymous while the Python arm registers
-/// `rows[i]` element names. The naming-work delta is quantified in the
-/// parity evidence, not hidden: it is the only structural work the
-/// Python arm performs that this arm cannot express.
+/// Fairness disclosure: neither the variable block nor
+/// [`Model::add_linear_rows_bulk`] takes names, so this arm is anonymous
+/// while the Python arm registers `x[i]`/`rows[i]` element names. The
+/// naming-work delta is quantified in the parity evidence, not hidden.
 #[allow(dead_code)]
 pub fn build_sparse_bulk(
     model: &mut Model,
@@ -98,13 +102,18 @@ pub fn build_sparse_bulk(
     named: bool,
     phases: Option<&mut BTreeMap<String, u64>>,
 ) -> Result<(usize, usize, usize), ModelError> {
-    use roml::ConstraintBounds;
+    use roml::{BlockBounds, Bounds, ConstraintBounds, VarType};
+    let _ = named;
     let rows = n / 10;
     let t0 = Instant::now();
+    let x = model.add_variable_array_block(
+        [n],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, 5.0)),
+    )?;
     let mut vars = Vec::with_capacity(n);
     for i in 0..n {
-        let name = named.then(|| format!("x[{i}]"));
-        vars.push(model.add_variable(var_def(name, 0.0, 5.0))?);
+        vars.push(x.get(i).expect("block member"));
     }
     let t_vars = t0.elapsed().as_nanos() as u64;
     let t1 = Instant::now();
@@ -283,8 +292,9 @@ pub fn build_bess(
 /// Same model as [`build_bess`]: `charge`/`discharge` on `[0, P]`,
 /// `energy` on `[0, E]`, init/balance/mode groups, numeric-price
 /// `maximize` with coefficients `±dt * price` and constant `0`.
-/// Variables use the ordinary scalar [`Model::add_variable`] with the
-/// same flat `base[i]` element names Python registers. Constraint
+/// Variables use the current packed block primitive
+/// [`Model::add_variable_array_block`] (one packed op per family, no
+/// per-element names). Constraint
 /// groups are derived inside the timer (the contract derives rows
 /// during timing) and inserted with one
 /// [`Model::add_linear_rows_bulk`] call per group — mirroring the
@@ -304,24 +314,35 @@ pub fn build_bess_bulk(
     named: bool,
     phases: Option<&mut BTreeMap<String, u64>>,
 ) -> Result<(usize, usize, usize, usize), ModelError> {
-    use roml::ConstraintBounds;
+    use roml::{BlockBounds, Bounds, ConstraintBounds, VarType};
+    let _ = named;
     assert_eq!(prices.len(), BESS_T);
     let t = BESS_T;
     let t0 = Instant::now();
+    let charge_arr = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let discharge_arr = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let energy_arr = model.add_variable_array_block(
+        [b, t + 1],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_E)),
+    )?;
     let mut charge = Vec::with_capacity(b * t);
     let mut discharge = Vec::with_capacity(b * t);
     let mut energy = Vec::with_capacity(b * (t + 1));
     for i in 0..b * t {
-        let name = named.then(|| format!("charge[{i}]"));
-        charge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
-    }
-    for i in 0..b * t {
-        let name = named.then(|| format!("discharge[{i}]"));
-        discharge.push(model.add_variable(var_def(name, 0.0, BESS_P))?);
+        charge.push(charge_arr.get(i).expect("block member"));
+        discharge.push(discharge_arr.get(i).expect("block member"));
     }
     for i in 0..b * (t + 1) {
-        let name = named.then(|| format!("energy[{i}]"));
-        energy.push(model.add_variable(var_def(name, 0.0, BESS_E))?);
+        energy.push(energy_arr.get(i).expect("block member"));
     }
     let t_vars = t0.elapsed().as_nanos() as u64;
     let t1 = Instant::now();
@@ -424,6 +445,246 @@ pub fn build_bess_bulk(
         b * (1 + 6 * t),
         b * (2 * t),
     ))
+}
+
+/// BESS workload through the **current idiomatic Rust Level-1 array API**
+/// (`model.var(..).bounds(..).build()`, `model.param(..)`, slicing / array
+/// algebra, `add_row`, `maximize_array`).
+///
+/// Builds the full canonical benchmark model — not the reduced `l1_bess`
+/// example: `energy` has `t + 1` periods, the init row `energy[:,0] == e0`
+/// and the `charge + discharge <= P` mode rows are present, and the objective
+/// is the packed `dt * sum(price * (discharge - charge))`.
+///
+/// Prices are the canonical shared vector; ROML expresses time-series data as
+/// a first-class parameter (its idiomatic surface), which is why this arm is
+/// the Rust representative for the parameterized-construction benchmark too.
+#[allow(dead_code)]
+pub fn build_bess_l1(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    _named: bool,
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.var("charge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let discharge = model.var("discharge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let energy = model
+        .var("energy", [b, t + 1])
+        .bounds(0.0, BESS_E)
+        .build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    // energy[:, 0] == e0
+    model.add_row(energy.slice(1, 0, 1)?.expr()?.eq(BESS_E0))?;
+    // energy[:, 1:] == energy[:, :-1] + dt * (eta * charge - discharge / eta)
+    let next = energy.slice(1, 1, t)?;
+    let prev = energy.slice(1, 0, t)?;
+    let rhs = prev + BESS_DT * (BESS_ETA * charge.clone() - discharge.clone() / BESS_ETA);
+    model.add_row((next - rhs).eq(0.0))?;
+    // charge + discharge <= P
+    model.add_row((charge.clone() + discharge.clone()).le(BESS_P))?;
+    let t_cons = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    let price = model.param("price", [b, t], &price_grid)?;
+    let objective = price
+        .try_mul(&(discharge.clone() - charge.clone()))?
+        .expect("conservative IR covers price * (discharge - charge)")
+        * BESS_DT;
+    model.maximize_array(&objective)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((
+        b * (3 * t + 1),
+        b * (2 * t + 1),
+        b * (1 + 6 * t),
+        b * (2 * t),
+    ))
+}
+
+/// Indexed-rule workload through the current Rust `add_indexed_rules` API:
+/// `n` rows, `j` unit coefficients per row, `sum_j x[i,j] <= cap[i]`,
+/// `minimize sum x`. One packed mixed-row commit.
+#[allow(dead_code)]
+pub fn build_rules(
+    model: &mut Model,
+    n: usize,
+    j: usize,
+    caps: &[f64],
+    _named: bool,
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(caps.len(), n);
+    let t0 = Instant::now();
+    let x = model.var("x", [n, j]).bounds(0.0, 5.0).build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    model.add_indexed_rules(0..n, |rules, i| {
+        rules.add_le(x.row(i)?, caps[i])?;
+        Ok(())
+    })?;
+    let t_cons = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    model.minimize_array(&x.expr()?)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((n * j, n, n * j, n * j))
+}
+
+/// Parameterized construction fixture — raw L2 path: block variables, a
+/// first-class parameter block, and the packed parameter-dependent objective
+/// `maximize sum(price * (discharge - charge))` through
+/// `set_linear_objective_param_bulk`. Internal lower bound for item 8.
+#[allow(dead_code)]
+pub fn build_param_bess_bulk(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    use roml::{BlockBounds, Bounds, VarType};
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let discharge = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    let price = model.add_parameter_array_block([b, t], &price_grid)?;
+    let t_params = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    use roml::bulk::{ParamDepBlockWitness, ParamDepLayout, StridedMap};
+    let n = b * t;
+    // Canonical order is by variable: charge (created first, scale -1) then
+    // discharge (scale +1), each reading the matching price parameter.
+    let mut vars = Vec::with_capacity(2 * n);
+    let mut params = Vec::with_capacity(2 * n);
+    let mut scales = Vec::with_capacity(2 * n);
+    for i in 0..n {
+        vars.push(charge.get(i).expect("member"));
+        params.push(price.get(i).expect("member"));
+        scales.push(-1.0);
+    }
+    for i in 0..n {
+        vars.push(discharge.get(i).expect("member"));
+        params.push(price.get(i).expect("member"));
+        scales.push(1.0);
+    }
+    let span = *price.view().view().span();
+    let layout = ParamDepLayout {
+        blocks: vec![
+            ParamDepBlockWitness {
+                params: span,
+                param_map: StridedMap::contiguous(n),
+                cell_offset: 0,
+                cell_map: StridedMap::contiguous(n),
+                scale: -1.0,
+                row: None,
+            },
+            ParamDepBlockWitness {
+                params: span,
+                param_map: StridedMap::contiguous(n),
+                cell_offset: n as u32,
+                cell_map: StridedMap::contiguous(n),
+                scale: 1.0,
+                row: None,
+            },
+        ],
+    };
+    model.set_linear_objective_param_bulk_with_layout(
+        roml::Sense::Maximize,
+        &vars,
+        &params,
+        &scales,
+        0.0,
+        &layout,
+    )?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("parameters".to_string(), t_params);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((2 * b * t, 0, 0, 2 * b * t))
+}
+
+/// Parameterized construction fixture — current Rust L1 array path:
+/// `var(..).build()`, `param(..)`, and the packed `maximize_array` objective
+/// `sum(price * (discharge - charge))`.
+#[allow(dead_code)]
+pub fn build_param_bess_l1(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.var("charge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let discharge = model.var("discharge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    let price = model.param("price", [b, t], &price_grid)?;
+    let t_params = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    let objective = price
+        .try_mul(&(discharge.clone() - charge.clone()))?
+        .expect("conservative IR covers price * (discharge - charge)");
+    model.maximize_array(&objective)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("parameters".to_string(), t_params);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((2 * b * t, 0, 0, 2 * b * t))
 }
 
 #[cfg(test)]

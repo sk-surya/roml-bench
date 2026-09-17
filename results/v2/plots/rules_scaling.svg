@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="432" viewBox="0 0 760 432" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect width="760" height="432" fill="#ffffff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Indexed-rule construction — N rows x 10 variables</text>
+<text x="16" y="46" font-size="12" fill="#6b7280">median construction time vs rows (sum_j x[i,j] &lt;= cap[i]); lower is better</text>
+<line x1="200" y1="293.1" x2="670" y2="293.1" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="297.1" font-size="11" fill="#6b7280" text-anchor="end">10</text>
+<line x1="200" y1="188.1" x2="670" y2="188.1" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="192.1" font-size="11" fill="#6b7280" text-anchor="end">100</text>
+<line x1="200" y1="83.0" x2="670" y2="83.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="87.0" font-size="11" fill="#6b7280" text-anchor="end">1000</text>
+<text x="200.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">1000</text>
+<text x="435.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">10000</text>
+<text x="670.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">100000</text>
+<polyline points="200.0,347.8 435.0,243.0 670.0,124.0" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+<circle cx="200.0" cy="347.8" r="3" fill="#2563eb"/>
+<circle cx="435.0" cy="243.0" r="3" fill="#2563eb"/>
+<circle cx="670.0" cy="124.0" r="3" fill="#2563eb"/>
+<polyline points="200.0,319.3 435.0,215.0 670.0,108.4" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+<circle cx="200.0" cy="319.3" r="3" fill="#1d4ed8"/>
+<circle cx="435.0" cy="215.0" r="3" fill="#1d4ed8"/>
+<circle cx="670.0" cy="108.4" r="3" fill="#1d4ed8"/>
+<polyline points="200.0,303.7 435.0,191.1 670.0,68.2" fill="none" stroke="#6b7280" stroke-width="2.2"/>
+<circle cx="200.0" cy="303.7" r="3" fill="#6b7280"/>
+<circle cx="435.0" cy="191.1" r="3" fill="#6b7280"/>
+<circle cx="670.0" cy="68.2" r="3" fill="#6b7280"/>
+<rect x="32" y="386" width="12" height="12" rx="2" fill="#2563eb"/>
+<text x="49" y="396" font-size="12" fill="#1f2937">ROML Rust add_indexed_rules</text>
+<rect x="270" y="386" width="12" height="12" rx="2" fill="#1d4ed8"/>
+<text x="287" y="396" font-size="12" fill="#1f2937">ROML Python rules API</text>
+<rect x="460" y="386" width="12" height="12" rx="2" fill="#6b7280"/>
+<text x="477" y="396" font-size="12" fill="#1f2937">Pyomo indexed rule</text>
+<text x="744" y="424" font-size="11" fill="#6b7280" text-anchor="end">ms (log scale)</text>
+</svg>

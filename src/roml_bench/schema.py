@@ -4,7 +4,7 @@ from __future__ import annotations
 
 SCHEMA_VERSION = 1
 
-ROML_SHA = "c590692ace5446cc20c7eb91cb8fa0d594a054b0"
+ROML_SHA = "f1dc3e6df181b638623f59726bd03c15729d568e"
 
 IMPLEMENTATIONS = (
     "roml_python_vectorized",
@@ -17,6 +17,13 @@ IMPLEMENTATIONS = (
     "roml_core_rust",
     "roml_core_rust_anon",
     "roml_core_bulk",
+    "roml_core_l1",
+    "roml_core_rules",
+    "roml_core_bulk_param",
+    "roml_core_l1_param",
+    "roml_python_rules",
+    "roml_python_param",
+    "roml_python_concrete",
     "jump_julia",
     "ortools_mathopt_cpp",
 )
@@ -32,7 +39,7 @@ KNOWN_IMPLEMENTATIONS = IMPLEMENTATIONS + LEGACY_IMPLEMENTATIONS
 
 VARIANTS = ("canonical", "shuffled", "duplicated")
 
-WORKLOADS = ("sparse_rows", "bess_96")
+WORKLOADS = ("sparse_rows", "bess_96", "rule_rows", "param_bess")
 
 STATUSES = ("ok", "timeout", "memory_exceeded", "error")
 

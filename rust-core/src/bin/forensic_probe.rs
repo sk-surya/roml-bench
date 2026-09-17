@@ -21,6 +21,7 @@
 //! counts. Prices arrive via `--prices-csv` (suite-canonical) so the
 //! reported cells cross-check the Python packed-parametric probe.
 
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 
@@ -32,7 +33,7 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 use std::time::Instant;
 
-const ROML_SHA: &str = "c590692ace5446cc20c7eb91cb8fa0d594a054b0";
+const ROML_SHA: &str = "f1dc3e6df181b638623f59726bd03c15729d568e";
 
 #[derive(Serialize)]
 struct ProbeRecord {

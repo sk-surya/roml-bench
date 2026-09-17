@@ -303,3 +303,160 @@ def _csr_bess_cons(model: rm.Model, case: WorkloadCase, x) -> None:
 def _csr_bess_obj(model: rm.Model, case: WorkloadCase, x) -> None:
     csr = case.payload["csr"]
     model.maximize(rm.dot(csr.obj_coeff, x))
+
+
+class RomlPythonRulesAdapter:
+    implementation_id = "roml_python_rules"
+    construction_path = (
+        "indexed rules: Model.vars + add_indexed_rules over x[i, :] "
+        "(one packed mixed-row commit)"
+    )
+    supported_workloads = ("rule_rows",)
+
+    def warmup(self) -> None:
+        m = rm.Model("warmup")
+        x = m.vars("x", (4, 3), lb=0.0, ub=5.0)
+        m.add_indexed_rules(range(4), lambda rows, i: rows.le(x[i, :], 2.0), name="r")
+        m.minimize(rm.sum(x))
+
+    def new_model(self, case: WorkloadCase) -> rm.Model:
+        return rm.Model(case.workload)
+
+    def populate(self, model: rm.Model, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case, self.implementation_id)
+
+    def populate_phases(self, model: rm.Model, case: WorkloadCase):
+        p = case.payload
+        n, j, caps = p["n"], p["j"], p["cap"]
+        stage: dict = {}
+
+        def variables() -> None:
+            stage["x"] = model.vars("x", (n, j), lb=0.0, ub=5.0)
+
+        def constraints() -> None:
+            x = stage["x"]
+            model.add_indexed_rules(
+                range(n),
+                lambda rows, i: rows.le(x[i, :], float(caps[i])),
+                name="rule",
+            )
+
+        def objective() -> None:
+            model.minimize(rm.sum(stage["x"]))
+
+        return [
+            ("variables", variables),
+            ("constraints", constraints),
+            ("objective", objective),
+        ]
+
+    def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
+        return _report(artifact)
+
+
+class RomlPythonParamAdapter:
+    implementation_id = "roml_python_param"
+    construction_path = (
+        "Python Model parameter arrays + packed rm.sum objective "
+        "(parameterized construction; no dense numeric objective)"
+    )
+    supported_workloads = ("param_bess",)
+
+    def warmup(self) -> None:
+        m = rm.Model("warmup")
+        p = m.params("p", np.ones((2, 3)))
+        x = m.vars("x", (2, 3), lb=0.0, ub=1.0)
+        m.maximize(rm.sum(p * x))
+
+    def new_model(self, case: WorkloadCase) -> rm.Model:
+        return rm.Model(case.workload)
+
+    def populate(self, model: rm.Model, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case, self.implementation_id)
+
+    def populate_phases(self, model: rm.Model, case: WorkloadCase):
+        p = case.payload
+        b, t, grid = p["b"], p["t"], p["price_grid"]
+        stage: dict = {}
+
+        def variables() -> None:
+            stage["charge"] = model.vars("charge", (b, t), lb=0.0, ub=2.0)
+            stage["discharge"] = model.vars("discharge", (b, t), lb=0.0, ub=2.0)
+
+        def parameters() -> None:
+            stage["price"] = model.params("price", grid)
+
+        def objective() -> None:
+            model.maximize(
+                rm.sum(stage["price"] * (stage["discharge"] - stage["charge"]))
+            )
+
+        return [
+            ("variables", variables),
+            ("parameters", parameters),
+            ("objective", objective),
+        ]
+
+    def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
+        return _report(artifact)
+
+
+class RomlPythonConcreteAdapter:
+    implementation_id = "roml_python_concrete"
+    construction_path = (
+        "ConcreteModel + RangeSet axes + labeled vars/params + array algebra "
+        "(labeled ergonomics surface)"
+    )
+    supported_workloads = ("param_bess",)
+
+    def warmup(self) -> None:
+        m = rm.ConcreteModel("warmup")
+        i = m.set("i", rm.RangeSet(2))
+        j = m.set("j", rm.RangeSet(3))
+        p = m.params("p", np.ones((2, 3)), axes=(i, j))
+        x = m.vars("x", (i, j), lb=0.0, ub=1.0)
+        m.maximize(rm.sum(p * x))
+
+    def new_model(self, case: WorkloadCase):
+        return rm.ConcreteModel(case.workload)
+
+    def populate(self, model, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case, self.implementation_id)
+
+    def populate_phases(self, model, case: WorkloadCase):
+        p = case.payload
+        b, t, grid = p["b"], p["t"], p["price_grid"]
+        batteries = model.set("batteries", rm.RangeSet(b))
+        periods = model.set("periods", rm.RangeSet(t))
+        stage: dict = {}
+
+        def variables() -> None:
+            stage["charge"] = model.vars("charge", (batteries, periods), lb=0.0, ub=2.0)
+            stage["discharge"] = model.vars(
+                "discharge", (batteries, periods), lb=0.0, ub=2.0
+            )
+
+        def parameters() -> None:
+            stage["price"] = model.params(
+                "price", grid, axes=(batteries, periods)
+            )
+
+        def objective() -> None:
+            model.maximize(
+                rm.sum(stage["price"] * (stage["discharge"] - stage["charge"]))
+            )
+
+        return [
+            ("variables", variables),
+            ("parameters", parameters),
+            ("objective", objective),
+        ]
+
+    def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
+        return _report(artifact)

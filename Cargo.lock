@@ -41,7 +41,7 @@ dependencies = [
 [[package]]
 name = "roml"
 version = "0.1.0"
-source = "git+https://github.com/sk-surya/roml?rev=c590692ace5446cc20c7eb91cb8fa0d594a054b0#c590692ace5446cc20c7eb91cb8fa0d594a054b0"
+source = "git+https://github.com/sk-surya/roml?rev=f1dc3e6df181b638623f59726bd03c15729d568e#f1dc3e6df181b638623f59726bd03c15729d568e"
 dependencies = [
  "log",
  "windows-sys",

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="212" viewBox="0 0 760 212" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect width="760" height="212" fill="#ffffff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Models that change — update + re-solve per cycle</text>
+<text x="16" y="46" font-size="12" fill="#6b7280">4-product x 24-period plan, 50 cycles; ROML is persistent update, competitors are rebuild + solve (whisker = min–max); lower is better</text>
+<line x1="200" y1="178" x2="670" y2="178" stroke="#e5e7eb" stroke-width="1"/>
+<text x="190" y="77" font-size="13" fill="#1f2937" text-anchor="end">ROML direct update</text>
+<rect x="200" y="63" width="14.0" height="18" rx="3" fill="#2563eb"/>
+<line x1="213.3" y1="72" x2="221.3" y2="72" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="222.0" y="77" font-size="12" fill="#1f2937">0.29 ms</text>
+<text x="190" y="107" font-size="13" fill="#1f2937" text-anchor="end">ROML Template.bind</text>
+<rect x="200" y="93" width="14.7" height="18" rx="3" fill="#1d4ed8"/>
+<line x1="213.4" y1="102" x2="229.8" y2="102" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="222.7" y="107" font-size="12" fill="#1f2937">0.31 ms</text>
+<text x="190" y="137" font-size="13" fill="#1f2937" text-anchor="end">PuLP rebuild + solve</text>
+<rect x="200" y="123" width="155.6" height="18" rx="3" fill="#9ca3af"/>
+<line x1="352.7" y1="132" x2="388.4" y2="132" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="363.6" y="137" font-size="12" fill="#1f2937">3.23 ms</text>
+<text x="190" y="167" font-size="13" fill="#1f2937" text-anchor="end">Pyomo rebuild + solve</text>
+<rect x="200" y="153" width="371.5" height="18" rx="3" fill="#6b7280"/>
+<line x1="559.4" y1="162" x2="660.8" y2="162" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="579.5" y="167" font-size="12" fill="#1f2937">7.71 ms</text>
+</svg>

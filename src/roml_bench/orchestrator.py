@@ -34,12 +34,23 @@ PYTHON_IMPLEMENTATIONS = (
     "roml_python_vectorized",
     "roml_python_naive_chain",
     "roml_python_csr",
+    "roml_python_rules",
+    "roml_python_param",
+    "roml_python_concrete",
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_python",
     "pyoptinterface_scalar",
 )
-CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon", "roml_core_bulk")
+CORE_IMPLEMENTATIONS = (
+    "roml_core_rust",
+    "roml_core_rust_anon",
+    "roml_core_bulk",
+    "roml_core_l1",
+    "roml_core_rules",
+    "roml_core_bulk_param",
+    "roml_core_l1_param",
+)
 JULIA_IMPLEMENTATIONS = ("jump_julia",)
 CPP_IMPLEMENTATIONS = ("ortools_mathopt_cpp",)
 ALL_IMPLEMENTATIONS = (
@@ -79,9 +90,22 @@ PROFILES = {
         "pilot_cap_s": 60,
         "variants": True,
     },
+    # Large-scale BESS construction (no solving): fewer replicates, longer
+    # wall timeout so million-variable builds are captured, not censored.
+    "scale": {
+        "replicates": 5,
+        "wall_timeout_s": 900,
+        "rss_ceiling_bytes": 24 * 1024**3,
+        "pilot_cap_s": None,
+        "variants": False,
+    },
 }
 
-WORKLOADS = ("sparse_rows", "bess_96")
+WORKLOADS = ("sparse_rows", "bess_96", "rule_rows", "param_bess")
+
+
+def workloads_for(profile: str) -> tuple[str, ...]:
+    return ("bess_96",) if profile == "scale" else WORKLOADS
 
 RUST_BINARY = Path("target/release/roml-bench-core")
 JULIA_SCRIPT = Path("julia/jump_bench.jl")
@@ -98,6 +122,16 @@ def _julia_binary() -> str | None:
         return found
     home = Path.home() / ".juliaup" / "bin" / "julia"
     return str(home) if home.exists() else None
+
+
+def _write_caps_file(run_id: str, size: int, caps) -> str:
+    """Write per-row capacities to a temp file (command-line ARG_MAX safety)."""
+    import tempfile
+
+    fd, path = tempfile.mkstemp(prefix=f"caps-{run_id}-{size}-", suffix=".txt")
+    with os.fdopen(fd, "w") as handle:
+        handle.write(",".join(repr(float(v)) for v in caps.tolist()))
+    return path
 
 
 def make_run_id(benchmark_sha: str | None) -> str:
@@ -416,6 +450,15 @@ def run_child(
             case = make_case(workload, size, seed=seed)
             prices = case.payload["prices"]
             cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
+        if workload == "rule_rows":
+            case = make_case(workload, size, seed=seed)
+            caps = case.payload["cap"]
+            caps_path = _write_caps_file(run_id, size, caps)
+            cmd += ["--caps-file", caps_path]
+        if workload == "param_bess":
+            case = make_case(workload, size, seed=seed)
+            prices = case.payload["prices"]
+            cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
     else:
         cmd = [
             sys.executable, "-m", "roml_bench.worker",
@@ -568,8 +611,19 @@ def run_batch(tasks, *, jobs, pool, run_one):
     return [(position, results[position]) for position, _ in tasks]
 
 
-def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: int = 1) -> Path:
-    """Execute a full benchmark profile; return the run directory."""
+def run_profile(
+    profile: str,
+    run_id: str | None = None,
+    repo: str = ".",
+    jobs: int = 1,
+    size: int | None = None,
+    arms: tuple[str, ...] | None = None,
+) -> Path:
+    """Execute a benchmark profile; return the run directory.
+
+    ``size`` overrides the profile's size grid with a single BESS size (a
+    one-off scale showcase); ``arms`` restricts the implementations measured.
+    """
     if profile not in PROFILES:
         raise ValueError(f"unknown profile: {profile}")
     if jobs < 1:
@@ -583,6 +637,12 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
             f"another benchmark child is refused"
         )
     config = PROFILES[profile]
+    if size is not None and profile != "scale":
+        raise ValueError("--size is supported with --profile scale only")
+    impl_pool = tuple(arms) if arms else ALL_IMPLEMENTATIONS
+    unknown = [a for a in impl_pool if a not in ALL_IMPLEMENTATIONS]
+    if unknown:
+        raise ValueError(f"unknown implementation(s): {unknown}")
     check_validation_gate(repo)
     benchmark_sha = git_sha(repo) or "unknown"
     run_id = run_id or make_run_id(benchmark_sha)
@@ -595,11 +655,14 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
     (run_dir / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
 
     seed = CANONICAL_SEED
-    plan = [
-        (workload, size)
-        for workload in WORKLOADS
-        for size in sizes_for(workload, profile)
-    ]
+    if size is not None:
+        plan = [("bess_96", size)]
+    else:
+        plan = [
+            (workload, sz)
+            for workload in workloads_for(profile)
+            for sz in sizes_for(workload, profile)
+        ]
     run_meta = {
         "run_id": run_id,
         "profile": profile,
@@ -611,9 +674,9 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
         "timing_class": "canonical_serial" if jobs == 1 else "parallel_throughput",
         "config": config,
         "plan": [{"workload": w, "size": s} for w, s in plan],
-        "implementations": list(ALL_IMPLEMENTATIONS),
+        "implementations": list(impl_pool),
         "support": {
-            impl: list(supported_workloads(impl)) for impl in ALL_IMPLEMENTATIONS
+            impl: list(supported_workloads(impl)) for impl in impl_pool
         },
         "stopped": [],
         "points": {},
@@ -630,7 +693,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
                 # budget is stopped (no further replicates or larger sizes).
                 pilot_first = config["pilot_cap_s"] is not None and replicate == 0
                 order = shuffled_order(
-                    ALL_IMPLEMENTATIONS, workload, size, replicate, seed
+                    impl_pool, workload, size, replicate, seed
                 )
                 batch = [
                     implementation
@@ -672,7 +735,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
                 # Early exit for replicate loop when every supported
                 # implementation for this workload is stopped.
                 supported = [
-                    impl for impl in ALL_IMPLEMENTATIONS
+                    impl for impl in impl_pool
                     if workload in supported_workloads(impl)
                 ]
                 if all((impl, workload) in stopped for impl in supported):

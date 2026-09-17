@@ -13,9 +13,17 @@ name = "roml-ops-probe"
 path = "src/bin/ops_probe.rs"
 
 [dependencies]
-roml = { git = "https://github.com/sk-surya/roml", rev = "c590692ace5446cc20c7eb91cb8fa0d594a054b0" }
+roml = { git = "https://github.com/sk-surya/roml", rev = "f1dc3e6df181b638623f59726bd03c15729d568e" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 [profile.release]
 opt-level = 3
+
+[[bin]]
+name = "fingerprint-probe"
+path = "src/bin/fingerprint_probe.rs"
+
+[[bin]]
+name = "param-evidence"
+path = "src/bin/param_evidence.rs"
