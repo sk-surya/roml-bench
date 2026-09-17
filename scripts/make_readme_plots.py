@@ -207,6 +207,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True)
     ap.add_argument("--persist", default=None)
+    ap.add_argument("--hero-run", default=None, help="run dir for the 10M hero bar")
     ap.add_argument("--out", default="plots")
     ap.add_argument("--bess-size", type=int, default=300)
     ap.add_argument("--rule-sizes", nargs="*", type=int, default=None)
@@ -223,6 +224,47 @@ def main() -> int:
         with open(os.path.join(args.out, name), "w") as f:
             f.write(svg + "\n")
         print("wrote", name)
+
+    # 0. Hero: full fleet at ~10M variables (single size, formulation arms).
+    if args.hero_run:
+        with open(os.path.join(args.hero_run, "summary.json")) as f:
+            hero = json.load(f)
+        hero_arms = [
+            ("roml_core_l1", "ROML Rust L1", BLUE),
+            ("roml_python_vectorized", "ROML Python vectorized", "#1d4ed8"),
+            ("ortools_mathopt_cpp", "OR-Tools MathOpt", "#0891b2"),
+            ("pyoptinterface_scalar", "PyOptInterface (scalar)", "#4b5563"),
+            ("pyomo_python", "Pyomo", GRAY),
+            ("pulp_python", "PuLP", LIGHT),
+        ]
+        hitems = []
+        nvars = None
+        for impl, label, color in hero_arms:
+            g = groups(hero, "bess_96", 34603).get(impl)
+            if not g:
+                continue
+            nvars = g["size"] * 289
+            rss = g["peak_rss_median_bytes"] / (1024 * 1024)
+            hitems.append(
+                {
+                    "label": f"{label}  ({rss / 1024:.1f} GiB)",
+                    "value": g["median_ms"] / 1000.0,
+                    "lo": g["p25_ms"] / 1000.0,
+                    "hi": g["p75_ms"] / 1000.0,
+                    "color": color,
+                }
+            )
+        if hitems:
+            write(
+                "hero_scale.svg",
+                hbar_chart(
+                    f"Build a {nvars:,}-variable battery-fleet model",
+                    "median model-construction time (label shows peak RSS); "
+                    "construction only, no solve; lower is better",
+                    sorted(hitems, key=lambda i: i["value"]),
+                    "s",
+                ),
+            )
 
     # 1. Competitive formulation (bess_96 B=300)
     gs = groups(summary, "bess_96", args.bess_size)

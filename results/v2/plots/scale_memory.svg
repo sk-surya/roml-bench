@@ -2,16 +2,12 @@
 <rect width="760" height="450" fill="#ffffff"/>
 <text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Day-ahead battery fleet dispatch — peak memory</text>
 <text x="16" y="46" font-size="12" fill="#6b7280">process peak RSS vs variables (median of replicates); lower is better</text>
-<line x1="200" y1="358.0" x2="670" y2="358.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="362.0" font-size="11" fill="#6b7280" text-anchor="end">3.5125</text>
-<line x1="200" y1="283.0" x2="670" y2="283.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="287.0" font-size="11" fill="#6b7280" text-anchor="end">20.3897</text>
-<line x1="200" y1="208.0" x2="670" y2="208.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="212.0" font-size="11" fill="#6b7280" text-anchor="end">118.36</text>
-<line x1="200" y1="133.0" x2="670" y2="133.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="137.0" font-size="11" fill="#6b7280" text-anchor="end">687.069</text>
-<line x1="200" y1="58.0" x2="670" y2="58.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="62.0" font-size="11" fill="#6b7280" text-anchor="end">3988.37</text>
+<line x1="200" y1="313.4" x2="670" y2="313.4" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="317.4" font-size="11" fill="#6b7280" text-anchor="end">10</text>
+<line x1="200" y1="215.2" x2="670" y2="215.2" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="219.2" font-size="11" fill="#6b7280" text-anchor="end">100</text>
+<line x1="200" y1="117.0" x2="670" y2="117.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="121.0" font-size="11" fill="#6b7280" text-anchor="end">1000</text>
 <text x="200.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">2890</text>
 <text x="278.3" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">8670</text>
 <text x="356.7" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">28900</text>

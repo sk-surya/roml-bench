@@ -68,6 +68,27 @@ Peak RSS at B=10,000 (MiB): ROML Rust L1 **1357**, POI scalar 1395, OR-Tools
 1479, ROML Python 1822, Pyomo 2550, PuLP 3191. ROML's packed representation
 uses the least memory, and the Python path ~1.4× less than Pyomo.
 
+### 2c. Ten-million-variable showcase (hero)
+
+`roml-bench run --profile scale --size 34603 --arms roml_core_l1,
+roml_python_vectorized,ortools_mathopt_cpp,pyoptinterface_scalar,pyomo_python,
+pulp_python -j 1` — a single BESS size of **B=34,603 → 10,000,267 variables,
+6,678,379 constraints**, construction only, 5 replicates, serial. **All six
+arms completed (no timeout/OOM).**
+
+| arm | median | p25 | p75 | peak RSS |
+| --- | ---: | ---: | ---: | ---: |
+| ROML Rust L1 | **2.161 s** | 2.134 | 2.164 | 4.37 GiB |
+| ROML Python vectorized | **5.842 s** | 5.756 | 5.876 | 5.52 GiB |
+| OR-Tools MathOpt | 7.219 s | 7.215 | 7.269 | 4.49 GiB |
+| PyOptInterface (scalar) | 18.859 s | 18.810 | 18.885 | 4.69 GiB |
+| Pyomo | **51.462 s** | 51.259 | 51.699 | 8.32 GiB |
+| PuLP | **67.593 s** | 67.530 | 68.153 | 10.28 GiB |
+
+ROML Rust L1 is **23.8×** Pyomo and **8.8×** the Python vectorized path vs
+Pyomo; ROML uses ~half the peak memory of Pyomo and ~40% of PuLP. Hero graphic:
+`hero_scale.svg`.
+
 ### 2. Matrix / CSR ingestion (separate panel)
 
 `sparse_rows` N=1M: ROML Python CSR (`add_linear_rows`) **128.70 ms**; ROML
@@ -127,6 +148,7 @@ equivalent. Retention is disclosed per arm (`model_retained`,
 
 | plot | source artifact |
 | --- | --- |
+| `hero_scale.svg` | 10M run `summary.json` (bess_96 B=34,603; seconds + RSS) |
 | `competitive_formulation.svg` | run `summary.json` (bess_96/300) |
 | `abstraction_tax.svg` | run `summary.json` (param_bess/300) |
 | `rules_scaling.svg` | run `summary.json` (rule_rows 1k/10k/100k) |
@@ -182,6 +204,8 @@ measured with the scale-profile code.
 - Run: `results/runs/20260917T190702Z-ai90-116c1be9/` (raw.jsonl, run.json,
   summary.json, summary.csv).
 - Scale run: `results/runs/20260917T194738Z-ai90-d1686765/` (`--profile scale`).
+- 10M showcase run: `results/runs/20260917T210511Z-ai90-36381087/`
+  (`--profile scale --size 34603 --arms …`).
 - Persistence: `results/v2/persistent.json`.
 - Plots: `results/v2/plots/*.svg`.
 - Adapter audit: `.planning/ADAPTER-AUDIT.md`.

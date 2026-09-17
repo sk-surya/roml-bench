@@ -2,16 +2,16 @@
 <rect width="760" height="450" fill="#ffffff"/>
 <text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Day-ahead battery fleet dispatch — 96 intervals</text>
 <text x="16" y="46" font-size="12" fill="#6b7280">model construction time vs variables (median, no solve); lower is better</text>
-<line x1="200" y1="358.0" x2="670" y2="358.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="362.0" font-size="11" fill="#6b7280" text-anchor="end">0.000383806</text>
-<line x1="200" y1="283.0" x2="670" y2="283.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="287.0" font-size="11" fill="#6b7280" text-anchor="end">0.00604163</text>
-<line x1="200" y1="208.0" x2="670" y2="208.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="212.0" font-size="11" fill="#6b7280" text-anchor="end">0.0951033</text>
-<line x1="200" y1="133.0" x2="670" y2="133.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="137.0" font-size="11" fill="#6b7280" text-anchor="end">1.49705</text>
-<line x1="200" y1="58.0" x2="670" y2="58.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="62.0" font-size="11" fill="#6b7280" text-anchor="end">23.5656</text>
+<line x1="200" y1="331.9" x2="670" y2="331.9" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="335.9" font-size="11" fill="#6b7280" text-anchor="end">0.001</text>
+<line x1="200" y1="269.3" x2="670" y2="269.3" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="273.3" font-size="11" fill="#6b7280" text-anchor="end">0.01</text>
+<line x1="200" y1="206.6" x2="670" y2="206.6" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="210.6" font-size="11" fill="#6b7280" text-anchor="end">0.1</text>
+<line x1="200" y1="144.0" x2="670" y2="144.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="148.0" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+<line x1="200" y1="81.3" x2="670" y2="81.3" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="85.3" font-size="11" fill="#6b7280" text-anchor="end">10</text>
 <text x="200.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">2890</text>
 <text x="278.3" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">8670</text>
 <text x="356.7" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">28900</text>

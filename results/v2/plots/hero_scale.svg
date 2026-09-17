@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="272" viewBox="0 0 760 272" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect width="760" height="272" fill="#ffffff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Build a 10,000,267-variable battery-fleet model</text>
+<text x="16" y="46" font-size="12" fill="#6b7280">median model-construction time (label shows peak RSS); construction only, no solve; lower is better</text>
+<line x1="200" y1="238" x2="670" y2="238" stroke="#e5e7eb" stroke-width="1"/>
+<text x="190" y="77" font-size="13" fill="#1f2937" text-anchor="end">ROML Rust L1  (4.4 GiB)</text>
+<rect x="200" y="63" width="14.6" height="18" rx="3" fill="#2563eb"/>
+<line x1="214.4" y1="72" x2="214.6" y2="72" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="222.6" y="77" font-size="12" fill="#1f2937">2.16 s</text>
+<text x="190" y="107" font-size="13" fill="#1f2937" text-anchor="end">ROML Python vectorized  (5.5 GiB)</text>
+<rect x="200" y="93" width="39.5" height="18" rx="3" fill="#1d4ed8"/>
+<line x1="238.9" y1="102" x2="239.7" y2="102" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="247.5" y="107" font-size="12" fill="#1f2937">5.84 s</text>
+<text x="190" y="137" font-size="13" fill="#1f2937" text-anchor="end">OR-Tools MathOpt  (4.5 GiB)</text>
+<rect x="200" y="123" width="48.8" height="18" rx="3" fill="#0891b2"/>
+<line x1="248.8" y1="132" x2="249.1" y2="132" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="256.8" y="137" font-size="12" fill="#1f2937">7.22 s</text>
+<text x="190" y="167" font-size="13" fill="#1f2937" text-anchor="end">PyOptInterface (scalar)  (4.7 GiB)</text>
+<rect x="200" y="153" width="127.5" height="18" rx="3" fill="#4b5563"/>
+<line x1="327.2" y1="162" x2="327.7" y2="162" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="335.5" y="167" font-size="12" fill="#1f2937">18.86 s</text>
+<text x="190" y="197" font-size="13" fill="#1f2937" text-anchor="end">Pyomo  (8.3 GiB)</text>
+<rect x="200" y="183" width="347.9" height="18" rx="3" fill="#6b7280"/>
+<line x1="546.6" y1="192" x2="549.5" y2="192" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="555.9" y="197" font-size="12" fill="#1f2937">51.46 s</text>
+<text x="190" y="227" font-size="13" fill="#1f2937" text-anchor="end">PuLP  (10.3 GiB)</text>
+<rect x="200" y="213" width="457.0" height="18" rx="3" fill="#9ca3af"/>
+<line x1="656.6" y1="222" x2="660.8" y2="222" stroke="#111827" stroke-width="1" opacity="0.35"/>
+<text x="665.0" y="227" font-size="12" fill="#1f2937">67.59 s</text>
+</svg>
