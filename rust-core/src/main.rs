@@ -9,7 +9,8 @@
 mod common;
 
 use common::{
-    build_bess, build_bess_bulk, build_bess_l1, build_sparse, build_sparse_bulk, rss_bytes, BESS_T,
+    build_bess, build_bess_bulk, build_bess_l1, build_rules, build_sparse, build_sparse_bulk,
+    rss_bytes, BESS_T, RULE_J,
 };
 use roml::prelude::*;
 use serde::Serialize;
@@ -59,6 +60,7 @@ struct Args {
     timestamp_utc: String,
     cpu: Option<u32>,
     prices_csv: Option<String>,
+    caps_csv: Option<String>,
     implementation: String,
     anonymous: bool,
     phase_breakdown: bool,
@@ -87,7 +89,7 @@ fn parse_args() -> Args {
         None => usage(),
     };
     let workload = req("--workload");
-    if workload != "sparse_rows" && workload != "bess_96" {
+    if workload != "sparse_rows" && workload != "bess_96" && workload != "rule_rows" {
         usage();
     }
     let has = |flag: &str| raw.iter().any(|a| a == flag);
@@ -97,6 +99,7 @@ fn parse_args() -> Args {
         && implementation != "roml_core_rust_anon"
         && implementation != "roml_core_bulk"
         && implementation != "roml_core_l1"
+        && implementation != "roml_core_rules"
     {
         usage();
     }
@@ -114,6 +117,7 @@ fn parse_args() -> Args {
         timestamp_utc: req("--timestamp-utc"),
         cpu: get(&raw, "--cpu").map(|v| v.parse().unwrap_or_else(|_| usage())),
         prices_csv: get(&raw, "--prices-csv"),
+        caps_csv: get(&raw, "--caps-csv"),
         anonymous: has("--anonymous") || implementation == "roml_core_rust_anon",
         phase_breakdown: has("--phase-breakdown"),
         implementation,
@@ -202,6 +206,21 @@ fn main() {
             container_init_ns,
         );
     }
+    let rules = args.implementation == "roml_core_rules";
+    if args.workload == "rule_rows" && !rules {
+        fail(
+            &args,
+            "rule_rows is built by --implementation roml_core_rules".to_string(),
+            container_init_ns,
+        );
+    }
+    if rules && args.workload != "rule_rows" {
+        fail(
+            &args,
+            "roml_core_rules supports rule_rows".to_string(),
+            container_init_ns,
+        );
+    }
     if bulk && parameterized {
         fail(
             &args,
@@ -216,7 +235,35 @@ fn main() {
             container_init_ns,
         );
     }
-    let counts = if args.workload == "sparse_rows" {
+    let counts = if args.workload == "rule_rows" {
+        let caps: Vec<f64> = match &args.caps_csv {
+            Some(v) => v
+                .split(',')
+                .map(|s| {
+                    s.trim().parse().unwrap_or_else(|_| {
+                        fail(
+                            &args,
+                            format!("bad caps-csv value: {s}"),
+                            container_init_ns,
+                        )
+                    })
+                })
+                .collect(),
+            None => fail(
+                &args,
+                "rule_rows requires --caps-csv".to_string(),
+                container_init_ns,
+            ),
+        };
+        build_rules(
+            &mut model,
+            args.size,
+            RULE_J,
+            &caps,
+            named,
+            phase_map.as_mut(),
+        )
+    } else if args.workload == "sparse_rows" {
         if bulk {
             build_sparse_bulk(&mut model, args.size, named, phase_map.as_mut())
                 .map(|(v, c, nnz)| (v, c, nnz, args.size))

@@ -17,10 +17,10 @@ Status legend: **CURRENT** (no change) · **UPDATED** (this tranche) ·
 | `roml_python_vectorized` | sparse: `Model.vars` + `add_linear_rows`; bess: `Model.vars` + array `Model.add` + fused `rm.dot` over a **dense numeric** `price_grid` | CURRENT (validate lowering) | **ingestion for sparse, formulation for bess** | **no** | shared `LinArray` → dense numeric coefficient family → **packed numeric** objective | Keep the efficient public path. Not a parameterized objective; item 8 exists to exercise parameter dependencies. Must not appear in the sparse *formulation* panel (item 5). |
 | `roml_python_naive_chain` | `var` + `total = total + v` chaining | CURRENT (disclosed pathology) | formulation (diagnostic) | no | O(n²) scalar accumulation | Disclosed diagnostic only; never a binding-overhead claim. |
 | `roml_python_csr` | `Model.vars` + `add_linear_rows` from shared CSR | CURRENT | **ingestion** (bess only) | no | packed CSR rows | Matrix/CSR ingestion; never headline vs algebraic formulation (item 5). |
-| **`roml_python_rules` (new)** | `@rm.rules` / `add_indexed_rules` | **MISSING → TODO** | formulation | no | one packed `BulkMixedRows` per component | Current Python rule API (item 3). |
-| **`roml_core_rules` (new)** | `Model::add_indexed_rules` | **MISSING → TODO** | formulation | no | one packed mixed-row commit | Current Rust rule API (item 3). |
+| `roml_python_rules` | `Model.vars` + `add_indexed_rules` over `x[i, :]` | **CURRENT** (item 3 done) | formulation | no | one packed `BulkMixedRows` commit | `rule_rows` fixture; validated ok (counts + objective agreement). |
+| `roml_core_rules` | `Model::add_indexed_rules` | **CURRENT** (item 3 done) | formulation | no | one packed mixed-row commit | `rule_rows` fixture; validated ok (counts; packed commit). |
 | `pulp_python` | `add_variable_dicts` + `lpSum` | COMPETITOR | formulation | no | — | Compare only under equivalent semantics. |
-| `pyomo_python` | `ConcreteModel` + indexed `Constraint` rules + `quicksum` | COMPETITOR | formulation (indexed rules) | no | — | Natural comparator for the rules arm. |
+| `pyomo_python` | `ConcreteModel` + indexed `Constraint` rules + `quicksum` | COMPETITOR | formulation (indexed rules) | no | — | Natural comparator for the rules arm; now also runs `rule_rows` (validated ok). |
 | `pyoptinterface_python` | `add_m_variables` + matrix constraints | COMPETITOR | ingestion | no | — | Ingestion panel only. |
 | `pyoptinterface_scalar` | scalar `add_variable` + `ExprBuilder` rows | COMPETITOR | formulation | no | — | Formulation panel only. |
 | `jump_julia`, `ortools_mathopt_cpp` | JuMP / OR-Tools MathOpt | COMPETITOR | formulation | no | — | Kept as-is. |

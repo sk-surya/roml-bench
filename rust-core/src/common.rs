@@ -16,6 +16,9 @@ pub const BESS_P: f64 = 2.0;
 pub const BESS_E: f64 = 4.0;
 pub const BESS_E0: f64 = 2.0;
 
+/// Variables per row in the indexed-rule workload.
+pub const RULE_J: usize = 10;
+
 /// Current VmRSS and process peak (VmHWM) in bytes from /proc/self/status.
 pub fn rss_bytes() -> (u64, u64) {
     let mut rss = 0u64;
@@ -512,6 +515,42 @@ pub fn build_bess_l1(
         b * (1 + 6 * t),
         b * (2 * t),
     ))
+}
+
+/// Indexed-rule workload through the current Rust `add_indexed_rules` API:
+/// `n` rows, `j` unit coefficients per row, `sum_j x[i,j] <= cap[i]`,
+/// `minimize sum x`. One packed mixed-row commit.
+#[allow(dead_code)]
+pub fn build_rules(
+    model: &mut Model,
+    n: usize,
+    j: usize,
+    caps: &[f64],
+    _named: bool,
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(caps.len(), n);
+    let t0 = Instant::now();
+    let x = model.var("x", [n, j]).bounds(0.0, 5.0).build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    model.add_indexed_rules(0..n, |rules, i| {
+        rules.add_le(x.row(i)?, caps[i])?;
+        Ok(())
+    })?;
+    let t_cons = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    model.minimize_array(&x.expr()?)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((n * j, n, n * j, n * j))
 }
 
 #[cfg(test)]

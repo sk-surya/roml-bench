@@ -11,11 +11,13 @@ from roml_bench.adapters.pyoptinterface import (
 from roml_bench.adapters.roml_python import (
     RomlPythonBulkAdapter,
     RomlPythonCsrAdapter,
+    RomlPythonRulesAdapter,
     RomlPythonScalarAdapter,
 )
 
 ADAPTERS = (
     RomlPythonBulkAdapter,
+    RomlPythonRulesAdapter,
     RomlPythonScalarAdapter,
     RomlPythonCsrAdapter,
     PulpAdapter,
@@ -37,6 +39,8 @@ def get_adapter(implementation_id: str):
 def supported_workloads(implementation_id: str) -> tuple[str, ...]:
     if implementation_id == "roml_core_l1":
         return ("bess_96",)
+    if implementation_id == "roml_core_rules":
+        return ("rule_rows",)
     if implementation_id in (
         "roml_core_rust",
         "roml_core_rust_anon",

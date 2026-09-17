@@ -16,7 +16,7 @@ from roml_bench.workloads import WorkloadCase
 class PyomoAdapter:
     implementation_id = "pyomo_python"
     construction_path = "ConcreteModel + indexed Var/Constraint rules + quicksum"
-    supported_workloads = ("sparse_rows", "bess_96")
+    supported_workloads = ("sparse_rows", "bess_96", "rule_rows")
 
     def warmup(self) -> None:
         m = pyo.ConcreteModel()
@@ -44,6 +44,12 @@ class PyomoAdapter:
                 ("variables", lambda: _bess_vars(model, case)),
                 ("constraints", lambda: _bess_cons(model, case)),
                 ("objective", lambda: _bess_obj(model, case)),
+            ]
+        if case.workload == "rule_rows":
+            return [
+                ("variables", lambda: _rule_vars(model, case)),
+                ("constraints", lambda: _rule_cons(model, case)),
+                ("objective", lambda: _rule_obj(model, case)),
             ]
         raise ValueError(f"unknown workload: {case.workload}")
 
@@ -149,6 +155,29 @@ def _bess_obj(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
             for tt in model.T
         ),
         sense=pyo.maximize,
+    )
+
+
+def _rule_vars(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
+    p = case.payload
+    model.I = pyo.Set(initialize=range(p["n"]))
+    model.J = pyo.Set(initialize=range(p["j"]))
+    model.x = pyo.Var(model.I, model.J, domain=pyo.NonNegativeReals, bounds=(0, 5))
+
+
+def _rule_cons(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
+    caps = case.payload["cap"]
+
+    def rule_rule(m: pyo.ConcreteModel, i: int) -> pyo.Constraint:
+        return pyo.quicksum(m.x[i, j] for j in m.J) <= float(caps[i])
+
+    model.rows = pyo.Constraint(model.I, rule=rule_rule)
+
+
+def _rule_obj(model: pyo.ConcreteModel, case: WorkloadCase) -> None:
+    model.obj = pyo.Objective(
+        expr=pyo.quicksum(model.x[i, j] for i in model.I for j in model.J),
+        sense=pyo.minimize,
     )
 
 

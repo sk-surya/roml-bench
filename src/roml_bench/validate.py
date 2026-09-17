@@ -36,12 +36,16 @@ from roml_bench.workloads import CANONICAL_SEED, make_case
 ABS_TOL = 1e-7
 REL_TOL = 1e-7
 
-VALIDATION_CASES = (("sparse_rows", 100), ("bess_96", 1))
+VALIDATION_CASES = (("sparse_rows", 100), ("bess_96", 1), ("rule_rows", 1_000))
+# External runners (Julia/OR-Tools) and the native bulk-vs-scalar replay proof
+# cover the original workloads only; rule_rows is a ROML/Pyomo panel.
+RUNNER_VALIDATION_CASES = (("sparse_rows", 100), ("bess_96", 1))
 
 PYTHON_SOLVERS = {
     "roml_python_vectorized": "roml-highs",
     "roml_python_naive_chain": "roml-highs",
     "roml_python_csr": "roml-highs",
+    "roml_python_rules": "roml-highs",
     "pulp_python": "bundled-cbc",
     "pyomo_python": "appsi-highs",
     "pyoptinterface_python": "highs-direct",
@@ -90,6 +94,10 @@ def _spot_check_bounds(implementation: str, artifact, case) -> list[str]:
                 var = model.x[0]
                 if (var.lb, var.ub) != (0, 5):
                     problems.append(f"sparse bound spot check: {(var.lb, var.ub)}")
+            elif case.workload == "rule_rows":
+                var = model.x[0, 0]
+                if (var.lb, var.ub) != (0, 5):
+                    problems.append(f"rule bound spot check: {(var.lb, var.ub)}")
             else:
                 var = model.charge[0, 0]
                 if (var.lb, var.ub) != (0, 2.0):
@@ -274,7 +282,7 @@ def _check_external_runner(cases: dict, implementation: str, kind: str) -> dict:
     prices_csv = ",".join(
         repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
     )
-    for workload, size in VALIDATION_CASES:
+    for workload, size in RUNNER_VALIDATION_CASES:
         case = cases[(workload, size)]
         key = f"{workload}/{size}"
         if kind == "julia":
@@ -418,11 +426,19 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
     prices_csv = ",".join(
         repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
     )
+    if implementation == "roml_core_rules":
+        supported = {"rule_rows"}
+    elif implementation == "roml_core_l1":
+        supported = {"bess_96"}
+    else:
+        supported = {"sparse_rows", "bess_96"}
     for workload, size in VALIDATION_CASES:
-        if implementation == "roml_core_l1" and workload != "bess_96":
+        if workload not in supported:
             entry["workloads"][f"{workload}/{size}"] = {
                 "status": "skipped",
-                "problems": ["roml_core_l1 supports bess_96 by design"],
+                "problems": [
+                    f"{implementation} supports {sorted(supported)} by design"
+                ],
             }
             continue
         case = cases[(workload, size)]
@@ -443,6 +459,12 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
             cmd += ["--anonymous"]
         if workload == "bess_96":
             cmd += ["--prices-csv", prices_csv]
+        if workload == "rule_rows":
+            caps = case.payload["cap"]
+            cmd += [
+                "--caps-csv",
+                ",".join(repr(float(v)) for v in caps.tolist()),
+            ]
         try:
             proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         except subprocess.SubprocessError as exc:
@@ -499,7 +521,7 @@ def _check_native_equiv() -> list[str]:
     prices_csv = ",".join(
         repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
     )
-    for workload, size in VALIDATION_CASES:
+    for workload, size in RUNNER_VALIDATION_CASES:
         for construction in ("scalar", "bulk"):
             cmd = [
                 str(binary),
@@ -615,7 +637,12 @@ def run_validation() -> dict:
             )
     # Cross-implementation objective agreement per validation case.
     for key, values in objectives.items():
-        reference = values.get("roml_python_vectorized")
+        reference_impl = (
+            "roml_python_rules"
+            if key.startswith("rule_rows/")
+            else "roml_python_vectorized"
+        )
+        reference = values.get(reference_impl)
         if reference is None:
             result["status"] = "failed"
             result["problems"].append(f"{key}: no ROML bulk reference objective")
@@ -636,6 +663,8 @@ def run_validation() -> dict:
     result["implementations"]["roml_core_bulk"] = bulk_entry
     l1_entry = _check_rust_core(cases, "roml_core_l1")
     result["implementations"]["roml_core_l1"] = l1_entry
+    rules_entry = _check_rust_core(cases, "roml_core_rules")
+    result["implementations"]["roml_core_rules"] = rules_entry
     # Native bulk-vs-scalar replay proof on the validation sizes: full
     # journal/delta replay equality plus snapshot equality (bulk ≡ scalar
     # canonically; scalar ≡ Python by counts; Python by the solve gate).

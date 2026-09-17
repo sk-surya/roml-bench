@@ -34,6 +34,7 @@ PYTHON_IMPLEMENTATIONS = (
     "roml_python_vectorized",
     "roml_python_naive_chain",
     "roml_python_csr",
+    "roml_python_rules",
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_python",
@@ -44,6 +45,7 @@ CORE_IMPLEMENTATIONS = (
     "roml_core_rust_anon",
     "roml_core_bulk",
     "roml_core_l1",
+    "roml_core_rules",
 )
 JULIA_IMPLEMENTATIONS = ("jump_julia",)
 CPP_IMPLEMENTATIONS = ("ortools_mathopt_cpp",)
@@ -421,6 +423,10 @@ def run_child(
             case = make_case(workload, size, seed=seed)
             prices = case.payload["prices"]
             cmd += ["--prices-csv", ",".join(repr(float(v)) for v in prices.tolist())]
+        if workload == "rule_rows":
+            case = make_case(workload, size, seed=seed)
+            caps = case.payload["cap"]
+            cmd += ["--caps-csv", ",".join(repr(float(v)) for v in caps.tolist())]
     else:
         cmd = [
             sys.executable, "-m", "roml_bench.worker",

@@ -303,3 +303,54 @@ def _csr_bess_cons(model: rm.Model, case: WorkloadCase, x) -> None:
 def _csr_bess_obj(model: rm.Model, case: WorkloadCase, x) -> None:
     csr = case.payload["csr"]
     model.maximize(rm.dot(csr.obj_coeff, x))
+
+
+class RomlPythonRulesAdapter:
+    implementation_id = "roml_python_rules"
+    construction_path = (
+        "indexed rules: Model.vars + add_indexed_rules over x[i, :] "
+        "(one packed mixed-row commit)"
+    )
+    supported_workloads = ("rule_rows",)
+
+    def warmup(self) -> None:
+        m = rm.Model("warmup")
+        x = m.vars("x", (4, 3), lb=0.0, ub=5.0)
+        m.add_indexed_rules(range(4), lambda rows, i: rows.le(x[i, :], 2.0), name="r")
+        m.minimize(rm.sum(x))
+
+    def new_model(self, case: WorkloadCase) -> rm.Model:
+        return rm.Model(case.workload)
+
+    def populate(self, model: rm.Model, case: WorkloadCase) -> BuildArtifact:
+        for _, step in self.populate_phases(model, case):
+            step()
+        return _artifact(model, case, self.implementation_id)
+
+    def populate_phases(self, model: rm.Model, case: WorkloadCase):
+        p = case.payload
+        n, j, caps = p["n"], p["j"], p["cap"]
+        stage: dict = {}
+
+        def variables() -> None:
+            stage["x"] = model.vars("x", (n, j), lb=0.0, ub=5.0)
+
+        def constraints() -> None:
+            x = stage["x"]
+            model.add_indexed_rules(
+                range(n),
+                lambda rows, i: rows.le(x[i, :], float(caps[i])),
+                name="rule",
+            )
+
+        def objective() -> None:
+            model.minimize(rm.sum(stage["x"]))
+
+        return [
+            ("variables", variables),
+            ("constraints", constraints),
+            ("objective", objective),
+        ]
+
+    def inspect(self, artifact: BuildArtifact, case: WorkloadCase) -> StructuralReport:
+        return _report(artifact)
