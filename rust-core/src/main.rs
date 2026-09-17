@@ -9,8 +9,8 @@
 mod common;
 
 use common::{
-    build_bess, build_bess_bulk, build_bess_l1, build_rules, build_sparse, build_sparse_bulk,
-    rss_bytes, BESS_T, RULE_J,
+    build_bess, build_bess_bulk, build_bess_l1, build_param_bess_bulk, build_param_bess_l1,
+    build_rules, build_sparse, build_sparse_bulk, rss_bytes, BESS_T, RULE_J,
 };
 use roml::prelude::*;
 use serde::Serialize;
@@ -72,7 +72,7 @@ fn usage() -> ! {
         "usage: roml-bench-core --workload <sparse_rows|bess_96> --size <N> \
          --seed <u64> --replicate <u32> --run-id <id> --benchmark-sha <sha> \
          --roml-sha <sha> --timestamp-utc <ts> [--cpu <n>] [--prices-csv <csv>] \
-         [--implementation <roml_core_rust|roml_core_rust_anon|roml_core_bulk|roml_core_l1>] [--anonymous] \
+         [--implementation <roml_core_rust|roml_core_rust_anon|roml_core_bulk|roml_core_l1|roml_core_rules|roml_core_bulk_param|roml_core_l1_param>] [--anonymous] \
          [--phase-breakdown] [--objective-mode <constant|parameterized>]"
     );
     std::process::exit(2);
@@ -89,7 +89,9 @@ fn parse_args() -> Args {
         None => usage(),
     };
     let workload = req("--workload");
-    if workload != "sparse_rows" && workload != "bess_96" && workload != "rule_rows" {
+    if workload != "sparse_rows" && workload != "bess_96" && workload != "rule_rows"
+        && workload != "param_bess"
+    {
         usage();
     }
     let has = |flag: &str| raw.iter().any(|a| a == flag);
@@ -100,6 +102,8 @@ fn parse_args() -> Args {
         && implementation != "roml_core_bulk"
         && implementation != "roml_core_l1"
         && implementation != "roml_core_rules"
+        && implementation != "roml_core_bulk_param"
+        && implementation != "roml_core_l1_param"
     {
         usage();
     }
@@ -221,6 +225,22 @@ fn main() {
             container_init_ns,
         );
     }
+    let param_arm = args.implementation == "roml_core_bulk_param"
+        || args.implementation == "roml_core_l1_param";
+    if args.workload == "param_bess" && !param_arm {
+        fail(
+            &args,
+            "param_bess is built by roml_core_bulk_param / roml_core_l1_param".to_string(),
+            container_init_ns,
+        );
+    }
+    if param_arm && args.workload != "param_bess" {
+        fail(
+            &args,
+            "parameterized core arms support param_bess".to_string(),
+            container_init_ns,
+        );
+    }
     if bulk && parameterized {
         fail(
             &args,
@@ -235,7 +255,29 @@ fn main() {
             container_init_ns,
         );
     }
-    let counts = if args.workload == "rule_rows" {
+    let counts = if args.workload == "param_bess" {
+        let csv = match &args.prices_csv {
+            Some(v) => v.clone(),
+            None => fail(
+                &args,
+                "param_bess requires --prices-csv".to_string(),
+                container_init_ns,
+            ),
+        };
+        let prices: Vec<f64> = csv
+            .split(',')
+            .map(|s| {
+                s.trim().parse().unwrap_or_else(|_| {
+                    fail(&args, format!("bad prices-csv value: {s}"), container_init_ns)
+                })
+            })
+            .collect();
+        if args.implementation == "roml_core_bulk_param" {
+            build_param_bess_bulk(&mut model, args.size, &prices, phase_map.as_mut())
+        } else {
+            build_param_bess_l1(&mut model, args.size, &prices, phase_map.as_mut())
+        }
+    } else if args.workload == "rule_rows" {
         let caps: Vec<f64> = match &args.caps_csv {
             Some(v) => v
                 .split(',')

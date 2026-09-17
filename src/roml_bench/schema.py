@@ -19,7 +19,11 @@ IMPLEMENTATIONS = (
     "roml_core_bulk",
     "roml_core_l1",
     "roml_core_rules",
+    "roml_core_bulk_param",
+    "roml_core_l1_param",
     "roml_python_rules",
+    "roml_python_param",
+    "roml_python_concrete",
     "jump_julia",
     "ortools_mathopt_cpp",
 )
@@ -35,7 +39,7 @@ KNOWN_IMPLEMENTATIONS = IMPLEMENTATIONS + LEGACY_IMPLEMENTATIONS
 
 VARIANTS = ("canonical", "shuffled", "duplicated")
 
-WORKLOADS = ("sparse_rows", "bess_96", "rule_rows")
+WORKLOADS = ("sparse_rows", "bess_96", "rule_rows", "param_bess")
 
 STATUSES = ("ok", "timeout", "memory_exceeded", "error")
 

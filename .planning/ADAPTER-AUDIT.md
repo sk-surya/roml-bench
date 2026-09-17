@@ -25,13 +25,29 @@ Status legend: **CURRENT** (no change) · **UPDATED** (this tranche) ·
 | `pyoptinterface_scalar` | scalar `add_variable` + `ExprBuilder` rows | COMPETITOR | formulation | no | — | Formulation panel only. |
 | `jump_julia`, `ortools_mathopt_cpp` | JuMP / OR-Tools MathOpt | COMPETITOR | formulation | no | — | Kept as-is. |
 
+## Parameterized-construction / ergonomics family (`param_bess`, ROML-only)
+
+Fixture: B batteries × T=96; `price[b,t]` parameters, `charge`/`discharge`
+variables, `maximize sum(price * (discharge - charge))`; sizes (1, 10, 300).
+Serves item 8 (parameterized construction) and item 6 (ConcreteModel ergonomics).
+
+| Arm | API | Status | Lowering evidence |
+| --- | --- | --- | --- |
+| `roml_core_bulk_param` | `add_variable_array_block` + `add_parameter_array_block` + `set_linear_objective_param_bulk_with_layout` | **CURRENT** | `general_affine=0`, `param_dep_blocks=2`, `param_positions_cells=0` |
+| `roml_core_l1_param` | `var(..).build()` + `param(..)` + `maximize_array` | **CURRENT** | `general_affine=0`, `param_dep_blocks=2`, `param_positions_cells=0` |
+| `roml_python_param` | Python `Model` parameter arrays + packed `rm.sum` | **CURRENT** | validated; objective agrees |
+| `roml_python_concrete` | `ConcreteModel` + `RangeSet` axes + labeled vars/params + array algebra | **CURRENT** (item 6) | identical objective + canonical equivalence to `roml_python_param` |
+
+`param-evidence` (rust-core bin) prints the packed-dependency lowering counters
+and fingerprints for the two core arms; both match exactly
+(`ordinal=8311104305927858589`). Item 6's primary number is
+`roml_python_concrete median / roml_python_param median`.
+
 ## Additional ROML-only measurements to add (non-competitive)
 
 | Measurement | Arms | Purpose |
 | --- | --- | --- |
-| ConcreteModel ergonomics (item 6) | raw L2 · Rust L1 · Python `Model` vectorized · Python `ConcreteModel`/labeled | Bounded (one workload, no full grid) check that high-level Python performance claims also hold on the labeled surface. Report overhead, not a ranking. |
 | Persistent update (item 7) | direct `Model` + params + `update`; `Template.bind`; rebuild path | Report convenience-layer overhead of `Template.bind` vs direct update; never silently pick the faster one. Separate build / update / sync / solve / end-to-end. |
-| Parameterized construction (item 8) | ROML block-parameter construction + packed parametric objective | The BESS `price_grid` dense-numeric arm does **not** establish parametric-construction performance; at least one ROML benchmark must exercise first-class parameter blocks. |
 
 ## Rules of the audit
 

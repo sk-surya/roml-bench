@@ -17,11 +17,11 @@
     "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
     "wheel_sha256": "5ab946959b74c73b2f03f162781347673c9440cb7ae34abb7565c5aef8819a52",
     "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
-    "core_binary_sha256": "e677a64e8158a374023b94c697b5c580a666ef2e3cb96d0a7170daf58cb0182f"
+    "core_binary_sha256": "0afc204fc883944b03750c596a6a581ba04e90a8c266d897ad0bd9e58322f2d5"
   },
-  "benchmark_sha": "64bf4ecc12a04a734442900f287838689e35d662",
+  "benchmark_sha": "b6963e755cb12a1b545b736b510d5287c1c9fdf5",
   "environment": {
-    "timestamp_utc": "2026-09-17T18:25:48Z",
+    "timestamp_utc": "2026-09-17T18:29:41Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-31-generic",
@@ -29,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      0.4130859375,
-      0.43603515625,
-      0.466796875
+      0.501953125,
+      0.42578125,
+      0.44677734375
     ],
     "memory_total_bytes": 63846858752,
-    "memory_available_bytes": 54145564672,
+    "memory_available_bytes": 54119837696,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,7 +50,7 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "64bf4ecc12a04a734442900f287838689e35d662",
+    "benchmark_sha": "b6963e755cb12a1b545b736b510d5287c1c9fdf5",
     "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
@@ -85,6 +85,12 @@
           "problems": [
             "roml_python_vectorized supports ('sparse_rows', 'bess_96'); rule_rows by design"
           ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_vectorized supports ('sparse_rows', 'bess_96'); param_bess by design"
+          ]
         }
       },
       "status": "ok",
@@ -109,6 +115,76 @@
         "rule_rows/1000": {
           "status": "ok",
           "objective": 0.0,
+          "solver": "roml-highs",
+          "problems": []
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_rules supports ('rule_rows',); param_bess by design"
+          ]
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_python_param": {
+      "construction_path": "Python Model parameter arrays + packed rm.sum objective (parameterized construction; no dense numeric objective)",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_param supports ('param_bess',); sparse_rows by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_param supports ('param_bess',); bess_96 by design"
+          ]
+        },
+        "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_param supports ('param_bess',); rule_rows by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "ok",
+          "objective": 96317.39571176776,
+          "solver": "roml-highs",
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_python_concrete": {
+      "construction_path": "ConcreteModel + RangeSet axes + labeled vars/params + array algebra (labeled ergonomics surface)",
+      "count_source": "construction",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_concrete supports ('param_bess',); sparse_rows by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_concrete supports ('param_bess',); bess_96 by design"
+          ]
+        },
+        "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_concrete supports ('param_bess',); rule_rows by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "ok",
+          "objective": 96317.39571176776,
           "solver": "roml-highs",
           "problems": []
         }
@@ -137,6 +213,12 @@
           "problems": [
             "roml_python_naive_chain supports ('sparse_rows', 'bess_96'); rule_rows by design"
           ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_naive_chain supports ('sparse_rows', 'bess_96'); param_bess by design"
+          ]
         }
       },
       "status": "ok",
@@ -162,6 +244,12 @@
           "status": "skipped",
           "problems": [
             "roml_python_csr supports ('bess_96',); rule_rows by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "roml_python_csr supports ('bess_96',); param_bess by design"
           ]
         }
       },
@@ -189,6 +277,12 @@
           "problems": [
             "pulp_python supports ('sparse_rows', 'bess_96'); rule_rows by design"
           ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "pulp_python supports ('sparse_rows', 'bess_96'); param_bess by design"
+          ]
         }
       },
       "status": "ok",
@@ -215,6 +309,12 @@
           "objective": 0.0,
           "solver": "appsi-highs",
           "problems": []
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "pyomo_python supports ('sparse_rows', 'bess_96', 'rule_rows'); param_bess by design"
+          ]
         }
       },
       "status": "ok",
@@ -240,6 +340,12 @@
           "status": "skipped",
           "problems": [
             "pyoptinterface_python supports ('sparse_rows', 'bess_96'); rule_rows by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "pyoptinterface_python supports ('sparse_rows', 'bess_96'); param_bess by design"
           ]
         }
       },
@@ -267,6 +373,12 @@
           "problems": [
             "pyoptinterface_scalar supports ('sparse_rows', 'bess_96'); rule_rows by design"
           ]
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "pyoptinterface_scalar supports ('sparse_rows', 'bess_96'); param_bess by design"
+          ]
         }
       },
       "status": "ok",
@@ -278,12 +390,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27220,
+          "populate_ns": 26671,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 126773,
+          "populate_ns": 123792,
           "objective": 651.9938455874309
         }
       },
@@ -300,12 +412,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 28831,
+          "populate_ns": 26961,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 113572,
+          "populate_ns": 111022,
           "objective": 651.993845587431
         }
       },
@@ -322,15 +434,21 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 73741,
+          "populate_ns": 76111,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 273555,
+          "populate_ns": 274305,
           "problems": []
         },
         "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_rust supports ['bess_96', 'sparse_rows'] by design"
+          ]
+        },
+        "param_bess/10": {
           "status": "skipped",
           "problems": [
             "roml_core_rust supports ['bess_96', 'sparse_rows'] by design"
@@ -346,15 +464,21 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 70141,
+          "populate_ns": 70281,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 244264,
+          "populate_ns": 236544,
           "problems": []
         },
         "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_rust_anon supports ['bess_96', 'sparse_rows'] by design"
+          ]
+        },
+        "param_bess/10": {
           "status": "skipped",
           "problems": [
             "roml_core_rust_anon supports ['bess_96', 'sparse_rows'] by design"
@@ -370,15 +494,21 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 16690,
+          "populate_ns": 15810,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 51431,
+          "populate_ns": 51761,
           "problems": []
         },
         "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_bulk supports ['bess_96', 'sparse_rows'] by design"
+          ]
+        },
+        "param_bess/10": {
           "status": "skipped",
           "problems": [
             "roml_core_bulk supports ['bess_96', 'sparse_rows'] by design"
@@ -400,10 +530,16 @@
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 78302,
+          "populate_ns": 72362,
           "problems": []
         },
         "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_l1 supports ['bess_96'] by design"
+          ]
+        },
+        "param_bess/10": {
           "status": "skipped",
           "problems": [
             "roml_core_l1 supports ['bess_96'] by design"
@@ -431,7 +567,75 @@
         },
         "rule_rows/1000": {
           "status": "ok",
-          "populate_ns": 3024974,
+          "populate_ns": 3034065,
+          "problems": []
+        },
+        "param_bess/10": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_rules supports ['rule_rows'] by design"
+          ]
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_bulk_param": {
+      "implementation": "roml_core_bulk_param",
+      "construction_path": "rust legacy scalar builder: Model::named + scalar add_variable/add_constraint (historical interface, not current L1)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_bulk_param supports ['param_bess'] by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_bulk_param supports ['param_bess'] by design"
+          ]
+        },
+        "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_bulk_param supports ['param_bess'] by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "ok",
+          "populate_ns": 202043,
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_l1_param": {
+      "implementation": "roml_core_l1_param",
+      "construction_path": "rust legacy scalar builder: Model::named + scalar add_variable/add_constraint (historical interface, not current L1)",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_l1_param supports ['param_bess'] by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_l1_param supports ['param_bess'] by design"
+          ]
+        },
+        "rule_rows/1000": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_l1_param supports ['param_bess'] by design"
+          ]
+        },
+        "param_bess/10": {
+          "status": "ok",
+          "populate_ns": 151112,
           "problems": []
         }
       },

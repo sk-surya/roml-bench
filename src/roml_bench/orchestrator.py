@@ -35,6 +35,8 @@ PYTHON_IMPLEMENTATIONS = (
     "roml_python_naive_chain",
     "roml_python_csr",
     "roml_python_rules",
+    "roml_python_param",
+    "roml_python_concrete",
     "pulp_python",
     "pyomo_python",
     "pyoptinterface_python",
@@ -46,6 +48,8 @@ CORE_IMPLEMENTATIONS = (
     "roml_core_bulk",
     "roml_core_l1",
     "roml_core_rules",
+    "roml_core_bulk_param",
+    "roml_core_l1_param",
 )
 JULIA_IMPLEMENTATIONS = ("jump_julia",)
 CPP_IMPLEMENTATIONS = ("ortools_mathopt_cpp",)

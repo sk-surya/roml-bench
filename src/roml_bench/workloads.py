@@ -27,6 +27,18 @@ BESS_E0 = 2.0
 BESS_STANDARD_SIZES = (1, 3, 10, 30, 100, 300)
 BESS_QUICK_SIZES = (1, 10)
 
+# Parameterized construction fixture (ROML-only): B batteries x T periods,
+# one price parameter per (battery, period) driving the packed objective.
+# Also the fixture for the ConcreteModel ergonomics measurement.
+PARAM_STANDARD_SIZES = (1, 10, 300)
+PARAM_QUICK_SIZES = (1, 10)
+
+
+def param_bess_counts(b: int, t: int = BESS_T) -> tuple[int, int, int, int]:
+    """Return (variables, constraints, constraint_nnz, objective_nnz)."""
+    return (2 * b * t, 0, 0, 2 * b * t)
+
+
 # Indexed-rule workload: N rows, J variables per row.
 RULE_J = 10
 RULE_STANDARD_SIZES = (1_000, 10_000, 100_000)
@@ -105,6 +117,15 @@ def make_case(workload: str, size: int, seed: int = CANONICAL_SEED) -> WorkloadC
         j = RULE_J
         variables, constraints, constraint_nnz, objective_nnz = rule_rows_counts(size, j)
         payload = {"n": size, "j": j, "cap": rule_rows_caps(size, seed)}
+    elif workload == "param_bess":
+        variables, constraints, constraint_nnz, objective_nnz = param_bess_counts(size)
+        prices = bess_prices(seed)
+        payload = {
+            "b": size,
+            "t": BESS_T,
+            "prices": prices,
+            "price_grid": np.tile(prices, (size, 1)),
+        }
     else:
         raise ValueError(f"unknown workload: {workload}")
     return WorkloadCase(
@@ -129,6 +150,8 @@ def sizes_for(workload: str, profile: str) -> tuple[int, ...]:
         grid = BESS_STANDARD_SIZES if standard else BESS_QUICK_SIZES
     elif workload == "rule_rows":
         grid = RULE_STANDARD_SIZES if standard else RULE_QUICK_SIZES
+    elif workload == "param_bess":
+        grid = PARAM_STANDARD_SIZES if standard else PARAM_QUICK_SIZES
     else:
         raise ValueError(f"unknown workload: {workload}")
     return grid

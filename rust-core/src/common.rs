@@ -553,6 +553,140 @@ pub fn build_rules(
     Ok((n * j, n, n * j, n * j))
 }
 
+/// Parameterized construction fixture — raw L2 path: block variables, a
+/// first-class parameter block, and the packed parameter-dependent objective
+/// `maximize sum(price * (discharge - charge))` through
+/// `set_linear_objective_param_bulk`. Internal lower bound for item 8.
+#[allow(dead_code)]
+pub fn build_param_bess_bulk(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    use roml::{BlockBounds, Bounds, VarType};
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let discharge = model.add_variable_array_block(
+        [b, t],
+        VarType::Continuous,
+        BlockBounds::Uniform(Bounds::new(0.0, BESS_P)),
+    )?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    let price = model.add_parameter_array_block([b, t], &price_grid)?;
+    let t_params = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    use roml::bulk::{ParamDepBlockWitness, ParamDepLayout, StridedMap};
+    let n = b * t;
+    // Canonical order is by variable: charge (created first, scale -1) then
+    // discharge (scale +1), each reading the matching price parameter.
+    let mut vars = Vec::with_capacity(2 * n);
+    let mut params = Vec::with_capacity(2 * n);
+    let mut scales = Vec::with_capacity(2 * n);
+    for i in 0..n {
+        vars.push(charge.get(i).expect("member"));
+        params.push(price.get(i).expect("member"));
+        scales.push(-1.0);
+    }
+    for i in 0..n {
+        vars.push(discharge.get(i).expect("member"));
+        params.push(price.get(i).expect("member"));
+        scales.push(1.0);
+    }
+    let span = *price.view().view().span();
+    let layout = ParamDepLayout {
+        blocks: vec![
+            ParamDepBlockWitness {
+                params: span,
+                param_map: StridedMap::contiguous(n),
+                cell_offset: 0,
+                cell_map: StridedMap::contiguous(n),
+                scale: -1.0,
+                row: None,
+            },
+            ParamDepBlockWitness {
+                params: span,
+                param_map: StridedMap::contiguous(n),
+                cell_offset: n as u32,
+                cell_map: StridedMap::contiguous(n),
+                scale: 1.0,
+                row: None,
+            },
+        ],
+    };
+    model.set_linear_objective_param_bulk_with_layout(
+        roml::Sense::Maximize,
+        &vars,
+        &params,
+        &scales,
+        0.0,
+        &layout,
+    )?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("parameters".to_string(), t_params);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((2 * b * t, 0, 0, 2 * b * t))
+}
+
+/// Parameterized construction fixture — current Rust L1 array path:
+/// `var(..).build()`, `param(..)`, and the packed `maximize_array` objective
+/// `sum(price * (discharge - charge))`.
+#[allow(dead_code)]
+pub fn build_param_bess_l1(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.var("charge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let discharge = model.var("discharge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    let price = model.param("price", [b, t], &price_grid)?;
+    let t_params = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    let objective = price
+        .try_mul(&(discharge.clone() - charge.clone()))?
+        .expect("conservative IR covers price * (discharge - charge)");
+    model.maximize_array(&objective)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("parameters".to_string(), t_params);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((2 * b * t, 0, 0, 2 * b * t))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
