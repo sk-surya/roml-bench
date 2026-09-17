@@ -92,7 +92,7 @@ PROFILES = {
     },
 }
 
-WORKLOADS = ("sparse_rows", "bess_96")
+WORKLOADS = ("sparse_rows", "bess_96", "rule_rows", "param_bess")
 
 RUST_BINARY = Path("target/release/roml-bench-core")
 JULIA_SCRIPT = Path("julia/jump_bench.jl")
