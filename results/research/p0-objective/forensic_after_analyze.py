@@ -4,7 +4,7 @@ import statistics
 import sys
 
 RUN = sys.argv[1]
-recs = [json.loads(l) for l in open(f"{RUN}/raw.jsonl")]
+recs = [json.loads(line) for line in open(f"{RUN}/raw.jsonl")]
 meta = json.load(open(f"{RUN}/run.json"))
 print("run:", meta["run_id"], "profile:", meta["profile"], "roml:", meta["roml_sha"])
 print("total records:", len(recs))

@@ -39,7 +39,8 @@ def esc(s: str) -> str:
 def header(title: str, subtitle: str, height: int) -> list[str]:
     return [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{height}" '
-        f'viewBox="0 0 {W} {height}" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">',
+        f'viewBox="0 0 {W} {height}" '
+        f'font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">',
         f'<rect width="{W}" height="{height}" fill="{FG}"/>',
         f'<text x="16" y="26" font-size="17" font-weight="700" fill="{TEXT}">{esc(title)}</text>',
         f'<text x="16" y="46" font-size="12" fill="{SUB}">{esc(subtitle)}</text>',
@@ -136,10 +137,19 @@ def line_chart(title: str, subtitle: str, x_labels: list[int], series: list[dict
     # legend
     lx = PAD_L
     for s in series:
-        out.append(f'<rect x="{lx}" y="{PAD_T - 26}" width="12" height="12" rx="2" fill="{s["color"]}"/>')
-        out.append(f'<text x="{lx + 17}" y="{PAD_T - 15}" font-size="12" fill="{TEXT}">{esc(s["label"])}</text>')
+        out.append(
+            f'<rect x="{lx}" y="{PAD_T - 26}" width="12" height="12" rx="2" '
+            f'fill="{s["color"]}"/>'
+        )
+        out.append(
+            f'<text x="{lx + 17}" y="{PAD_T - 15}" font-size="12" fill="{TEXT}">'
+            f'{esc(s["label"])}</text>'
+        )
         lx += 22 + 8 * len(s["label"])
-    out.append(f'<text x="{W - 16}" y="{height - 8}" font-size="11" fill="{SUB}" text-anchor="end">{esc(unit)} (log scale)</text>')
+    out.append(
+        f'<text x="{W - 16}" y="{height - 8}" font-size="11" fill="{SUB}" '
+        f'text-anchor="end">{esc(unit)} (log scale)</text>'
+    )
     out.append("</svg>")
     return "\n".join(out)
 

@@ -11,6 +11,7 @@
 //! come from `roml-bench-core` built without this shim. Records emitted here
 //! carry `status: "ok-counting"` and must never enter benchmark runs.
 
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 

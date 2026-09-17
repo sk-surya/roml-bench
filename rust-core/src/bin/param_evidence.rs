@@ -2,6 +2,7 @@
 //! through the raw L2 parameter-block path and the current Rust L1 array path,
 //! and print the packed-dependency lowering counters + canonical fingerprints
 //! so roml-bench has its own evidence (MIR numbers are a sanity check only).
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 

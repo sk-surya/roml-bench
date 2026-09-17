@@ -30,9 +30,9 @@ extrapolated.</p>
 <td>{{ '%.3g'|format(g.min_ms) if g.min_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.max_ms) if g.max_ms is defined else '—' }}</td>
 <td>{{ '%.3g'|format(g.mad_ms) if g.mad_ms is defined else '—' }}</td>
-<td>{{ '%.3g'|format(g.phase_median_ms.variables) if g.phase_median_ms is defined else '—' }}</td>
-<td>{{ '%.3g'|format(g.phase_median_ms.constraints) if g.phase_median_ms is defined else '—' }}</td>
-<td>{{ '%.3g'|format(g.phase_median_ms.objective) if g.phase_median_ms is defined else '—' }}</td></tr>
+<td>{{ '%.3g'|format(g.phase_median_ms.variables) if g.phase_median_ms is defined and 'variables' in g.phase_median_ms else '—' }}</td>
+<td>{{ '%.3g'|format(g.phase_median_ms.constraints) if g.phase_median_ms is defined and 'constraints' in g.phase_median_ms else '—' }}</td>
+<td>{{ '%.3g'|format(g.phase_median_ms.objective) if g.phase_median_ms is defined and 'objective' in g.phase_median_ms else '—' }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

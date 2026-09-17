@@ -21,6 +21,7 @@
 //! counts. Prices arrive via `--prices-csv` (suite-canonical) so the
 //! reported cells cross-check the Python packed-parametric probe.
 
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 

@@ -31,7 +31,6 @@ import statistics
 import time
 
 import numpy as np
-
 import roml as rm
 
 P_PRODUCTS = 4
@@ -346,13 +345,16 @@ def main() -> int:
     if args.out:
         with open(args.out, "w") as f:
             f.write(text + "\n")
+    def p50(name: str) -> float:
+        return report["arms"][name]["end_to_end_ms"]["median"]
+
     print(
         json.dumps(
             {
-                "roml_direct_end_to_end_p50_ms": report["arms"]["roml_direct"]["end_to_end_ms"]["median"],
-                "roml_template_end_to_end_p50_ms": report["arms"]["roml_template"]["end_to_end_ms"]["median"],
-                "pyomo_rebuild_end_to_end_p50_ms": report["arms"]["pyomo_rebuild"]["end_to_end_ms"]["median"],
-                "pulp_rebuild_end_to_end_p50_ms": report["arms"]["pulp_rebuild"]["end_to_end_ms"]["median"],
+                "roml_direct": p50("roml_direct"),
+                "roml_template": p50("roml_template"),
+                "pyomo_rebuild": p50("pyomo_rebuild"),
+                "pulp_rebuild": p50("pulp_rebuild"),
             },
             indent=1,
         )

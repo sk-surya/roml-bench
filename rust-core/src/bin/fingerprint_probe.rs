@@ -1,6 +1,7 @@
 //! Canonical-equivalence probe: build the benchmark BESS through the current
 //! Rust L1 array API and print its normalized fingerprints, so the arm can be
 //! checked against an equivalent Python construction before timing.
+#![allow(dead_code)]
 #[path = "../common.rs"]
 mod common;
 

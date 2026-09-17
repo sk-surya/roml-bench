@@ -1,0 +1,4299 @@
+{
+  "run_id": "20260909T030826Z-ai90-13842608",
+  "profile": "standard",
+  "seed": 20260908,
+  "benchmark_sha": "138426084e2db12a89771155c67c179a83d02b6c",
+  "roml_sha": "d6afabd2988761fe9d5dd08597491a6f3fb73779",
+  "generated_utc": "2026-09-09T03:10:52Z",
+  "groups": [
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.642189,
+      "p25_ms": 1.628619,
+      "p75_ms": 1.656779,
+      "min_ms": 1.625079,
+      "max_ms": 1.65817,
+      "mad_ms": 0.01356999999999986,
+      "replicates": 7,
+      "container_init_median_ms": 0.002,
+      "user_build_total_median_ms": 1.644189,
+      "peak_rss_median_bytes": 136822784,
+      "phase_median_ms": {
+        "variables": 0.292375,
+        "constraints": 1.1164,
+        "objective": 0.232694
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.188051,
+      "p25_ms": 1.14954,
+      "p75_ms": 2.100477,
+      "min_ms": 1.126349,
+      "max_ms": 3.017054,
+      "mad_ms": 0.061701999999999924,
+      "replicates": 7,
+      "container_init_median_ms": 0.020601,
+      "user_build_total_median_ms": 1.208652,
+      "peak_rss_median_bytes": 136728576,
+      "phase_median_ms": {
+        "variables": 0.470538,
+        "constraints": 0.54641,
+        "objective": 0.134352
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.944856,
+      "p25_ms": 0.932696,
+      "p75_ms": 1.065068,
+      "min_ms": 0.932257,
+      "max_ms": 1.477956,
+      "mad_ms": 0.012599000000000027,
+      "replicates": 7,
+      "container_init_median_ms": 0.03296,
+      "user_build_total_median_ms": 0.977816,
+      "peak_rss_median_bytes": 138506240,
+      "phase_median_ms": {
+        "variables": 0.327776,
+        "constraints": 0.58245,
+        "objective": 0.03614
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.483729,
+      "p25_ms": 0.480658,
+      "p75_ms": 0.496479,
+      "min_ms": 0.475128,
+      "max_ms": 0.52181,
+      "mad_ms": 0.0031489999999999574,
+      "replicates": 7,
+      "container_init_median_ms": 0.028601,
+      "user_build_total_median_ms": 0.5123300000000001,
+      "peak_rss_median_bytes": 138125312,
+      "phase_median_ms": {
+        "variables": 0.243875,
+        "constraints": 0.213604,
+        "objective": 0.026
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.069321,
+      "p25_ms": 0.068071,
+      "p75_ms": 0.071051,
+      "min_ms": 0.065791,
+      "max_ms": 0.072601,
+      "mad_ms": 0.0016200000000000103,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.069531,
+      "peak_rss_median_bytes": 3010560,
+      "phase_median_ms": {
+        "constraints": 0.020771,
+        "objective": 0.00593,
+        "variables": 0.03704
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.284545,
+      "p25_ms": 0.273625,
+      "p75_ms": 0.287605,
+      "min_ms": 0.271255,
+      "max_ms": 0.293456,
+      "mad_ms": 0.006981000000000015,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.284755,
+      "peak_rss_median_bytes": 3383296,
+      "phase_median_ms": {
+        "constraints": 0.200404,
+        "objective": 0.035281,
+        "variables": 0.041081
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.251665,
+      "p25_ms": 0.249604,
+      "p75_ms": 0.257845,
+      "min_ms": 0.248405,
+      "max_ms": 0.264844,
+      "mad_ms": 0.002061000000000035,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.251875,
+      "peak_rss_median_bytes": 3244032,
+      "phase_median_ms": {
+        "constraints": 0.183053,
+        "objective": 0.03644,
+        "variables": 0.02624
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.227614,
+      "p25_ms": 0.227274,
+      "p75_ms": 0.241854,
+      "min_ms": 0.226384,
+      "max_ms": 0.254235,
+      "mad_ms": 0.0012300000000000089,
+      "replicates": 7,
+      "container_init_median_ms": 0.00078,
+      "user_build_total_median_ms": 0.228394,
+      "peak_rss_median_bytes": 137273344,
+      "phase_median_ms": {
+        "variables": 0.040021,
+        "constraints": 0.102732,
+        "objective": 0.087682
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.187023,
+      "p25_ms": 0.172713,
+      "p75_ms": 0.215334,
+      "min_ms": 0.171933,
+      "max_ms": 0.220574,
+      "mad_ms": 0.01430999999999999,
+      "replicates": 7,
+      "container_init_median_ms": 0.00097,
+      "user_build_total_median_ms": 0.187993,
+      "peak_rss_median_bytes": 137465856,
+      "phase_median_ms": {
+        "variables": 0.100802,
+        "constraints": 0.067141,
+        "objective": 0.015361
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 1,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.671362,
+      "p25_ms": 0.658262,
+      "p75_ms": 0.673812,
+      "min_ms": 0.653752,
+      "max_ms": 0.692082,
+      "mad_ms": 0.00829000000000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.00074,
+      "user_build_total_median_ms": 0.672102,
+      "peak_rss_median_bytes": 137285632,
+      "phase_median_ms": {
+        "variables": 0.108002,
+        "constraints": 0.383217,
+        "objective": 0.177914
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.594131,
+      "p25_ms": 4.556771,
+      "p75_ms": 4.655263,
+      "min_ms": 4.55199,
+      "max_ms": 6.521026,
+      "mad_ms": 0.042140999999999984,
+      "replicates": 7,
+      "container_init_median_ms": 0.00203,
+      "user_build_total_median_ms": 4.596161,
+      "peak_rss_median_bytes": 137580544,
+      "phase_median_ms": {
+        "variables": 0.918506,
+        "constraints": 3.007614,
+        "objective": 0.661782
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 3.844589,
+      "p25_ms": 3.804868,
+      "p75_ms": 3.893809,
+      "min_ms": 3.703866,
+      "max_ms": 4.042332,
+      "mad_ms": 0.03972100000000012,
+      "replicates": 7,
+      "container_init_median_ms": 0.02,
+      "user_build_total_median_ms": 3.864589,
+      "peak_rss_median_bytes": 137367552,
+      "phase_median_ms": {
+        "variables": 0.595971,
+        "constraints": 2.920201,
+        "objective": 0.326436
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.372932,
+      "p25_ms": 2.330471,
+      "p75_ms": 2.497385,
+      "min_ms": 2.323441,
+      "max_ms": 3.598483,
+      "mad_ms": 0.04246099999999986,
+      "replicates": 7,
+      "container_init_median_ms": 0.036921,
+      "user_build_total_median_ms": 2.409853,
+      "peak_rss_median_bytes": 138694656,
+      "phase_median_ms": {
+        "variables": 0.898135,
+        "constraints": 1.392415,
+        "objective": 0.081991
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.349014,
+      "p25_ms": 1.314863,
+      "p75_ms": 1.353374,
+      "min_ms": 1.312174,
+      "max_ms": 1.365774,
+      "mad_ms": 0.01309999999999989,
+      "replicates": 7,
+      "container_init_median_ms": 0.02833,
+      "user_build_total_median_ms": 1.377344,
+      "peak_rss_median_bytes": 138334208,
+      "phase_median_ms": {
+        "variables": 0.676132,
+        "constraints": 0.608331,
+        "objective": 0.054471
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.174513,
+      "p25_ms": 0.161993,
+      "p75_ms": 0.180803,
+      "min_ms": 0.158712,
+      "max_ms": 0.185863,
+      "mad_ms": 0.00827,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.174723,
+      "peak_rss_median_bytes": 3399680,
+      "phase_median_ms": {
+        "constraints": 0.080481,
+        "objective": 0.01211,
+        "variables": 0.074761
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.800664,
+      "p25_ms": 0.763353,
+      "p75_ms": 1.002588,
+      "min_ms": 0.756963,
+      "max_ms": 1.055319,
+      "mad_ms": 0.04370099999999999,
+      "replicates": 7,
+      "container_init_median_ms": 0.00022,
+      "user_build_total_median_ms": 0.800884,
+      "peak_rss_median_bytes": 4091904,
+      "phase_median_ms": {
+        "constraints": 0.529119,
+        "objective": 0.184313,
+        "variables": 0.088372
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.720423,
+      "p25_ms": 0.706322,
+      "p75_ms": 0.742233,
+      "min_ms": 0.695352,
+      "max_ms": 0.900396,
+      "mad_ms": 0.01410100000000003,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.7206330000000001,
+      "peak_rss_median_bytes": 4018176,
+      "phase_median_ms": {
+        "constraints": 0.498049,
+        "objective": 0.149823,
+        "variables": 0.059841
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.407066,
+      "p25_ms": 0.403927,
+      "p75_ms": 0.416657,
+      "min_ms": 0.403487,
+      "max_ms": 0.429748,
+      "mad_ms": 0.003192000000000028,
+      "replicates": 7,
+      "container_init_median_ms": 0.00081,
+      "user_build_total_median_ms": 0.40787599999999996,
+      "peak_rss_median_bytes": 137826304,
+      "phase_median_ms": {
+        "variables": 0.082031,
+        "constraints": 0.221613,
+        "objective": 0.103782
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.351676,
+      "p25_ms": 0.345866,
+      "p75_ms": 0.353766,
+      "min_ms": 0.343216,
+      "max_ms": 0.357956,
+      "mad_ms": 0.0042999999999999705,
+      "replicates": 7,
+      "container_init_median_ms": 0.00107,
+      "user_build_total_median_ms": 0.352746,
+      "peak_rss_median_bytes": 137670656,
+      "phase_median_ms": {
+        "variables": 0.152453,
+        "constraints": 0.166973,
+        "objective": 0.029561
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 3,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.804552,
+      "p25_ms": 1.776532,
+      "p75_ms": 1.846113,
+      "min_ms": 1.741911,
+      "max_ms": 2.556976,
+      "mad_ms": 0.028019999999999934,
+      "replicates": 7,
+      "container_init_median_ms": 0.00076,
+      "user_build_total_median_ms": 1.805312,
+      "peak_rss_median_bytes": 138285056,
+      "phase_median_ms": {
+        "variables": 0.294516,
+        "constraints": 1.090079,
+        "objective": 0.416337
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 17.028492,
+      "p25_ms": 16.862408,
+      "p75_ms": 17.265986,
+      "min_ms": 16.805349,
+      "max_ms": 17.314718,
+      "mad_ms": 0.16608400000000145,
+      "replicates": 7,
+      "container_init_median_ms": 0.00198,
+      "user_build_total_median_ms": 17.030472,
+      "peak_rss_median_bytes": 139755520,
+      "phase_median_ms": {
+        "variables": 2.930432,
+        "constraints": 11.791639,
+        "objective": 2.193979
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 7.453522,
+      "p25_ms": 7.216298,
+      "p75_ms": 7.848549,
+      "min_ms": 6.661158,
+      "max_ms": 7.921011,
+      "mad_ms": 0.23901399999999917,
+      "replicates": 7,
+      "container_init_median_ms": 0.02021,
+      "user_build_total_median_ms": 7.473732,
+      "peak_rss_median_bytes": 138563584,
+      "phase_median_ms": {
+        "variables": 2.632467,
+        "constraints": 3.398201,
+        "objective": 1.426535
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 7.30144,
+      "p25_ms": 7.267909,
+      "p75_ms": 7.33193,
+      "min_ms": 7.198838,
+      "max_ms": 7.360351,
+      "mad_ms": 0.030489999999999462,
+      "replicates": 7,
+      "container_init_median_ms": 0.035861,
+      "user_build_total_median_ms": 7.337301,
+      "peak_rss_median_bytes": 139530240,
+      "phase_median_ms": {
+        "variables": 2.908452,
+        "constraints": 4.155093,
+        "objective": 0.221404
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.321807,
+      "p25_ms": 4.277746,
+      "p75_ms": 4.355877,
+      "min_ms": 4.263785,
+      "max_ms": 4.427658,
+      "mad_ms": 0.03407000000000071,
+      "replicates": 7,
+      "container_init_median_ms": 0.02846,
+      "user_build_total_median_ms": 4.350267,
+      "peak_rss_median_bytes": 139128832,
+      "phase_median_ms": {
+        "variables": 2.166738,
+        "constraints": 1.995935,
+        "objective": 0.141343
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.544249,
+      "p25_ms": 0.5333,
+      "p75_ms": 0.55221,
+      "min_ms": 0.499989,
+      "max_ms": 0.55767,
+      "mad_ms": 0.007960999999999996,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.544459,
+      "peak_rss_median_bytes": 4624384,
+      "phase_median_ms": {
+        "constraints": 0.243064,
+        "objective": 0.037521,
+        "variables": 0.257594
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.590946,
+      "p25_ms": 2.540315,
+      "p75_ms": 2.707209,
+      "min_ms": 2.504994,
+      "max_ms": 2.725269,
+      "mad_ms": 0.05063100000000009,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 2.5911560000000002,
+      "peak_rss_median_bytes": 6778880,
+      "phase_median_ms": {
+        "constraints": 1.733921,
+        "objective": 0.536719,
+        "variables": 0.290845
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.383553,
+      "p25_ms": 2.327681,
+      "p75_ms": 2.462574,
+      "min_ms": 2.320151,
+      "max_ms": 2.497184,
+      "mad_ms": 0.06340199999999996,
+      "replicates": 7,
+      "container_init_median_ms": 0.00022,
+      "user_build_total_median_ms": 2.383773,
+      "peak_rss_median_bytes": 6660096,
+      "phase_median_ms": {
+        "constraints": 1.667969,
+        "objective": 0.54293,
+        "variables": 0.175643
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.982157,
+      "p25_ms": 0.979597,
+      "p75_ms": 1.014308,
+      "min_ms": 0.976387,
+      "max_ms": 1.026228,
+      "mad_ms": 0.004810000000000092,
+      "replicates": 7,
+      "container_init_median_ms": 0.00076,
+      "user_build_total_median_ms": 0.9829169999999999,
+      "peak_rss_median_bytes": 139173888,
+      "phase_median_ms": {
+        "variables": 0.231265,
+        "constraints": 0.616371,
+        "objective": 0.139782
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.991887,
+      "p25_ms": 0.976748,
+      "p75_ms": 1.020228,
+      "min_ms": 0.936137,
+      "max_ms": 1.263513,
+      "mad_ms": 0.015139000000000014,
+      "replicates": 7,
+      "container_init_median_ms": 0.001,
+      "user_build_total_median_ms": 0.992887,
+      "peak_rss_median_bytes": 139526144,
+      "phase_median_ms": {
+        "variables": 0.340466,
+        "constraints": 0.56341,
+        "objective": 0.076712
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 10,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 5.672281,
+      "p25_ms": 5.58801,
+      "p75_ms": 5.759022,
+      "min_ms": 5.574259,
+      "max_ms": 5.763212,
+      "mad_ms": 0.0842710000000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.00073,
+      "user_build_total_median_ms": 5.673011,
+      "peak_rss_median_bytes": 140902400,
+      "phase_median_ms": {
+        "variables": 0.963988,
+        "constraints": 3.33559,
+        "objective": 1.307444
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 47.290839,
+      "p25_ms": 46.621537,
+      "p75_ms": 47.765277,
+      "min_ms": 46.531636,
+      "max_ms": 48.192195,
+      "mad_ms": 0.5261500000000012,
+      "replicates": 7,
+      "container_init_median_ms": 0.0018,
+      "user_build_total_median_ms": 47.292639,
+      "peak_rss_median_bytes": 146096128,
+      "phase_median_ms": {
+        "variables": 10.546727,
+        "constraints": 30.169675,
+        "objective": 6.557246
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 54.08472,
+      "p25_ms": 41.361353,
+      "p75_ms": 54.630128,
+      "min_ms": 36.570588,
+      "max_ms": 55.25661,
+      "mad_ms": 1.1718900000000048,
+      "replicates": 7,
+      "container_init_median_ms": 0.0205,
+      "user_build_total_median_ms": 54.105219999999996,
+      "peak_rss_median_bytes": 144297984,
+      "phase_median_ms": {
+        "variables": 4.00094,
+        "constraints": 10.640929,
+        "objective": 39.341268
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 21.472251,
+      "p25_ms": 21.363009,
+      "p75_ms": 21.898879,
+      "min_ms": 21.176466,
+      "max_ms": 22.833046,
+      "mad_ms": 0.29578499999999863,
+      "replicates": 7,
+      "container_init_median_ms": 0.032981,
+      "user_build_total_median_ms": 21.505232,
+      "peak_rss_median_bytes": 142729216,
+      "phase_median_ms": {
+        "variables": 8.821837,
+        "constraints": 12.104655,
+        "objective": 0.613261
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 12.96801,
+      "p25_ms": 12.816377,
+      "p75_ms": 13.456318,
+      "min_ms": 12.725136,
+      "max_ms": 22.57501,
+      "mad_ms": 0.15163300000000035,
+      "replicates": 7,
+      "container_init_median_ms": 0.028651,
+      "user_build_total_median_ms": 12.996661,
+      "peak_rss_median_bytes": 142413824,
+      "phase_median_ms": {
+        "variables": 6.685039,
+        "constraints": 5.893095,
+        "objective": 0.377457
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.583458,
+      "p25_ms": 1.474406,
+      "p75_ms": 1.68006,
+      "min_ms": 1.462856,
+      "max_ms": 2.214739,
+      "mad_ms": 0.09660200000000008,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 1.583668,
+      "peak_rss_median_bytes": 7847936,
+      "phase_median_ms": {
+        "constraints": 0.746423,
+        "objective": 0.141652,
+        "variables": 0.634342
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.246696,
+      "p25_ms": 7.676886,
+      "p75_ms": 8.842266,
+      "min_ms": 7.663686,
+      "max_ms": 8.98768,
+      "mad_ms": 0.5698100000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 8.246906,
+      "peak_rss_median_bytes": 14053376,
+      "phase_median_ms": {
+        "constraints": 5.785763,
+        "objective": 1.594818,
+        "variables": 0.739643
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 7.600495,
+      "p25_ms": 7.449162,
+      "p75_ms": 8.238146,
+      "min_ms": 6.992734,
+      "max_ms": 11.920491,
+      "mad_ms": 0.2536840000000007,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 7.600695,
+      "peak_rss_median_bytes": 13623296,
+      "phase_median_ms": {
+        "constraints": 5.61391,
+        "objective": 1.563048,
+        "variables": 0.491638
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.694227,
+      "p25_ms": 2.618167,
+      "p75_ms": 2.811839,
+      "min_ms": 2.544215,
+      "max_ms": 2.937033,
+      "mad_ms": 0.07606000000000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.00084,
+      "user_build_total_median_ms": 2.6950670000000003,
+      "peak_rss_median_bytes": 143089664,
+      "phase_median_ms": {
+        "variables": 0.839745,
+        "constraints": 1.596088,
+        "objective": 0.290395
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.706488,
+      "p25_ms": 2.665027,
+      "p75_ms": 2.780129,
+      "min_ms": 2.633017,
+      "max_ms": 4.005552,
+      "mad_ms": 0.05072100000000024,
+      "replicates": 7,
+      "container_init_median_ms": 0.00103,
+      "user_build_total_median_ms": 2.707518,
+      "peak_rss_median_bytes": 143679488,
+      "phase_median_ms": {
+        "variables": 0.948507,
+        "constraints": 1.573718,
+        "objective": 0.193403
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 30,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 16.903428,
+      "p25_ms": 16.628325,
+      "p75_ms": 17.062243,
+      "min_ms": 16.473511,
+      "max_ms": 25.026994,
+      "mad_ms": 0.20012200000000036,
+      "replicates": 7,
+      "container_init_median_ms": 0.00073,
+      "user_build_total_median_ms": 16.904158000000002,
+      "peak_rss_median_bytes": 148770816,
+      "phase_median_ms": {
+        "variables": 2.978432,
+        "constraints": 9.821315,
+        "objective": 4.100812
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 196.111029,
+      "p25_ms": 189.350509,
+      "p75_ms": 197.746548,
+      "min_ms": 177.414367,
+      "max_ms": 264.671725,
+      "mad_ms": 1.635518999999988,
+      "replicates": 7,
+      "container_init_median_ms": 0.00227,
+      "user_build_total_median_ms": 196.113299,
+      "peak_rss_median_bytes": 167829504,
+      "phase_median_ms": {
+        "variables": 32.225641,
+        "constraints": 142.229403,
+        "objective": 21.813017
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 92.118865,
+      "p25_ms": 76.321094,
+      "p75_ms": 93.475728,
+      "min_ms": 71.115151,
+      "max_ms": 117.302321,
+      "mad_ms": 6.892152999999993,
+      "replicates": 7,
+      "container_init_median_ms": 0.02145,
+      "user_build_total_median_ms": 92.140315,
+      "peak_rss_median_bytes": 161411072,
+      "phase_median_ms": {
+        "variables": 9.299865,
+        "constraints": 72.658029,
+        "objective": 9.907635
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 73.317081,
+      "p25_ms": 72.839802,
+      "p75_ms": 74.470401,
+      "min_ms": 72.1227,
+      "max_ms": 75.170514,
+      "mad_ms": 0.726389999999995,
+      "replicates": 7,
+      "container_init_median_ms": 0.036101,
+      "user_build_total_median_ms": 73.353182,
+      "peak_rss_median_bytes": 153358336,
+      "phase_median_ms": {
+        "variables": 29.880981,
+        "constraints": 41.415705,
+        "objective": 2.085877
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 44.875207,
+      "p25_ms": 43.464211,
+      "p75_ms": 67.07244,
+      "min_ms": 43.349119,
+      "max_ms": 72.808222,
+      "mad_ms": 1.4109960000000044,
+      "replicates": 7,
+      "container_init_median_ms": 0.030071,
+      "user_build_total_median_ms": 44.905278,
+      "peak_rss_median_bytes": 150810624,
+      "phase_median_ms": {
+        "variables": 23.492237,
+        "constraints": 20.050576,
+        "objective": 1.288653
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 5.338985,
+      "p25_ms": 5.159501,
+      "p75_ms": 5.483677,
+      "min_ms": 5.153591,
+      "max_ms": 5.551949,
+      "mad_ms": 0.16978399999999993,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 5.3391850000000005,
+      "peak_rss_median_bytes": 19582976,
+      "phase_median_ms": {
+        "constraints": 2.743838,
+        "objective": 0.53804,
+        "variables": 1.996526
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 33.654997,
+      "p25_ms": 33.310771,
+      "p75_ms": 33.812759,
+      "min_ms": 33.178658,
+      "max_ms": 41.326353,
+      "mad_ms": 0.2039140000000046,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 33.655197,
+      "peak_rss_median_bytes": 41316352,
+      "phase_median_ms": {
+        "constraints": 22.777914,
+        "objective": 8.364228,
+        "variables": 2.424043
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 31.477298,
+      "p25_ms": 30.237916,
+      "p75_ms": 31.674852,
+      "min_ms": 26.871947,
+      "max_ms": 32.229082,
+      "mad_ms": 0.19755400000000023,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 31.477498,
+      "peak_rss_median_bytes": 39751680,
+      "phase_median_ms": {
+        "constraints": 21.43891,
+        "objective": 8.419229,
+        "variables": 1.474096
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.740945,
+      "p25_ms": 8.467099,
+      "p75_ms": 8.983959,
+      "min_ms": 8.436128,
+      "max_ms": 9.053251,
+      "mad_ms": 0.2430140000000005,
+      "replicates": 7,
+      "container_init_median_ms": 0.00097,
+      "user_build_total_median_ms": 8.741915,
+      "peak_rss_median_bytes": 157474816,
+      "phase_median_ms": {
+        "variables": 1.768491,
+        "constraints": 6.186619,
+        "objective": 0.765843
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.45468,
+      "p25_ms": 8.302487,
+      "p75_ms": 9.03328,
+      "min_ms": 8.142674,
+      "max_ms": 12.002143,
+      "mad_ms": 0.1665530000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.00121,
+      "user_build_total_median_ms": 8.45589,
+      "peak_rss_median_bytes": 159735808,
+      "phase_median_ms": {
+        "variables": 2.021026,
+        "constraints": 5.519358,
+        "objective": 0.884386
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 100,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 58.502838,
+      "p25_ms": 57.172083,
+      "p75_ms": 59.283852,
+      "min_ms": 55.152399,
+      "max_ms": 91.85534,
+      "mad_ms": 0.7810140000000061,
+      "replicates": 7,
+      "container_init_median_ms": 0.00089,
+      "user_build_total_median_ms": 58.503727999999995,
+      "peak_rss_median_bytes": 178110464,
+      "phase_median_ms": {
+        "variables": 9.454918,
+        "constraints": 34.733776,
+        "objective": 14.10915
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 511.045946,
+      "p25_ms": 493.930333,
+      "p75_ms": 515.028196,
+      "min_ms": 485.254957,
+      "max_ms": 515.666618,
+      "mad_ms": 4.620671999999956,
+      "replicates": 7,
+      "container_init_median_ms": 0.00216,
+      "user_build_total_median_ms": 511.048106,
+      "peak_rss_median_bytes": 231026688,
+      "phase_median_ms": {
+        "variables": 131.619945,
+        "constraints": 312.88726,
+        "objective": 65.269348
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 401.518403,
+      "p25_ms": 394.747033,
+      "p75_ms": 415.635573,
+      "min_ms": 393.627133,
+      "max_ms": 537.858472,
+      "mad_ms": 6.77136999999999,
+      "replicates": 7,
+      "container_init_median_ms": 0.022351,
+      "user_build_total_median_ms": 401.540754,
+      "peak_rss_median_bytes": 213180416,
+      "phase_median_ms": {
+        "variables": 57.305626,
+        "constraints": 240.744101,
+        "objective": 104.413282
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 235.319515,
+      "p25_ms": 234.134413,
+      "p75_ms": 236.841342,
+      "min_ms": 233.287618,
+      "max_ms": 239.514719,
+      "mad_ms": 1.1851020000000005,
+      "replicates": 7,
+      "container_init_median_ms": 0.0383,
+      "user_build_total_median_ms": 235.357815,
+      "peak_rss_median_bytes": 181506048,
+      "phase_median_ms": {
+        "variables": 106.353407,
+        "constraints": 123.071723,
+        "objective": 6.019517
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 147.24058,
+      "p25_ms": 142.488358,
+      "p75_ms": 147.488266,
+      "min_ms": 135.931261,
+      "max_ms": 148.814359,
+      "mad_ms": 0.4526559999999904,
+      "replicates": 7,
+      "container_init_median_ms": 0.02908,
+      "user_build_total_median_ms": 147.26966,
+      "peak_rss_median_bytes": 178958336,
+      "phase_median_ms": {
+        "variables": 83.856187,
+        "constraints": 59.697318,
+        "objective": 3.660195
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 18.222063,
+      "p25_ms": 18.068621,
+      "p75_ms": 18.59807,
+      "min_ms": 17.639533,
+      "max_ms": 18.649631,
+      "mad_ms": 0.1534419999999983,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 18.222272999999998,
+      "peak_rss_median_bytes": 54824960,
+      "phase_median_ms": {
+        "constraints": 10.249752,
+        "objective": 1.766391,
+        "variables": 6.127388
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 111.584579,
+      "p25_ms": 111.323724,
+      "p75_ms": 112.527766,
+      "min_ms": 104.87991,
+      "max_ms": 113.31772,
+      "mad_ms": 0.2608550000000065,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 111.584789,
+      "peak_rss_median_bytes": 128417792,
+      "phase_median_ms": {
+        "constraints": 71.192683,
+        "objective": 33.033666,
+        "variables": 7.256998
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 106.119932,
+      "p25_ms": 105.784406,
+      "p75_ms": 106.485149,
+      "min_ms": 105.302678,
+      "max_ms": 107.549368,
+      "mad_ms": 0.33552600000000155,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 106.120142,
+      "peak_rss_median_bytes": 123981824,
+      "phase_median_ms": {
+        "constraints": 68.321092,
+        "objective": 33.415733,
+        "variables": 4.343097
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 28.693739,
+      "p25_ms": 28.080889,
+      "p75_ms": 29.379361,
+      "min_ms": 27.534739,
+      "max_ms": 29.786789,
+      "mad_ms": 0.6128500000000017,
+      "replicates": 7,
+      "container_init_median_ms": 0.00094,
+      "user_build_total_median_ms": 28.694679,
+      "peak_rss_median_bytes": 198971392,
+      "phase_median_ms": {
+        "variables": 4.673943,
+        "constraints": 21.809447,
+        "objective": 2.269101
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_python_csr",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 26.984728,
+      "p25_ms": 26.506681,
+      "p75_ms": 27.543398,
+      "min_ms": 26.359918,
+      "max_ms": 27.676921,
+      "mad_ms": 0.5092999999999996,
+      "replicates": 7,
+      "container_init_median_ms": 0.00126,
+      "user_build_total_median_ms": 26.985988,
+      "peak_rss_median_bytes": 207257600,
+      "phase_median_ms": {
+        "variables": 5.525818,
+        "constraints": 18.837574,
+        "objective": 2.711868
+      }
+    },
+    {
+      "workload": "bess_96",
+      "size": 300,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 183.633798,
+      "p25_ms": 181.423919,
+      "p75_ms": 192.139119,
+      "min_ms": 173.566958,
+      "max_ms": 192.317331,
+      "mad_ms": 2.4501829999999813,
+      "replicates": 7,
+      "container_init_median_ms": 0.00106,
+      "user_build_total_median_ms": 183.634858,
+      "peak_rss_median_bytes": 257634304,
+      "phase_median_ms": {
+        "variables": 31.073152,
+        "constraints": 112.639838,
+        "objective": 41.281763
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.412556,
+      "p25_ms": 1.334684,
+      "p75_ms": 1.440975,
+      "min_ms": 1.331534,
+      "max_ms": 1.461396,
+      "mad_ms": 0.048839999999999995,
+      "replicates": 7,
+      "container_init_median_ms": 0.00194,
+      "user_build_total_median_ms": 1.414496,
+      "peak_rss_median_bytes": 136863744,
+      "phase_median_ms": {
+        "variables": 0.826945,
+        "constraints": 0.427727,
+        "objective": 0.163243
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.044368,
+      "p25_ms": 1.012438,
+      "p75_ms": 1.088019,
+      "min_ms": 0.931486,
+      "max_ms": 1.10173,
+      "mad_ms": 0.03484100000000012,
+      "replicates": 7,
+      "container_init_median_ms": 0.02121,
+      "user_build_total_median_ms": 1.065578,
+      "peak_rss_median_bytes": 136876032,
+      "phase_median_ms": {
+        "variables": 0.507359,
+        "constraints": 0.384697,
+        "objective": 0.152893
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.540328,
+      "p25_ms": 1.530857,
+      "p75_ms": 1.559768,
+      "min_ms": 1.480056,
+      "max_ms": 1.643149,
+      "mad_ms": 0.015199000000000185,
+      "replicates": 7,
+      "container_init_median_ms": 0.037281,
+      "user_build_total_median_ms": 1.5776089999999998,
+      "peak_rss_median_bytes": 138555392,
+      "phase_median_ms": {
+        "variables": 1.011738,
+        "constraints": 0.423568,
+        "objective": 0.099152
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.965428,
+      "p25_ms": 0.944357,
+      "p75_ms": 1.483975,
+      "min_ms": 0.939797,
+      "max_ms": 1.505077,
+      "mad_ms": 0.02107099999999995,
+      "replicates": 7,
+      "container_init_median_ms": 0.030071,
+      "user_build_total_median_ms": 0.9954989999999999,
+      "peak_rss_median_bytes": 138280960,
+      "phase_median_ms": {
+        "variables": 0.749214,
+        "constraints": 0.164783,
+        "objective": 0.056681
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.143073,
+      "p25_ms": 0.139532,
+      "p75_ms": 0.146723,
+      "min_ms": 0.136683,
+      "max_ms": 0.151353,
+      "mad_ms": 0.0035410000000000164,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.143283,
+      "peak_rss_median_bytes": 3268608,
+      "phase_median_ms": {
+        "constraints": 0.023831,
+        "objective": 0.029321,
+        "variables": 0.088842
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.639741,
+      "p25_ms": 0.634521,
+      "p75_ms": 0.648842,
+      "min_ms": 0.610451,
+      "max_ms": 0.655581,
+      "mad_ms": 0.005220000000000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 0.639941,
+      "peak_rss_median_bytes": 3948544,
+      "phase_median_ms": {
+        "constraints": 0.320526,
+        "objective": 0.234774,
+        "variables": 0.081991
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.600821,
+      "p25_ms": 0.597251,
+      "p75_ms": 0.699022,
+      "min_ms": 0.591031,
+      "max_ms": 0.860556,
+      "mad_ms": 0.0075599999999999,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 0.6010310000000001,
+      "peak_rss_median_bytes": 3846144,
+      "phase_median_ms": {
+        "constraints": 0.308446,
+        "objective": 0.228364,
+        "variables": 0.064061
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.248134,
+      "p25_ms": 0.231534,
+      "p75_ms": 0.277145,
+      "min_ms": 0.216283,
+      "max_ms": 0.299786,
+      "mad_ms": 0.016600000000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.00078,
+      "user_build_total_median_ms": 0.248914,
+      "peak_rss_median_bytes": 137760768,
+      "phase_median_ms": {
+        "variables": 0.095051,
+        "constraints": 0.133323,
+        "objective": 0.01976
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.981618,
+      "p25_ms": 0.964337,
+      "p75_ms": 1.035239,
+      "min_ms": 0.952087,
+      "max_ms": 1.488777,
+      "mad_ms": 0.01728099999999999,
+      "replicates": 7,
+      "container_init_median_ms": 0.00073,
+      "user_build_total_median_ms": 0.982348,
+      "peak_rss_median_bytes": 137957376,
+      "phase_median_ms": {
+        "variables": 0.381076,
+        "constraints": 0.357687,
+        "objective": 0.245244
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 5.396336,
+      "p25_ms": 4.194924,
+      "p75_ms": 6.120109,
+      "min_ms": 4.144233,
+      "max_ms": 6.508056,
+      "mad_ms": 0.7237730000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.00214,
+      "user_build_total_median_ms": 5.398476,
+      "peak_rss_median_bytes": 138326016,
+      "phase_median_ms": {
+        "variables": 3.641385,
+        "constraints": 1.237261,
+        "objective": 0.512979
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.182314,
+      "p25_ms": 4.023212,
+      "p75_ms": 4.284866,
+      "min_ms": 3.264468,
+      "max_ms": 4.339277,
+      "mad_ms": 0.1025520000000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.02114,
+      "user_build_total_median_ms": 4.203454,
+      "peak_rss_median_bytes": 137584640,
+      "phase_median_ms": {
+        "variables": 1.906694,
+        "constraints": 0.995178,
+        "objective": 0.403477
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.209834,
+      "p25_ms": 4.139454,
+      "p75_ms": 4.744334,
+      "min_ms": 4.129033,
+      "max_ms": 5.776953,
+      "mad_ms": 0.07038000000000011,
+      "replicates": 7,
+      "container_init_median_ms": 0.03585,
+      "user_build_total_median_ms": 4.245684,
+      "peak_rss_median_bytes": 138997760,
+      "phase_median_ms": {
+        "variables": 2.991663,
+        "constraints": 0.950737,
+        "objective": 0.285305
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.744599,
+      "p25_ms": 2.727579,
+      "p75_ms": 4.058342,
+      "min_ms": 2.721498,
+      "max_ms": 4.564241,
+      "mad_ms": 0.023101000000000038,
+      "replicates": 7,
+      "container_init_median_ms": 0.02902,
+      "user_build_total_median_ms": 2.773619,
+      "peak_rss_median_bytes": 138891264,
+      "phase_median_ms": {
+        "variables": 2.159628,
+        "constraints": 0.462108,
+        "objective": 0.128663
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.428977,
+      "p25_ms": 0.425088,
+      "p75_ms": 0.439388,
+      "min_ms": 0.395897,
+      "max_ms": 0.54746,
+      "mad_ms": 0.0071410000000000085,
+      "replicates": 7,
+      "container_init_median_ms": 0.00022,
+      "user_build_total_median_ms": 0.429197,
+      "peak_rss_median_bytes": 4227072,
+      "phase_median_ms": {
+        "constraints": 0.058781,
+        "objective": 0.077491,
+        "variables": 0.292635
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.776552,
+      "p25_ms": 1.736961,
+      "p75_ms": 1.802682,
+      "min_ms": 1.721561,
+      "max_ms": 2.956203,
+      "mad_ms": 0.026129999999999987,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 1.7767519999999999,
+      "peak_rss_median_bytes": 5791744,
+      "phase_median_ms": {
+        "constraints": 0.818835,
+        "objective": 0.683062,
+        "variables": 0.278275
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.68324,
+      "p25_ms": 1.679049,
+      "p75_ms": 1.837133,
+      "min_ms": 1.635129,
+      "max_ms": 2.591756,
+      "mad_ms": 0.006399999999999961,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 1.6834500000000001,
+      "peak_rss_median_bytes": 5550080,
+      "phase_median_ms": {
+        "constraints": 0.820135,
+        "objective": 0.690092,
+        "variables": 0.177943
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 0.492268,
+      "p25_ms": 0.486918,
+      "p75_ms": 0.528119,
+      "min_ms": 0.480889,
+      "max_ms": 0.54854,
+      "mad_ms": 0.005349999999999966,
+      "replicates": 7,
+      "container_init_median_ms": 0.00072,
+      "user_build_total_median_ms": 0.492988,
+      "peak_rss_median_bytes": 138821632,
+      "phase_median_ms": {
+        "variables": 0.233534,
+        "constraints": 0.185193,
+        "objective": 0.074472
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2.746169,
+      "p25_ms": 2.726688,
+      "p75_ms": 2.79144,
+      "min_ms": 2.696808,
+      "max_ms": 2.81287,
+      "mad_ms": 0.030139999999999834,
+      "replicates": 7,
+      "container_init_median_ms": 0.00079,
+      "user_build_total_median_ms": 2.746959,
+      "peak_rss_median_bytes": 139862016,
+      "phase_median_ms": {
+        "variables": 1.1689,
+        "constraints": 0.912836,
+        "objective": 0.667892
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 15.476144,
+      "p25_ms": 15.389383,
+      "p75_ms": 15.81626,
+      "min_ms": 14.65371,
+      "max_ms": 18.373986,
+      "mad_ms": 0.2547150000000009,
+      "replicates": 7,
+      "container_init_median_ms": 0.00188,
+      "user_build_total_median_ms": 15.478024,
+      "peak_rss_median_bytes": 141737984,
+      "phase_median_ms": {
+        "variables": 9.670772,
+        "constraints": 4.158974,
+        "objective": 1.639969
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.520151,
+      "p25_ms": 8.284807,
+      "p75_ms": 8.764015,
+      "min_ms": 8.076594,
+      "max_ms": 9.467358,
+      "mad_ms": 0.23534399999999955,
+      "replicates": 7,
+      "container_init_median_ms": 0.02116,
+      "user_build_total_median_ms": 8.541311,
+      "peak_rss_median_bytes": 139726848,
+      "phase_median_ms": {
+        "variables": 4.332886,
+        "constraints": 2.897441,
+        "objective": 1.303003
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 13.704903,
+      "p25_ms": 13.645362,
+      "p75_ms": 14.429756,
+      "min_ms": 13.58727,
+      "max_ms": 20.207838,
+      "mad_ms": 0.11763299999999965,
+      "replicates": 7,
+      "container_init_median_ms": 0.035941,
+      "user_build_total_median_ms": 13.740844,
+      "peak_rss_median_bytes": 142221312,
+      "phase_median_ms": {
+        "variables": 9.859855,
+        "constraints": 2.870491,
+        "objective": 0.966137
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.969829,
+      "p25_ms": 8.943899,
+      "p75_ms": 9.067751,
+      "min_ms": 8.940978,
+      "max_ms": 9.201674,
+      "mad_ms": 0.028851000000001292,
+      "replicates": 7,
+      "container_init_median_ms": 0.029281,
+      "user_build_total_median_ms": 8.99911,
+      "peak_rss_median_bytes": 141807616,
+      "phase_median_ms": {
+        "variables": 7.087566,
+        "constraints": 1.496236,
+        "objective": 0.394847
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.384815,
+      "p25_ms": 1.358674,
+      "p75_ms": 1.995965,
+      "min_ms": 1.319953,
+      "max_ms": 2.132248,
+      "mad_ms": 0.06486199999999998,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 1.385025,
+      "peak_rss_median_bytes": 7303168,
+      "phase_median_ms": {
+        "constraints": 0.298316,
+        "objective": 0.276475,
+        "variables": 0.808524
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 6.451445,
+      "p25_ms": 6.242761,
+      "p75_ms": 6.825101,
+      "min_ms": 6.145399,
+      "max_ms": 7.118627,
+      "mad_ms": 0.20868399999999987,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 6.451645,
+      "peak_rss_median_bytes": 12509184,
+      "phase_median_ms": {
+        "constraints": 2.998293,
+        "objective": 2.662427,
+        "variables": 0.763234
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 6.142239,
+      "p25_ms": 5.882685,
+      "p75_ms": 6.665568,
+      "min_ms": 5.794692,
+      "max_ms": 8.819367,
+      "mad_ms": 0.2595539999999996,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 6.142449,
+      "peak_rss_median_bytes": 12156928,
+      "phase_median_ms": {
+        "constraints": 2.950082,
+        "objective": 2.681558,
+        "variables": 0.506599
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1.537258,
+      "p25_ms": 1.478467,
+      "p75_ms": 1.613689,
+      "min_ms": 1.464096,
+      "max_ms": 1.670189,
+      "mad_ms": 0.05879100000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.00082,
+      "user_build_total_median_ms": 1.538078,
+      "peak_rss_median_bytes": 141770752,
+      "phase_median_ms": {
+        "variables": 0.802875,
+        "constraints": 0.505589,
+        "objective": 0.231014
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 8.97619,
+      "p25_ms": 8.912258,
+      "p75_ms": 9.357745,
+      "min_ms": 8.879257,
+      "max_ms": 9.534669,
+      "mad_ms": 0.09693299999999994,
+      "replicates": 7,
+      "container_init_median_ms": 0.00069,
+      "user_build_total_median_ms": 8.976880000000001,
+      "peak_rss_median_bytes": 146509824,
+      "phase_median_ms": {
+        "variables": 3.557923,
+        "constraints": 3.065094,
+        "objective": 2.388703
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 45.311284,
+      "p25_ms": 44.774784,
+      "p75_ms": 45.382165,
+      "min_ms": 44.611861,
+      "max_ms": 45.420086,
+      "mad_ms": 0.07088099999999997,
+      "replicates": 7,
+      "container_init_median_ms": 0.00198,
+      "user_build_total_median_ms": 45.313264000000004,
+      "peak_rss_median_bytes": 153583616,
+      "phase_median_ms": {
+        "variables": 27.331595,
+        "constraints": 12.726106,
+        "objective": 5.153902
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 21.783206,
+      "p25_ms": 21.703465,
+      "p75_ms": 22.043251,
+      "min_ms": 21.570103,
+      "max_ms": 22.079132,
+      "mad_ms": 0.07974099999999851,
+      "replicates": 7,
+      "container_init_median_ms": 0.0212,
+      "user_build_total_median_ms": 21.804406,
+      "peak_rss_median_bytes": 146960384,
+      "phase_median_ms": {
+        "variables": 9.762653,
+        "constraints": 8.382629,
+        "objective": 3.687525
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 42.87307,
+      "p25_ms": 41.810092,
+      "p75_ms": 43.640163,
+      "min_ms": 41.670409,
+      "max_ms": 43.983771,
+      "mad_ms": 0.7670930000000027,
+      "replicates": 7,
+      "container_init_median_ms": 0.035941,
+      "user_build_total_median_ms": 42.909011,
+      "peak_rss_median_bytes": 151261184,
+      "phase_median_ms": {
+        "variables": 30.804706,
+        "constraints": 9.351356,
+        "objective": 2.696588
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 27.806653,
+      "p25_ms": 27.347926,
+      "p75_ms": 27.900195,
+      "min_ms": 26.820896,
+      "max_ms": 28.163349,
+      "mad_ms": 0.35669599999999946,
+      "replicates": 7,
+      "container_init_median_ms": 0.028271,
+      "user_build_total_median_ms": 27.834924,
+      "peak_rss_median_bytes": 148803584,
+      "phase_median_ms": {
+        "variables": 21.99378,
+        "constraints": 4.537201,
+        "objective": 1.216312
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.109382,
+      "p25_ms": 4.025591,
+      "p75_ms": 4.143233,
+      "min_ms": 3.991491,
+      "max_ms": 4.213145,
+      "mad_ms": 0.0338510000000003,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 4.1095820000000005,
+      "peak_rss_median_bytes": 16740352,
+      "phase_median_ms": {
+        "constraints": 0.870305,
+        "objective": 0.829505,
+        "variables": 2.337641
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 26.540181,
+      "p25_ms": 26.122434,
+      "p75_ms": 26.924098,
+      "min_ms": 26.094463,
+      "max_ms": 27.340105,
+      "mad_ms": 0.3839170000000003,
+      "replicates": 7,
+      "container_init_median_ms": 0.000191,
+      "user_build_total_median_ms": 26.540372,
+      "peak_rss_median_bytes": 34115584,
+      "phase_median_ms": {
+        "constraints": 10.480136,
+        "objective": 13.748274,
+        "variables": 2.23298
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 24.841111,
+      "p25_ms": 19.21129,
+      "p75_ms": 25.254317,
+      "min_ms": 19.110289,
+      "max_ms": 25.510412,
+      "mad_ms": 0.6693009999999973,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 24.841311,
+      "peak_rss_median_bytes": 33042432,
+      "phase_median_ms": {
+        "constraints": 10.173691,
+        "objective": 13.243584,
+        "variables": 1.337064
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 4.112214,
+      "p25_ms": 4.046051,
+      "p75_ms": 4.306587,
+      "min_ms": 4.015221,
+      "max_ms": 4.360956,
+      "mad_ms": 0.06616299999999953,
+      "replicates": 7,
+      "container_init_median_ms": 0.0008,
+      "user_build_total_median_ms": 4.113014,
+      "peak_rss_median_bytes": 151785472,
+      "phase_median_ms": {
+        "variables": 1.846043,
+        "constraints": 1.481067,
+        "objective": 0.783444
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 29.109016,
+      "p25_ms": 27.949966,
+      "p75_ms": 29.313361,
+      "min_ms": 27.591959,
+      "max_ms": 29.530394,
+      "mad_ms": 0.4213780000000007,
+      "replicates": 7,
+      "container_init_median_ms": 0.00073,
+      "user_build_total_median_ms": 29.109746,
+      "peak_rss_median_bytes": 166977536,
+      "phase_median_ms": {
+        "variables": 11.28036,
+        "constraints": 9.492808,
+        "objective": 8.272647
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 196.562307,
+      "p25_ms": 194.946428,
+      "p75_ms": 199.345036,
+      "min_ms": 193.184397,
+      "max_ms": 200.162821,
+      "mad_ms": 2.3877530000000036,
+      "replicates": 7,
+      "container_init_median_ms": 0.00192,
+      "user_build_total_median_ms": 196.56422700000002,
+      "peak_rss_median_bytes": 197468160,
+      "phase_median_ms": {
+        "variables": 129.303113,
+        "constraints": 49.830964,
+        "objective": 18.221033
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 102.449577,
+      "p25_ms": 101.602932,
+      "p75_ms": 103.73328,
+      "min_ms": 92.40155,
+      "max_ms": 105.744135,
+      "mad_ms": 1.121268999999998,
+      "replicates": 7,
+      "container_init_median_ms": 0.02022,
+      "user_build_total_median_ms": 102.469797,
+      "peak_rss_median_bytes": 173654016,
+      "phase_median_ms": {
+        "variables": 60.854149,
+        "constraints": 29.964991,
+        "objective": 12.168516
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 155.519689,
+      "p25_ms": 155.402047,
+      "p75_ms": 155.794293,
+      "min_ms": 155.348086,
+      "max_ms": 158.860268,
+      "mad_ms": 0.1716030000000046,
+      "replicates": 7,
+      "container_init_median_ms": 0.03584,
+      "user_build_total_median_ms": 155.555529,
+      "peak_rss_median_bytes": 177487872,
+      "phase_median_ms": {
+        "variables": 117.997983,
+        "constraints": 28.041667,
+        "objective": 9.470927
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 105.326719,
+      "p25_ms": 104.981203,
+      "p75_ms": 110.142854,
+      "min_ms": 101.422919,
+      "max_ms": 113.518244,
+      "mad_ms": 1.2728120000000018,
+      "replicates": 7,
+      "container_init_median_ms": 0.02894,
+      "user_build_total_median_ms": 105.355659,
+      "peak_rss_median_bytes": 174526464,
+      "phase_median_ms": {
+        "variables": 86.2467,
+        "constraints": 15.166869,
+        "objective": 4.020851
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 14.07493,
+      "p25_ms": 13.943677,
+      "p75_ms": 14.720221,
+      "min_ms": 13.920857,
+      "max_ms": 14.726212,
+      "mad_ms": 0.13125300000000095,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 14.07513,
+      "peak_rss_median_bytes": 48467968,
+      "phase_median_ms": {
+        "constraints": 3.073494,
+        "objective": 2.952162,
+        "variables": 7.912151
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 93.825424,
+      "p25_ms": 93.57314,
+      "p75_ms": 93.904206,
+      "min_ms": 76.625109,
+      "max_ms": 94.064039,
+      "mad_ms": 0.14484199999999703,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 93.825634,
+      "peak_rss_median_bytes": 95907840,
+      "phase_median_ms": {
+        "constraints": 36.313894,
+        "objective": 49.514008,
+        "variables": 7.577725
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 90.461855,
+      "p25_ms": 89.956066,
+      "p75_ms": 92.039433,
+      "min_ms": 89.04881,
+      "max_ms": 92.268967,
+      "mad_ms": 0.9036660000000012,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 90.462055,
+      "peak_rss_median_bytes": 92168192,
+      "phase_median_ms": {
+        "constraints": 36.569899,
+        "objective": 49.520118,
+        "variables": 4.656303
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 13.737514,
+      "p25_ms": 13.54864,
+      "p75_ms": 13.859706,
+      "min_ms": 13.50767,
+      "max_ms": 13.866916,
+      "mad_ms": 0.12219200000000008,
+      "replicates": 7,
+      "container_init_median_ms": 0.00079,
+      "user_build_total_median_ms": 13.738304,
+      "peak_rss_median_bytes": 185700352,
+      "phase_median_ms": {
+        "variables": 5.754312,
+        "constraints": 5.10659,
+        "objective": 2.82318
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 97.697853,
+      "p25_ms": 96.812647,
+      "p75_ms": 98.762191,
+      "min_ms": 91.963932,
+      "max_ms": 101.267717,
+      "mad_ms": 0.8852059999999966,
+      "replicates": 7,
+      "container_init_median_ms": 0.00072,
+      "user_build_total_median_ms": 97.698573,
+      "peak_rss_median_bytes": 234479616,
+      "phase_median_ms": {
+        "variables": 38.545814,
+        "constraints": 33.467514,
+        "objective": 25.460031
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 601.034162,
+      "p25_ms": 593.236284,
+      "p75_ms": 609.253618,
+      "min_ms": 583.181966,
+      "max_ms": 610.898817,
+      "mad_ms": 7.7978780000000825,
+      "replicates": 7,
+      "container_init_median_ms": 0.00203,
+      "user_build_total_median_ms": 601.036192,
+      "peak_rss_median_bytes": 304943104,
+      "phase_median_ms": {
+        "variables": 305.181034,
+        "constraints": 242.699166,
+        "objective": 55.79053
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 291.170595,
+      "p25_ms": 284.854554,
+      "p75_ms": 292.207933,
+      "min_ms": 280.667799,
+      "max_ms": 294.606407,
+      "mad_ms": 3.4358119999999985,
+      "replicates": 7,
+      "container_init_median_ms": 0.02166,
+      "user_build_total_median_ms": 291.192255,
+      "peak_rss_median_bytes": 234483712,
+      "phase_median_ms": {
+        "variables": 117.083587,
+        "constraints": 136.895329,
+        "objective": 36.873735
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 505.159362,
+      "p25_ms": 494.970681,
+      "p75_ms": 511.552835,
+      "min_ms": 443.514998,
+      "max_ms": 516.560574,
+      "mad_ms": 6.393473000000029,
+      "replicates": 7,
+      "container_init_median_ms": 0.03646,
+      "user_build_total_median_ms": 505.19582199999996,
+      "peak_rss_median_bytes": 258154496,
+      "phase_median_ms": {
+        "variables": 384.597933,
+        "constraints": 84.169163,
+        "objective": 36.810873
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 355.483776,
+      "p25_ms": 311.941013,
+      "p75_ms": 363.047361,
+      "min_ms": 306.516517,
+      "max_ms": 364.184971,
+      "mad_ms": 7.563585000000046,
+      "replicates": 7,
+      "container_init_median_ms": 0.028801,
+      "user_build_total_median_ms": 355.51257699999996,
+      "peak_rss_median_bytes": 256221184,
+      "phase_median_ms": {
+        "variables": 295.101615,
+        "constraints": 45.307674,
+        "objective": 14.131701
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 45.925615,
+      "p25_ms": 45.030068,
+      "p75_ms": 46.157659,
+      "min_ms": 43.723826,
+      "max_ms": 46.73372,
+      "mad_ms": 0.8081049999999976,
+      "replicates": 7,
+      "container_init_median_ms": 0.00021,
+      "user_build_total_median_ms": 45.925825,
+      "peak_rss_median_bytes": 141049856,
+      "phase_median_ms": {
+        "constraints": 9.920536,
+        "objective": 11.732848,
+        "variables": 23.70262
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 317.829838,
+      "p25_ms": 313.646664,
+      "p75_ms": 318.852007,
+      "min_ms": 313.191496,
+      "max_ms": 330.618466,
+      "mad_ms": 3.1442260000000033,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 317.830038,
+      "peak_rss_median_bytes": 297783296,
+      "phase_median_ms": {
+        "constraints": 128.769475,
+        "objective": 165.899673,
+        "variables": 22.726393
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 309.905638,
+      "p25_ms": 304.595873,
+      "p75_ms": 314.394717,
+      "min_ms": 273.97584,
+      "max_ms": 316.134578,
+      "mad_ms": 4.489079000000004,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 309.905838,
+      "peak_rss_median_bytes": 287305728,
+      "phase_median_ms": {
+        "constraints": 126.789219,
+        "objective": 169.624589,
+        "variables": 14.022909
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 46.102228,
+      "p25_ms": 45.016459,
+      "p75_ms": 46.467835,
+      "min_ms": 44.961188,
+      "max_ms": 47.277029,
+      "mad_ms": 0.8281639999999939,
+      "replicates": 7,
+      "container_init_median_ms": 0.0008,
+      "user_build_total_median_ms": 46.103027999999995,
+      "peak_rss_median_bytes": 290435072,
+      "phase_median_ms": {
+        "variables": 16.595915,
+        "constraints": 17.029972,
+        "objective": 11.974503
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 342.408405,
+      "p25_ms": 336.379527,
+      "p75_ms": 348.544103,
+      "min_ms": 333.922514,
+      "max_ms": 348.671846,
+      "mad_ms": 6.02887800000002,
+      "replicates": 7,
+      "container_init_median_ms": 0.00091,
+      "user_build_total_median_ms": 342.409315,
+      "peak_rss_median_bytes": 435568640,
+      "phase_median_ms": {
+        "variables": 154.46195,
+        "constraints": 105.137795,
+        "objective": 83.296288
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "pulp_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 2279.61286,
+      "p25_ms": 2178.638819,
+      "p75_ms": 2326.893939,
+      "min_ms": 2163.803815,
+      "max_ms": 2392.930551,
+      "mad_ms": 86.28239100000019,
+      "replicates": 7,
+      "container_init_median_ms": 0.00242,
+      "user_build_total_median_ms": 2279.61528,
+      "peak_rss_median_bytes": 728170496,
+      "phase_median_ms": {
+        "variables": 1318.961568,
+        "constraints": 746.054545,
+        "objective": 195.487637
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "pyomo_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1179.241758,
+      "p25_ms": 1154.115042,
+      "p75_ms": 1185.019831,
+      "min_ms": 1142.310365,
+      "max_ms": 1202.179436,
+      "mad_ms": 6.295389999999998,
+      "replicates": 7,
+      "container_init_median_ms": 0.021791,
+      "user_build_total_median_ms": 1179.2635489999998,
+      "peak_rss_median_bytes": 485941248,
+      "phase_median_ms": {
+        "variables": 527.245863,
+        "constraints": 519.068648,
+        "objective": 126.631857
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "pyoptinterface_python",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1858.937367,
+      "p25_ms": 1834.230078,
+      "p75_ms": 1865.573945,
+      "min_ms": 1795.97836,
+      "max_ms": 1910.728916,
+      "mad_ms": 6.6365780000001,
+      "replicates": 7,
+      "container_init_median_ms": 0.04008,
+      "user_build_total_median_ms": 1858.977447,
+      "peak_rss_median_bytes": 550772736,
+      "phase_median_ms": {
+        "variables": 1395.149619,
+        "constraints": 311.585077,
+        "objective": 145.174165
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "pyoptinterface_scalar",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1365.082586,
+      "p25_ms": 1192.468384,
+      "p75_ms": 1367.296415,
+      "min_ms": 1178.912012,
+      "max_ms": 1372.559899,
+      "mad_ms": 7.477313000000095,
+      "replicates": 7,
+      "container_init_median_ms": 0.0299,
+      "user_build_total_median_ms": 1365.112486,
+      "peak_rss_median_bytes": 496889856,
+      "phase_median_ms": {
+        "variables": 1090.035387,
+        "constraints": 154.303927,
+        "objective": 114.708895
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "roml_core_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 173.62826,
+      "p25_ms": 171.885889,
+      "p75_ms": 178.585758,
+      "min_ms": 159.794484,
+      "max_ms": 248.131391,
+      "mad_ms": 1.7423710000000199,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 173.62846000000002,
+      "peak_rss_median_bytes": 463208448,
+      "phase_median_ms": {
+        "constraints": 36.442917,
+        "objective": 54.504467,
+        "variables": 81.540606
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "roml_core_rust",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1361.538604,
+      "p25_ms": 1329.606977,
+      "p75_ms": 1372.024319,
+      "min_ms": 1123.048652,
+      "max_ms": 1608.013436,
+      "mad_ms": 18.768883000000187,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 1361.538804,
+      "peak_rss_median_bytes": 1013198848,
+      "phase_median_ms": {
+        "constraints": 537.72902,
+        "objective": 747.244956,
+        "variables": 77.589426
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "roml_core_rust_anon",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1310.59048,
+      "p25_ms": 1295.504892,
+      "p75_ms": 1346.308033,
+      "min_ms": 1288.391096,
+      "max_ms": 1374.967972,
+      "mad_ms": 15.085588000000143,
+      "replicates": 7,
+      "container_init_median_ms": 0.0002,
+      "user_build_total_median_ms": 1310.59068,
+      "peak_rss_median_bytes": 977960960,
+      "phase_median_ms": {
+        "constraints": 529.83555,
+        "objective": 737.115536,
+        "variables": 47.264009
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "roml_python_bulk",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 182.302363,
+      "p25_ms": 174.7823,
+      "p75_ms": 185.959129,
+      "min_ms": 172.655463,
+      "max_ms": 193.087626,
+      "mad_ms": 3.656765999999976,
+      "replicates": 7,
+      "container_init_median_ms": 0.00107,
+      "user_build_total_median_ms": 182.303433,
+      "peak_rss_median_bytes": 625623040,
+      "phase_median_ms": {
+        "variables": 58.662801,
+        "constraints": 63.825783,
+        "objective": 58.303704
+      }
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "implementation": "roml_python_naive_chain",
+      "variant": "canonical",
+      "status": "ok",
+      "statuses": [
+        "ok"
+      ],
+      "errors": [],
+      "median_ms": 1305.137763,
+      "p25_ms": 1295.068173,
+      "p75_ms": 1336.307536,
+      "min_ms": 1289.118278,
+      "max_ms": 1341.506008,
+      "mad_ms": 10.069590000000062,
+      "replicates": 7,
+      "container_init_median_ms": 0.0012,
+      "user_build_total_median_ms": 1305.1389629999999,
+      "peak_rss_median_bytes": 1145368576,
+      "phase_median_ms": {
+        "variables": 634.292832,
+        "constraints": 355.332994,
+        "objective": 315.511937
+      }
+    }
+  ],
+  "speedups": [
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.214797859534123
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.2195866686583425
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.151133058599207
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.151133058599207
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 2.125216375091163
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.104744593990278
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 3.6304294513927964
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 3.2834783110457155
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 0.8216673842558014
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 2.9495637350953805
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 1,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 9.684828551232672
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 11.285960998953486
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 9.44463305704726
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.829354453577553
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.829354453577553
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 3.313993308210462
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.587990579498376
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.128191023018343
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 2.33258267292408
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 0.8639286995229275
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.4330698216014115
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 3,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 10.340501853730094
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 17.33785128039611
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.588931301207445
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.434086403701242
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.434086403701242
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.400321944454909
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.760589362589551
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.379526650485348
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.8046096547719885
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 1.0099067664334724
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.775330217063057
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 10,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 10.422216669208396
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 17.552655733908093
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 20.074299604302084
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.969726010466081
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.969726010466081
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.8132581256145075
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 5.208029515149755
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.799934699878367
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.7014830832267103
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 1.0045508414844033
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.273943509585496
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 30,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 10.675008746679737
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 22.435906987173585
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.538776413763042
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.387775120424623
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.387775120424623
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.133907947024035
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.30363205740417
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 5.895745726949973
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.6371922753107566
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 0.9672501085408958
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.692964891095871
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 100,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 10.95767041862826
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 17.810364344639783
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 13.993240929667618
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.201075328663162
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.201075328663162
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.13145324141967
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.123597476312096
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 5.823705691282047
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.574670167697258
+    },
+    {
+      "panel": "ingestion",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_python_csr",
+      "denominator": "roml_python_bulk",
+      "speedup": 0.9404395850955499
+    },
+    {
+      "panel": "formulation",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.399786308783251
+    },
+    {
+      "panel": "roml-core",
+      "workload": "bess_96",
+      "size": 300,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 10.077552580078338
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.69271442043412
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 4.208887133564929
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.207645868764458
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.207645868764458
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 3.8907525772364933
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.4714306682602585
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.1994017040252185
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.7343174463385822
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 3.9559995808716257
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.86095909081378
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.962191326675713
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.496010303330706
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.551914810631606
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.551914810631606
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.575416236684083
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.141368884578894
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 3.923846733041632
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.1475393785680816
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.578605556322979
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 3000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.401669553379319
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.06736930300574
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.542433996115161
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.915161280669867
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 8.915161280669867
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.834953534149766
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.658705314428281
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 4.435422059986352
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.1100818520885463
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.83909142121882
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 10000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.481869419380929
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 11.018707683987264
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 5.297196595313377
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.425787665719731
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.425787665719731
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.761966424899094
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.458436086010013
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.04497488916825
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.0006891547196146
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.078672462084902
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 30000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 7.083550762620754
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 14.3084336074198
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.457650416225237
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 11.320802948772245
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 11.320802948772245
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.667087291048439
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.666137877772749
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.427161982333127
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 0.9760271631901544
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.1117563920226035
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 100000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.941267416605268
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 13.036987323042176
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.315759728575374
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.957374164216098
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.957374164216098
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.710772156174317
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.920535261204449
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 6.7479910285360365
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.0038456316807078
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.427155255923858
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 300000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 7.455717359473575
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "pulp_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 12.504571100924238
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "pyomo_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 6.468603799721454
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.19700094068446
+    },
+    {
+      "panel": "ingestion",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "pyoptinterface_python",
+      "denominator": "roml_python_bulk",
+      "speedup": 10.19700094068446
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "pyoptinterface_scalar",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.488013668808011
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "roml_core_rust",
+      "denominator": "roml_core_bulk",
+      "speedup": 7.841687775941543
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "roml_core_rust_anon",
+      "denominator": "roml_core_bulk",
+      "speedup": 7.548255566230981
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "roml_python_bulk",
+      "denominator": "roml_core_bulk",
+      "speedup": 1.0499578985586793
+    },
+    {
+      "panel": "formulation",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_python_bulk",
+      "speedup": 7.15919279115433
+    },
+    {
+      "panel": "roml-core",
+      "workload": "sparse_rows",
+      "size": 1000000,
+      "numerator": "roml_python_naive_chain",
+      "denominator": "roml_core_bulk",
+      "speedup": 7.516851018376847
+    }
+  ],
+  "stopped": []
+}

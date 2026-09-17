@@ -1,0 +1,1776 @@
+{
+  "run_id": "20260917T185525Z-ai90-03be2239",
+  "profile": "standard",
+  "seed": 20260908,
+  "benchmark_sha": "03be223922c86a2cd29cd1625fd09ee580a181c8",
+  "roml_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
+  "jobs": 1,
+  "cpu_pool": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "timing_class": "canonical_serial",
+  "config": {
+    "replicates": 7,
+    "wall_timeout_s": 120,
+    "rss_ceiling_bytes": 17179869184,
+    "pilot_cap_s": 60,
+    "variants": false
+  },
+  "plan": [
+    {
+      "workload": "sparse_rows",
+      "size": 1000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 3000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 10000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 30000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 100000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 300000
+    },
+    {
+      "workload": "sparse_rows",
+      "size": 1000000
+    },
+    {
+      "workload": "bess_96",
+      "size": 1
+    },
+    {
+      "workload": "bess_96",
+      "size": 3
+    },
+    {
+      "workload": "bess_96",
+      "size": 10
+    },
+    {
+      "workload": "bess_96",
+      "size": 30
+    },
+    {
+      "workload": "bess_96",
+      "size": 100
+    },
+    {
+      "workload": "bess_96",
+      "size": 300
+    },
+    {
+      "workload": "rule_rows",
+      "size": 1000
+    },
+    {
+      "workload": "rule_rows",
+      "size": 10000
+    },
+    {
+      "workload": "rule_rows",
+      "size": 100000
+    },
+    {
+      "workload": "param_bess",
+      "size": 1
+    },
+    {
+      "workload": "param_bess",
+      "size": 10
+    },
+    {
+      "workload": "param_bess",
+      "size": 300
+    }
+  ],
+  "implementations": [
+    "roml_python_vectorized",
+    "roml_python_naive_chain",
+    "roml_python_csr",
+    "roml_python_rules",
+    "roml_python_param",
+    "roml_python_concrete",
+    "pulp_python",
+    "pyomo_python",
+    "pyoptinterface_python",
+    "pyoptinterface_scalar",
+    "roml_core_rust",
+    "roml_core_rust_anon",
+    "roml_core_bulk",
+    "roml_core_l1",
+    "roml_core_rules",
+    "roml_core_bulk_param",
+    "roml_core_l1_param",
+    "jump_julia",
+    "ortools_mathopt_cpp"
+  ],
+  "support": {
+    "roml_python_vectorized": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_python_naive_chain": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_python_csr": [
+      "bess_96"
+    ],
+    "roml_python_rules": [
+      "rule_rows"
+    ],
+    "roml_python_param": [
+      "param_bess"
+    ],
+    "roml_python_concrete": [
+      "param_bess"
+    ],
+    "pulp_python": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "pyomo_python": [
+      "sparse_rows",
+      "bess_96",
+      "rule_rows"
+    ],
+    "pyoptinterface_python": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "pyoptinterface_scalar": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_rust": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_rust_anon": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_bulk": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "roml_core_l1": [
+      "bess_96"
+    ],
+    "roml_core_rules": [
+      "rule_rows"
+    ],
+    "roml_core_bulk_param": [
+      "param_bess"
+    ],
+    "roml_core_l1_param": [
+      "param_bess"
+    ],
+    "jump_julia": [
+      "sparse_rows",
+      "bess_96"
+    ],
+    "ortools_mathopt_cpp": [
+      "sparse_rows",
+      "bess_96"
+    ]
+  },
+  "stopped": [
+    {
+      "implementation": "roml_core_bulk_param",
+      "workload": "param_bess",
+      "size": 1,
+      "variant": "canonical",
+      "status": "error",
+      "error": "param_bess requires --prices-csv"
+    },
+    {
+      "implementation": "roml_core_l1_param",
+      "workload": "param_bess",
+      "size": 1,
+      "variant": "canonical",
+      "status": "error",
+      "error": "param_bess requires --prices-csv"
+    }
+  ],
+  "points": {
+    "sparse_rows/1000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/3000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/10000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/30000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/100000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/300000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "sparse_rows/1000000/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/1/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/3/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/10/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/30/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/100/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_l1/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_naive_chain/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_vectorized/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_rust_anon/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/ortools_mathopt_cpp/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/jump_julia/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pulp_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_rust/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_python_csr/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyoptinterface_scalar/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/roml_core_bulk/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "bess_96/300/pyoptinterface_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/1000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/1000/roml_python_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/1000/roml_core_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/10000/roml_core_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/10000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/10000/roml_python_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/100000/pyomo_python/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/100000/roml_core_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "rule_rows/100000/roml_python_rules/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/1/roml_core_bulk_param/canonical": [
+      "error"
+    ],
+    "param_bess/1/roml_python_concrete/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/1/roml_python_param/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/1/roml_core_l1_param/canonical": [
+      "error"
+    ],
+    "param_bess/10/roml_python_param/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/10/roml_python_concrete/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/300/roml_python_param/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ],
+    "param_bess/300/roml_python_concrete/canonical": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  }
+}
