@@ -61,6 +61,7 @@ struct Args {
     cpu: Option<u32>,
     prices_csv: Option<String>,
     caps_csv: Option<String>,
+    caps_file: Option<String>,
     implementation: String,
     anonymous: bool,
     phase_breakdown: bool,
@@ -122,6 +123,7 @@ fn parse_args() -> Args {
         cpu: get(&raw, "--cpu").map(|v| v.parse().unwrap_or_else(|_| usage())),
         prices_csv: get(&raw, "--prices-csv"),
         caps_csv: get(&raw, "--caps-csv"),
+        caps_file: get(&raw, "--caps-file"),
         anonymous: has("--anonymous") || implementation == "roml_core_rust_anon",
         phase_breakdown: has("--phase-breakdown"),
         implementation,
@@ -278,24 +280,30 @@ fn main() {
             build_param_bess_l1(&mut model, args.size, &prices, phase_map.as_mut())
         }
     } else if args.workload == "rule_rows" {
-        let caps: Vec<f64> = match &args.caps_csv {
-            Some(v) => v
-                .split(',')
+        let caps: Vec<f64> = if let Some(v) = &args.caps_csv {
+            v.split(',').map(|s| {
+                s.trim().parse().unwrap_or_else(|_| {
+                    fail(&args, format!("bad caps-csv value: {s}"), container_init_ns)
+                })
+            }).collect()
+        } else if let Some(path) = &args.caps_file {
+            let text = std::fs::read_to_string(path).unwrap_or_else(|e| {
+                fail(&args, format!("cannot read caps-file {path}: {e}"), container_init_ns)
+            });
+            text.split(|c: char| c == ',' || c.is_whitespace())
+                .filter(|s| !s.is_empty())
                 .map(|s| {
-                    s.trim().parse().unwrap_or_else(|_| {
-                        fail(
-                            &args,
-                            format!("bad caps-csv value: {s}"),
-                            container_init_ns,
-                        )
+                    s.parse().unwrap_or_else(|_| {
+                        fail(&args, format!("bad caps-file value: {s}"), container_init_ns)
                     })
                 })
-                .collect(),
-            None => fail(
+                .collect()
+        } else {
+            fail(
                 &args,
-                "rule_rows requires --caps-csv".to_string(),
+                "rule_rows requires --caps-csv or --caps-file".to_string(),
                 container_init_ns,
-            ),
+            )
         };
         build_rules(
             &mut model,

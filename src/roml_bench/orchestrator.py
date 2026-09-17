@@ -111,6 +111,16 @@ def _julia_binary() -> str | None:
     return str(home) if home.exists() else None
 
 
+def _write_caps_file(run_id: str, size: int, caps) -> str:
+    """Write per-row capacities to a temp file (command-line ARG_MAX safety)."""
+    import tempfile
+
+    fd, path = tempfile.mkstemp(prefix=f"caps-{run_id}-{size}-", suffix=".txt")
+    with os.fdopen(fd, "w") as handle:
+        handle.write(",".join(repr(float(v)) for v in caps.tolist()))
+    return path
+
+
 def make_run_id(benchmark_sha: str | None) -> str:
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     host = socket.gethostname().split(".")[0]
@@ -430,7 +440,8 @@ def run_child(
         if workload == "rule_rows":
             case = make_case(workload, size, seed=seed)
             caps = case.payload["cap"]
-            cmd += ["--caps-csv", ",".join(repr(float(v)) for v in caps.tolist())]
+            caps_path = _write_caps_file(run_id, size, caps)
+            cmd += ["--caps-file", caps_path]
     else:
         cmd = [
             sys.executable, "-m", "roml_bench.worker",
