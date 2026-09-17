@@ -21,7 +21,7 @@ use std::alloc::{GlobalAlloc, Layout, System};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
 
-const ROML_SHA: &str = "8be9d35a76900f999e44e153b22a3ed0e0366bb5";
+const ROML_SHA: &str = "f1dc3e6df181b638623f59726bd03c15729d568e";
 
 static ALLOC_CALLS: AtomicU64 = AtomicU64::new(0);
 static ALLOC_BYTES: AtomicU64 = AtomicU64::new(0);

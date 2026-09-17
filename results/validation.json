@@ -1,40 +1,40 @@
 {
   "seed": 20260908,
-  "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
-  "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+  "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
+  "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
   "roml_artifacts": {
-    "expected_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
-    "checkout_head": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "expected_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
+    "checkout_head": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "cargo_revs": {
-      "rust-core": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
-      "rust-store-proto": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+      "rust-core": "f1dc3e6df181b638623f59726bd03c15729d568e",
+      "rust-store-proto": "f1dc3e6df181b638623f59726bd03c15729d568e",
       "lock": [
-        "c590692ace5446cc20c7eb91cb8fa0d594a054b0"
+        "f1dc3e6df181b638623f59726bd03c15729d568e"
       ]
     },
     "installed_file": "/srv/repos/roml-bench/.venv/lib/python3.13/site-packages/roml/__init__.py",
     "installed_wheel_url": "{\"url\":\"file:///srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl\",\"archive_info\":{}}",
     "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
-    "wheel_sha256": "da7950f98eb00b7140540645283ebdda321fca5d170b18cd657141b32899a432",
-    "native_ext_sha256": "56548e7b41a2cb8d0fc9c7819becbc888b715d396864d4a47352c497500139d7",
-    "core_binary_sha256": "2527d67ee6ff642380e9d6c2d35e07120be71d8e8b25146b5a0abbcabfae8d7d"
+    "wheel_sha256": "5ab946959b74c73b2f03f162781347673c9440cb7ae34abb7565c5aef8819a52",
+    "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
+    "core_binary_sha256": "418b92c28a37018ea2e7c25e69dbf18196bb22c117ca2051609ca3ac4de0d420"
   },
-  "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
+  "benchmark_sha": "13bfde4d3a5d5f2173ffb72d88c1c423008b1d55",
   "environment": {
-    "timestamp_utc": "2026-09-09T04:54:43Z",
+    "timestamp_utc": "2026-09-17T17:55:46Z",
     "python": "3.13.14",
-    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
-    "kernel": "7.0.0-30-generic",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
+    "kernel": "7.0.0-31-generic",
     "cpu_model": "AMD Ryzen 9 9950X 16-Core Processor",
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      0.91650390625,
-      0.8203125,
-      0.9599609375
+      0.26025390625,
+      0.18798828125,
+      0.23681640625
     ],
-    "memory_total_bytes": 63843864576,
-    "memory_available_bytes": 51982016512,
+    "memory_total_bytes": 63846858752,
+    "memory_available_bytes": 53757218816,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,9 +50,9 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "92b9ea0018465419345ce0c3d8786a9bd4f8cebd",
-    "roml_sha_expected": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
-    "roml_checkout_sha": "c590692ace5446cc20c7eb91cb8fa0d594a054b0",
+    "benchmark_sha": "13bfde4d3a5d5f2173ffb72d88c1c423008b1d55",
+    "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
+    "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
     "thread_env": {
       "OMP_NUM_THREADS": "1",
@@ -64,8 +64,8 @@
     }
   },
   "implementations": {
-    "roml_python_bulk": {
-      "construction_path": "bulk: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add over array expressions with one fused rm.dot objective call (bess_96)",
+    "roml_python_vectorized": {
+      "construction_path": "vectorized: Model.vars + add_linear_rows CSR (sparse_rows) or vectorized Model.add over array expressions with one fused rm.dot objective call (bess_96)",
       "count_source": "construction",
       "workloads": {
         "sparse_rows/100": {
@@ -210,12 +210,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27290,
+          "populate_ns": 27010,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 128372,
+          "populate_ns": 123142,
           "objective": 651.9938455874309
         }
       },
@@ -232,12 +232,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 28770,
+          "populate_ns": 28590,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 123982,
+          "populate_ns": 108511,
           "objective": 651.993845587431
         }
       },
@@ -254,12 +254,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 73801,
+          "populate_ns": 76661,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 278684,
+          "populate_ns": 259634,
           "problems": []
         }
       },
@@ -272,12 +272,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 69882,
+          "populate_ns": 93351,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 250325,
+          "populate_ns": 251005,
           "problems": []
         }
       },
@@ -290,12 +290,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 20350,
+          "populate_ns": 22231,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 61101,
+          "populate_ns": 58951,
           "problems": []
         }
       },
