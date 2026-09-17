@@ -8,7 +8,9 @@
 
 mod common;
 
-use common::{build_bess, build_bess_bulk, build_sparse, build_sparse_bulk, rss_bytes, BESS_T};
+use common::{
+    build_bess, build_bess_bulk, build_bess_l1, build_sparse, build_sparse_bulk, rss_bytes, BESS_T,
+};
 use roml::prelude::*;
 use serde::Serialize;
 use std::time::Instant;
@@ -68,7 +70,7 @@ fn usage() -> ! {
         "usage: roml-bench-core --workload <sparse_rows|bess_96> --size <N> \
          --seed <u64> --replicate <u32> --run-id <id> --benchmark-sha <sha> \
          --roml-sha <sha> --timestamp-utc <ts> [--cpu <n>] [--prices-csv <csv>] \
-         [--implementation <roml_core_rust|roml_core_rust_anon|roml_core_bulk>] [--anonymous] \
+         [--implementation <roml_core_rust|roml_core_rust_anon|roml_core_bulk|roml_core_l1>] [--anonymous] \
          [--phase-breakdown] [--objective-mode <constant|parameterized>]"
     );
     std::process::exit(2);
@@ -94,6 +96,7 @@ fn parse_args() -> Args {
     if implementation != "roml_core_rust"
         && implementation != "roml_core_rust_anon"
         && implementation != "roml_core_bulk"
+        && implementation != "roml_core_l1"
     {
         usage();
     }
@@ -191,6 +194,14 @@ fn main() {
     let named = !args.anonymous;
     let parameterized = args.objective_mode == "parameterized";
     let bulk = args.implementation == "roml_core_bulk";
+    let l1 = args.implementation == "roml_core_l1";
+    if l1 && args.workload != "bess_96" {
+        fail(
+            &args,
+            "roml_core_l1 supports bess_96 (current Rust L1 formulation)".to_string(),
+            container_init_ns,
+        );
+    }
     if bulk && parameterized {
         fail(
             &args,
@@ -247,7 +258,9 @@ fn main() {
                 container_init_ns,
             );
         }
-        if bulk {
+        if l1 {
+            build_bess_l1(&mut model, args.size, &prices, named, phase_map.as_mut())
+        } else if bulk {
             build_bess_bulk(&mut model, args.size, &prices, named, phase_map.as_mut())
         } else {
             build_bess(&mut model, args.size, &prices, named, phase_map.as_mut())

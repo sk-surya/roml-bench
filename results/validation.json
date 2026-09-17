@@ -17,11 +17,11 @@
     "wheel_path": "/srv/repos/roml-bench/.cache/wheels/roml_python-0.1.0-cp313-cp313-manylinux_2_38_x86_64.whl",
     "wheel_sha256": "5ab946959b74c73b2f03f162781347673c9440cb7ae34abb7565c5aef8819a52",
     "native_ext_sha256": "17df9a7e57aea95afa0dd55d12061af19e37e1ad482338c9baaf7b8ea1402a09",
-    "core_binary_sha256": "ff65c0cec99818d15fb2f0caf16395f2d01ca57cc4240c570dd849236d35518c"
+    "core_binary_sha256": "3c62a06d8ff88823a2ef774c4052acb060f1bb5a6263f4718a0ede75ab432bf5"
   },
-  "benchmark_sha": "aaf5e8aedb82ae8f817f0a0f3b34cf4928a33ba3",
+  "benchmark_sha": "a4d11e2240325654c88842bd9e30320acbe6ee27",
   "environment": {
-    "timestamp_utc": "2026-09-17T18:08:45Z",
+    "timestamp_utc": "2026-09-17T18:15:31Z",
     "python": "3.13.14",
     "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
     "kernel": "7.0.0-31-generic",
@@ -29,12 +29,12 @@
     "cpu_count": 32,
     "cpu_governor": "powersave",
     "load_average": [
-      0.5703125,
-      0.859375,
-      0.68505859375
+      0.30810546875,
+      0.41455078125,
+      0.5322265625
     ],
     "memory_total_bytes": 63846858752,
-    "memory_available_bytes": 53818499072,
+    "memory_available_bytes": 54018469888,
     "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
     "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)",
     "packages": {
@@ -50,7 +50,7 @@
       "psutil": "7.2.2",
       "roml_import": "0.1.0"
     },
-    "benchmark_sha": "aaf5e8aedb82ae8f817f0a0f3b34cf4928a33ba3",
+    "benchmark_sha": "a4d11e2240325654c88842bd9e30320acbe6ee27",
     "roml_sha_expected": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "roml_checkout_sha": "f1dc3e6df181b638623f59726bd03c15729d568e",
     "canonical_seed": 20260908,
@@ -210,12 +210,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 27731,
+          "populate_ns": 27700,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 124882,
+          "populate_ns": 123252,
           "objective": 651.9938455874309
         }
       },
@@ -232,12 +232,12 @@
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 28391,
+          "populate_ns": 27510,
           "objective": 0.0
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 108742,
+          "populate_ns": 109202,
           "objective": 651.993845587431
         }
       },
@@ -250,16 +250,16 @@
     },
     "roml_core_rust": {
       "implementation": "roml_core_rust",
-      "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
+      "construction_path": "rust legacy scalar builder: Model::named + scalar add_variable/add_constraint (historical interface, not current L1)",
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 71771,
+          "populate_ns": 73091,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 275395,
+          "populate_ns": 275765,
           "problems": []
         }
       },
@@ -268,16 +268,16 @@
     },
     "roml_core_rust_anon": {
       "implementation": "roml_core_rust_anon",
-      "construction_path": "rust: Model::named + scalar add_variable/add_constraint (anonymous, no .named() calls)",
+      "construction_path": "rust legacy scalar builder: Model::named + scalar add_variable/add_constraint (historical interface, not current L1) (anonymous, no .named() calls)",
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 69081,
+          "populate_ns": 68441,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 253165,
+          "populate_ns": 264945,
           "problems": []
         }
       },
@@ -286,16 +286,35 @@
     },
     "roml_core_bulk": {
       "implementation": "roml_core_bulk",
-      "construction_path": "rust: Model::named + scalar add_variable/add_constraint",
+      "construction_path": "rust raw L2 (internal lower bound): add_variable_array_block + add_linear_rows_bulk + set_linear_objective_bulk",
       "workloads": {
         "sparse_rows/100": {
           "status": "ok",
-          "populate_ns": 14721,
+          "populate_ns": 17411,
           "problems": []
         },
         "bess_96/1": {
           "status": "ok",
-          "populate_ns": 51941,
+          "populate_ns": 52521,
+          "problems": []
+        }
+      },
+      "status": "ok",
+      "problems": []
+    },
+    "roml_core_l1": {
+      "implementation": "roml_core_l1",
+      "construction_path": "rust L1 array API: var(..).bounds(..).build() + param + slicing/array algebra + add_row + maximize_array",
+      "workloads": {
+        "sparse_rows/100": {
+          "status": "skipped",
+          "problems": [
+            "roml_core_l1 supports bess_96 by design"
+          ]
+        },
+        "bess_96/1": {
+          "status": "ok",
+          "populate_ns": 77512,
           "problems": []
         }
       },

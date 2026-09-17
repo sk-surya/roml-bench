@@ -444,6 +444,76 @@ pub fn build_bess_bulk(
     ))
 }
 
+/// BESS workload through the **current idiomatic Rust Level-1 array API**
+/// (`model.var(..).bounds(..).build()`, `model.param(..)`, slicing / array
+/// algebra, `add_row`, `maximize_array`).
+///
+/// Builds the full canonical benchmark model — not the reduced `l1_bess`
+/// example: `energy` has `t + 1` periods, the init row `energy[:,0] == e0`
+/// and the `charge + discharge <= P` mode rows are present, and the objective
+/// is the packed `dt * sum(price * (discharge - charge))`.
+///
+/// Prices are the canonical shared vector; ROML expresses time-series data as
+/// a first-class parameter (its idiomatic surface), which is why this arm is
+/// the Rust representative for the parameterized-construction benchmark too.
+#[allow(dead_code)]
+pub fn build_bess_l1(
+    model: &mut Model,
+    b: usize,
+    prices: &[f64],
+    _named: bool,
+    phases: Option<&mut BTreeMap<String, u64>>,
+) -> Result<(usize, usize, usize, usize), ModelError> {
+    assert_eq!(prices.len(), BESS_T);
+    let t = BESS_T;
+    let mut price_grid = Vec::with_capacity(b * t);
+    for _ in 0..b {
+        price_grid.extend_from_slice(prices);
+    }
+
+    let t0 = Instant::now();
+    let charge = model.var("charge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let discharge = model.var("discharge", [b, t]).bounds(0.0, BESS_P).build()?;
+    let energy = model
+        .var("energy", [b, t + 1])
+        .bounds(0.0, BESS_E)
+        .build()?;
+    let t_vars = t0.elapsed().as_nanos() as u64;
+
+    let t1 = Instant::now();
+    // energy[:, 0] == e0
+    model.add_row(energy.slice(1, 0, 1)?.expr()?.eq(BESS_E0))?;
+    // energy[:, 1:] == energy[:, :-1] + dt * (eta * charge - discharge / eta)
+    let next = energy.slice(1, 1, t)?;
+    let prev = energy.slice(1, 0, t)?;
+    let rhs = prev + BESS_DT * (BESS_ETA * charge.clone() - discharge.clone() / BESS_ETA);
+    model.add_row((next - rhs).eq(0.0))?;
+    // charge + discharge <= P
+    model.add_row((charge.clone() + discharge.clone()).le(BESS_P))?;
+    let t_cons = t1.elapsed().as_nanos() as u64;
+
+    let t2 = Instant::now();
+    let price = model.param("price", [b, t], &price_grid)?;
+    let objective = price
+        .try_mul(&(discharge.clone() - charge.clone()))?
+        .expect("conservative IR covers price * (discharge - charge)")
+        * BESS_DT;
+    model.maximize_array(&objective)?;
+    let t_obj = t2.elapsed().as_nanos() as u64;
+
+    if let Some(map) = phases {
+        map.insert("variables".to_string(), t_vars);
+        map.insert("constraints".to_string(), t_cons);
+        map.insert("objective".to_string(), t_obj);
+    }
+    Ok((
+        b * (3 * t + 1),
+        b * (2 * t + 1),
+        b * (1 + 6 * t),
+        b * (2 * t),
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

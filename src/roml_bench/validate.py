@@ -389,6 +389,11 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
             "rust raw L2 (internal lower bound): add_variable_array_block + "
             "add_linear_rows_bulk + set_linear_objective_bulk"
         )
+    elif implementation == "roml_core_l1":
+        construction_path = (
+            "rust L1 array API: var(..).bounds(..).build() + param + "
+            "slicing/array algebra + add_row + maximize_array"
+        )
     else:
         construction_path = (
             "rust legacy scalar builder: Model::named + scalar "
@@ -414,6 +419,12 @@ def _check_rust_core(cases: dict, implementation: str = "roml_core_rust") -> dic
         repr(float(v)) for v in np.asarray(bess_prices(CANONICAL_SEED)).tolist()
     )
     for workload, size in VALIDATION_CASES:
+        if implementation == "roml_core_l1" and workload != "bess_96":
+            entry["workloads"][f"{workload}/{size}"] = {
+                "status": "skipped",
+                "problems": ["roml_core_l1 supports bess_96 by design"],
+            }
+            continue
         case = cases[(workload, size)]
         cmd = [
             str(binary),
@@ -623,6 +634,8 @@ def run_validation() -> dict:
     result["implementations"]["roml_core_rust_anon"] = anon_entry
     bulk_entry = _check_rust_core(cases, "roml_core_bulk")
     result["implementations"]["roml_core_bulk"] = bulk_entry
+    l1_entry = _check_rust_core(cases, "roml_core_l1")
+    result["implementations"]["roml_core_l1"] = l1_entry
     # Native bulk-vs-scalar replay proof on the validation sizes: full
     # journal/delta replay equality plus snapshot equality (bulk ≡ scalar
     # canonically; scalar ≡ Python by counts; Python by the solve gate).

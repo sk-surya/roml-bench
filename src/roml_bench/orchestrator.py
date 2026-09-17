@@ -39,7 +39,12 @@ PYTHON_IMPLEMENTATIONS = (
     "pyoptinterface_python",
     "pyoptinterface_scalar",
 )
-CORE_IMPLEMENTATIONS = ("roml_core_rust", "roml_core_rust_anon", "roml_core_bulk")
+CORE_IMPLEMENTATIONS = (
+    "roml_core_rust",
+    "roml_core_rust_anon",
+    "roml_core_bulk",
+    "roml_core_l1",
+)
 JULIA_IMPLEMENTATIONS = ("jump_julia",)
 CPP_IMPLEMENTATIONS = ("ortools_mathopt_cpp",)
 ALL_IMPLEMENTATIONS = (

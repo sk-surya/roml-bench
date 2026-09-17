@@ -17,6 +17,7 @@ IMPLEMENTATIONS = (
     "roml_core_rust",
     "roml_core_rust_anon",
     "roml_core_bulk",
+    "roml_core_l1",
     "jump_julia",
     "ortools_mathopt_cpp",
 )
