@@ -611,8 +611,19 @@ def run_batch(tasks, *, jobs, pool, run_one):
     return [(position, results[position]) for position, _ in tasks]
 
 
-def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: int = 1) -> Path:
-    """Execute a full benchmark profile; return the run directory."""
+def run_profile(
+    profile: str,
+    run_id: str | None = None,
+    repo: str = ".",
+    jobs: int = 1,
+    size: int | None = None,
+    arms: tuple[str, ...] | None = None,
+) -> Path:
+    """Execute a benchmark profile; return the run directory.
+
+    ``size`` overrides the profile's size grid with a single BESS size (a
+    one-off scale showcase); ``arms`` restricts the implementations measured.
+    """
     if profile not in PROFILES:
         raise ValueError(f"unknown profile: {profile}")
     if jobs < 1:
@@ -626,6 +637,12 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
             f"another benchmark child is refused"
         )
     config = PROFILES[profile]
+    if size is not None and profile != "scale":
+        raise ValueError("--size is supported with --profile scale only")
+    impl_pool = tuple(arms) if arms else ALL_IMPLEMENTATIONS
+    unknown = [a for a in impl_pool if a not in ALL_IMPLEMENTATIONS]
+    if unknown:
+        raise ValueError(f"unknown implementation(s): {unknown}")
     check_validation_gate(repo)
     benchmark_sha = git_sha(repo) or "unknown"
     run_id = run_id or make_run_id(benchmark_sha)
@@ -638,11 +655,14 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
     (run_dir / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
 
     seed = CANONICAL_SEED
-    plan = [
-        (workload, size)
-        for workload in workloads_for(profile)
-        for size in sizes_for(workload, profile)
-    ]
+    if size is not None:
+        plan = [("bess_96", size)]
+    else:
+        plan = [
+            (workload, sz)
+            for workload in workloads_for(profile)
+            for sz in sizes_for(workload, profile)
+        ]
     run_meta = {
         "run_id": run_id,
         "profile": profile,
@@ -654,9 +674,9 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
         "timing_class": "canonical_serial" if jobs == 1 else "parallel_throughput",
         "config": config,
         "plan": [{"workload": w, "size": s} for w, s in plan],
-        "implementations": list(ALL_IMPLEMENTATIONS),
+        "implementations": list(impl_pool),
         "support": {
-            impl: list(supported_workloads(impl)) for impl in ALL_IMPLEMENTATIONS
+            impl: list(supported_workloads(impl)) for impl in impl_pool
         },
         "stopped": [],
         "points": {},
@@ -673,7 +693,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
                 # budget is stopped (no further replicates or larger sizes).
                 pilot_first = config["pilot_cap_s"] is not None and replicate == 0
                 order = shuffled_order(
-                    ALL_IMPLEMENTATIONS, workload, size, replicate, seed
+                    impl_pool, workload, size, replicate, seed
                 )
                 batch = [
                     implementation
@@ -715,7 +735,7 @@ def run_profile(profile: str, run_id: str | None = None, repo: str = ".", jobs: 
                 # Early exit for replicate loop when every supported
                 # implementation for this workload is stopped.
                 supported = [
-                    impl for impl in ALL_IMPLEMENTATIONS
+                    impl for impl in impl_pool
                     if workload in supported_workloads(impl)
                 ]
                 if all((impl, workload) in stopped for impl in supported):

@@ -1,83 +1,83 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-<rect width="760" height="360" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="450" viewBox="0 0 760 450" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect width="760" height="450" fill="#ffffff"/>
 <text x="16" y="26" font-size="17" font-weight="700" fill="#1f2937">Day-ahead battery fleet dispatch — peak memory</text>
 <text x="16" y="46" font-size="12" fill="#6b7280">process peak RSS vs variables (median of replicates); lower is better</text>
-<line x1="200" y1="326.0" x2="670" y2="326.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="330.0" font-size="11" fill="#6b7280" text-anchor="end">4</text>
-<line x1="200" y1="259.0" x2="670" y2="259.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="263.0" font-size="11" fill="#6b7280" text-anchor="end">20</text>
-<line x1="200" y1="192.0" x2="670" y2="192.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="196.0" font-size="11" fill="#6b7280" text-anchor="end">118</text>
-<line x1="200" y1="125.0" x2="670" y2="125.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="129.0" font-size="11" fill="#6b7280" text-anchor="end">687</text>
+<line x1="200" y1="358.0" x2="670" y2="358.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="362.0" font-size="11" fill="#6b7280" text-anchor="end">3.5125</text>
+<line x1="200" y1="283.0" x2="670" y2="283.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="287.0" font-size="11" fill="#6b7280" text-anchor="end">20.3897</text>
+<line x1="200" y1="208.0" x2="670" y2="208.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="212.0" font-size="11" fill="#6b7280" text-anchor="end">118.36</text>
+<line x1="200" y1="133.0" x2="670" y2="133.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="192" y="137.0" font-size="11" fill="#6b7280" text-anchor="end">687.069</text>
 <line x1="200" y1="58.0" x2="670" y2="58.0" stroke="#e5e7eb" stroke-width="1"/>
-<text x="192" y="62.0" font-size="11" fill="#6b7280" text-anchor="end">3988</text>
-<text x="200.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">2890</text>
-<text x="278.3" y="344" font-size="11" fill="#6b7280" text-anchor="middle">8670</text>
-<text x="356.7" y="344" font-size="11" fill="#6b7280" text-anchor="middle">28900</text>
-<text x="435.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">86700</text>
-<text x="513.3" y="344" font-size="11" fill="#6b7280" text-anchor="middle">289000</text>
-<text x="591.7" y="344" font-size="11" fill="#6b7280" text-anchor="middle">867000</text>
-<text x="670.0" y="344" font-size="11" fill="#6b7280" text-anchor="middle">2890000</text>
-<polyline points="200.0,317.5 278.3,299.2 356.7,266.1 435.0,228.8 513.3,186.2 591.7,144.4 670.0,99.1" fill="none" stroke="#2563eb" stroke-width="2.2"/>
-<circle cx="200.0" cy="317.5" r="3" fill="#2563eb"/>
-<circle cx="278.3" cy="299.2" r="3" fill="#2563eb"/>
-<circle cx="356.7" cy="266.1" r="3" fill="#2563eb"/>
-<circle cx="435.0" cy="228.8" r="3" fill="#2563eb"/>
-<circle cx="513.3" cy="186.2" r="3" fill="#2563eb"/>
-<circle cx="591.7" cy="144.4" r="3" fill="#2563eb"/>
-<circle cx="670.0" cy="99.1" r="3" fill="#2563eb"/>
-<polyline points="200.0,188.7 278.3,187.7 356.7,184.4 435.0,175.9 513.3,157.2 591.7,128.2 670.0,87.9" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
-<circle cx="200.0" cy="188.7" r="3" fill="#1d4ed8"/>
-<circle cx="278.3" cy="187.7" r="3" fill="#1d4ed8"/>
-<circle cx="356.7" cy="184.4" r="3" fill="#1d4ed8"/>
-<circle cx="435.0" cy="175.9" r="3" fill="#1d4ed8"/>
-<circle cx="513.3" cy="157.2" r="3" fill="#1d4ed8"/>
-<circle cx="591.7" cy="128.2" r="3" fill="#1d4ed8"/>
-<circle cx="670.0" cy="87.9" r="3" fill="#1d4ed8"/>
-<polyline points="200.0,188.7 278.3,187.8 356.7,185.6 435.0,178.9 513.3,161.8 591.7,136.5 670.0,98.0" fill="none" stroke="#4b5563" stroke-width="2.2"/>
-<circle cx="200.0" cy="188.7" r="3" fill="#4b5563"/>
-<circle cx="278.3" cy="187.8" r="3" fill="#4b5563"/>
-<circle cx="356.7" cy="185.6" r="3" fill="#4b5563"/>
-<circle cx="435.0" cy="178.9" r="3" fill="#4b5563"/>
-<circle cx="513.3" cy="161.8" r="3" fill="#4b5563"/>
-<circle cx="591.7" cy="136.5" r="3" fill="#4b5563"/>
-<circle cx="670.0" cy="98.0" r="3" fill="#4b5563"/>
-<polyline points="200.0,188.7 278.3,187.3 356.7,182.9 435.0,172.0 513.3,148.1 591.7,117.3 670.0,75.0" fill="none" stroke="#6b7280" stroke-width="2.2"/>
-<circle cx="200.0" cy="188.7" r="3" fill="#6b7280"/>
-<circle cx="278.3" cy="187.3" r="3" fill="#6b7280"/>
-<circle cx="356.7" cy="182.9" r="3" fill="#6b7280"/>
-<circle cx="435.0" cy="172.0" r="3" fill="#6b7280"/>
-<circle cx="513.3" cy="148.1" r="3" fill="#6b7280"/>
-<circle cx="591.7" cy="117.3" r="3" fill="#6b7280"/>
-<circle cx="670.0" cy="75.0" r="3" fill="#6b7280"/>
-<polyline points="200.0,188.6 278.3,186.8 356.7,181.3 435.0,168.9 513.3,142.5 591.7,109.6 670.0,66.5" fill="none" stroke="#9ca3af" stroke-width="2.2"/>
-<circle cx="200.0" cy="188.6" r="3" fill="#9ca3af"/>
-<circle cx="278.3" cy="186.8" r="3" fill="#9ca3af"/>
-<circle cx="356.7" cy="181.3" r="3" fill="#9ca3af"/>
-<circle cx="435.0" cy="168.9" r="3" fill="#9ca3af"/>
-<circle cx="513.3" cy="142.5" r="3" fill="#9ca3af"/>
-<circle cx="591.7" cy="109.6" r="3" fill="#9ca3af"/>
-<circle cx="670.0" cy="66.5" r="3" fill="#9ca3af"/>
-<polyline points="200.0,264.0 278.3,257.6 356.7,238.7 435.0,216.7 513.3,178.8 591.7,145.9 670.0,95.8" fill="none" stroke="#0891b2" stroke-width="2.2"/>
-<circle cx="200.0" cy="264.0" r="3" fill="#0891b2"/>
-<circle cx="278.3" cy="257.6" r="3" fill="#0891b2"/>
-<circle cx="356.7" cy="238.7" r="3" fill="#0891b2"/>
-<circle cx="435.0" cy="216.7" r="3" fill="#0891b2"/>
-<circle cx="513.3" cy="178.8" r="3" fill="#0891b2"/>
-<circle cx="591.7" cy="145.9" r="3" fill="#0891b2"/>
-<circle cx="670.0" cy="95.8" r="3" fill="#0891b2"/>
-<rect x="200" y="32" width="12" height="12" rx="2" fill="#2563eb"/>
-<text x="217" y="43" font-size="12" fill="#1f2937">ROML Rust L1</text>
-<rect x="318" y="32" width="12" height="12" rx="2" fill="#1d4ed8"/>
-<text x="335" y="43" font-size="12" fill="#1f2937">ROML Python vectorized</text>
-<rect x="516" y="32" width="12" height="12" rx="2" fill="#4b5563"/>
-<text x="533" y="43" font-size="12" fill="#1f2937">PyOptInterface (scalar)</text>
-<rect x="722" y="32" width="12" height="12" rx="2" fill="#6b7280"/>
-<text x="739" y="43" font-size="12" fill="#1f2937">Pyomo</text>
-<rect x="784" y="32" width="12" height="12" rx="2" fill="#9ca3af"/>
-<text x="801" y="43" font-size="12" fill="#1f2937">PuLP</text>
-<rect x="838" y="32" width="12" height="12" rx="2" fill="#0891b2"/>
-<text x="855" y="43" font-size="12" fill="#1f2937">OR-Tools MathOpt</text>
-<text x="744" y="352" font-size="11" fill="#6b7280" text-anchor="end">MiB (log scale)</text>
+<text x="192" y="62.0" font-size="11" fill="#6b7280" text-anchor="end">3988.37</text>
+<text x="200.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">2890</text>
+<text x="278.3" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">8670</text>
+<text x="356.7" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">28900</text>
+<text x="435.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">86700</text>
+<text x="513.3" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">289000</text>
+<text x="591.7" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">867000</text>
+<text x="670.0" y="374.0" font-size="11" fill="#6b7280" text-anchor="middle">2890000</text>
+<polyline points="200.0,348.5 278.3,328.0 356.7,291.0 435.0,249.2 513.3,201.5 591.7,154.7 670.0,104.0" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+<circle cx="200.0" cy="348.5" r="3" fill="#2563eb"/>
+<circle cx="278.3" cy="328.0" r="3" fill="#2563eb"/>
+<circle cx="356.7" cy="291.0" r="3" fill="#2563eb"/>
+<circle cx="435.0" cy="249.2" r="3" fill="#2563eb"/>
+<circle cx="513.3" cy="201.5" r="3" fill="#2563eb"/>
+<circle cx="591.7" cy="154.7" r="3" fill="#2563eb"/>
+<circle cx="670.0" cy="104.0" r="3" fill="#2563eb"/>
+<polyline points="200.0,204.3 278.3,203.2 356.7,199.5 435.0,190.0 513.3,169.0 591.7,136.6 670.0,91.4" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+<circle cx="200.0" cy="204.3" r="3" fill="#1d4ed8"/>
+<circle cx="278.3" cy="203.2" r="3" fill="#1d4ed8"/>
+<circle cx="356.7" cy="199.5" r="3" fill="#1d4ed8"/>
+<circle cx="435.0" cy="190.0" r="3" fill="#1d4ed8"/>
+<circle cx="513.3" cy="169.0" r="3" fill="#1d4ed8"/>
+<circle cx="591.7" cy="136.6" r="3" fill="#1d4ed8"/>
+<circle cx="670.0" cy="91.4" r="3" fill="#1d4ed8"/>
+<polyline points="200.0,204.3 278.3,203.3 356.7,200.8 435.0,193.3 513.3,174.2 591.7,145.8 670.0,102.8" fill="none" stroke="#4b5563" stroke-width="2.2"/>
+<circle cx="200.0" cy="204.3" r="3" fill="#4b5563"/>
+<circle cx="278.3" cy="203.3" r="3" fill="#4b5563"/>
+<circle cx="356.7" cy="200.8" r="3" fill="#4b5563"/>
+<circle cx="435.0" cy="193.3" r="3" fill="#4b5563"/>
+<circle cx="513.3" cy="174.2" r="3" fill="#4b5563"/>
+<circle cx="591.7" cy="145.8" r="3" fill="#4b5563"/>
+<circle cx="670.0" cy="102.8" r="3" fill="#4b5563"/>
+<polyline points="200.0,204.3 278.3,202.7 356.7,197.8 435.0,185.7 513.3,158.9 591.7,124.3 670.0,77.1" fill="none" stroke="#6b7280" stroke-width="2.2"/>
+<circle cx="200.0" cy="204.3" r="3" fill="#6b7280"/>
+<circle cx="278.3" cy="202.7" r="3" fill="#6b7280"/>
+<circle cx="356.7" cy="197.8" r="3" fill="#6b7280"/>
+<circle cx="435.0" cy="185.7" r="3" fill="#6b7280"/>
+<circle cx="513.3" cy="158.9" r="3" fill="#6b7280"/>
+<circle cx="591.7" cy="124.3" r="3" fill="#6b7280"/>
+<circle cx="670.0" cy="77.1" r="3" fill="#6b7280"/>
+<polyline points="200.0,204.2 278.3,202.2 356.7,196.0 435.0,182.2 513.3,152.6 591.7,115.8 670.0,67.5" fill="none" stroke="#9ca3af" stroke-width="2.2"/>
+<circle cx="200.0" cy="204.2" r="3" fill="#9ca3af"/>
+<circle cx="278.3" cy="202.2" r="3" fill="#9ca3af"/>
+<circle cx="356.7" cy="196.0" r="3" fill="#9ca3af"/>
+<circle cx="435.0" cy="182.2" r="3" fill="#9ca3af"/>
+<circle cx="513.3" cy="152.6" r="3" fill="#9ca3af"/>
+<circle cx="591.7" cy="115.8" r="3" fill="#9ca3af"/>
+<circle cx="670.0" cy="67.5" r="3" fill="#9ca3af"/>
+<polyline points="200.0,288.6 278.3,281.4 356.7,260.3 435.0,235.7 513.3,193.2 591.7,156.4 670.0,100.3" fill="none" stroke="#0891b2" stroke-width="2.2"/>
+<circle cx="200.0" cy="288.6" r="3" fill="#0891b2"/>
+<circle cx="278.3" cy="281.4" r="3" fill="#0891b2"/>
+<circle cx="356.7" cy="260.3" r="3" fill="#0891b2"/>
+<circle cx="435.0" cy="235.7" r="3" fill="#0891b2"/>
+<circle cx="513.3" cy="193.2" r="3" fill="#0891b2"/>
+<circle cx="591.7" cy="156.4" r="3" fill="#0891b2"/>
+<circle cx="670.0" cy="100.3" r="3" fill="#0891b2"/>
+<rect x="32" y="386" width="12" height="12" rx="2" fill="#2563eb"/>
+<text x="49" y="396" font-size="12" fill="#1f2937">ROML Rust L1</text>
+<rect x="150" y="386" width="12" height="12" rx="2" fill="#1d4ed8"/>
+<text x="167" y="396" font-size="12" fill="#1f2937">ROML Python vectorized</text>
+<rect x="348" y="386" width="12" height="12" rx="2" fill="#4b5563"/>
+<text x="365" y="396" font-size="12" fill="#1f2937">PyOptInterface (scalar)</text>
+<rect x="554" y="386" width="12" height="12" rx="2" fill="#6b7280"/>
+<text x="571" y="396" font-size="12" fill="#1f2937">Pyomo</text>
+<rect x="616" y="386" width="12" height="12" rx="2" fill="#9ca3af"/>
+<text x="633" y="396" font-size="12" fill="#1f2937">PuLP</text>
+<rect x="32" y="404" width="12" height="12" rx="2" fill="#0891b2"/>
+<text x="49" y="414" font-size="12" fill="#1f2937">OR-Tools MathOpt</text>
+<text x="744" y="442" font-size="11" fill="#6b7280" text-anchor="end">MiB (log scale)</text>
 </svg>

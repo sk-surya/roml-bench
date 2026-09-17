@@ -86,12 +86,31 @@ def hbar_chart(title: str, subtitle: str, items: list[dict], unit: str) -> str:
     return "\n".join(out)
 
 
+def _tick(v: float) -> str:
+    """Compact axis label that keeps fractional values (0.01, 0.1, 1, 10)."""
+    return f"{v:g}"
+
+
 def line_chart(title: str, subtitle: str, x_labels: list[int], series: list[dict],
                unit: str) -> str:
-    """series: [{label, values, color}]; log10 y-axis; x evenly spaced."""
-    height = 360
+    """series: [{label, values, color}]; log10 y-axis; x evenly spaced.
+
+    The legend wraps inside the canvas so long arm labels are never clipped.
+    """
+    plot_h = 300
+    legend_row_h = 18
+    # Pre-wrap the legend to compute the canvas height.
+    legend_rows: list[list[tuple[str, str]]] = [[]]
+    lx = 32
+    for s in series:
+        w = 22 + 8 * len(s["label"])
+        if lx + w > W - 20 and legend_rows[-1]:
+            legend_rows.append([])
+            lx = 32
+        legend_rows[-1].append((s["label"], s["color"]))
+        lx += w
+    height = PAD_T + plot_h + 22 + legend_row_h * len(legend_rows) + PAD_B
     plot_w = W - PAD_L - PAD_R
-    plot_h = height - PAD_T - PAD_B
     vals = [v for s in series for v in s["values"] if v and v > 0]
     lo = math.log10(min(vals) * 0.8)
     hi = math.log10(max(vals) * 1.25)
@@ -105,20 +124,22 @@ def line_chart(title: str, subtitle: str, x_labels: list[int], series: list[dict
         return PAD_T + plot_h * (1 - (math.log10(v) - lo) / (hi - lo))
 
     out = header(title, subtitle, height)
-    for g in range(5):
-        lv = lo + (hi - lo) * g / 4
-        y = py(10**lv)
+    # Prefer decade gridlines (0.01, 0.1, 1, 10) for readability.
+    decades = [10**k for k in range(math.floor(lo) + 1, math.floor(hi) + 1)]
+    ticks = decades if len(decades) >= 2 else [10 ** (lo + (hi - lo) * g / 4) for g in range(5)]
+    for v in ticks:
+        y = py(v)
         out.append(
             f'<line x1="{PAD_L}" y1="{y:.1f}" x2="{PAD_L + plot_w}" y2="{y:.1f}" '
             f'stroke="{GRID}" stroke-width="1"/>'
         )
         out.append(
             f'<text x="{PAD_L - 8}" y="{y + 4:.1f}" font-size="11" fill="{SUB}" '
-            f'text-anchor="end">{10**lv:.0f}</text>'
+            f'text-anchor="end">{_tick(v)}</text>'
         )
     for i, xl in enumerate(x_labels):
         out.append(
-            f'<text x="{px(i):.1f}" y="{height - PAD_B + 18}" font-size="11" '
+            f'<text x="{px(i):.1f}" y="{PAD_T + plot_h + 16:.1f}" font-size="11" '
             f'fill="{SUB}" text-anchor="middle">{xl}</text>'
         )
     for s in series:
@@ -127,6 +148,8 @@ def line_chart(title: str, subtitle: str, x_labels: list[int], series: list[dict
             for i, v in enumerate(s["values"])
             if v and v > 0
         ]
+        if not pts:
+            continue
         path = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
         out.append(
             f'<polyline points="{path}" fill="none" stroke="{s["color"]}" '
@@ -134,25 +157,27 @@ def line_chart(title: str, subtitle: str, x_labels: list[int], series: list[dict
         )
         for x, y in pts:
             out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3" fill="{s["color"]}"/>')
-    # legend
-    lx = PAD_L
-    for s in series:
-        out.append(
-            f'<rect x="{lx}" y="{PAD_T - 26}" width="12" height="12" rx="2" '
-            f'fill="{s["color"]}"/>'
-        )
-        out.append(
-            f'<text x="{lx + 17}" y="{PAD_T - 15}" font-size="12" fill="{TEXT}">'
-            f'{esc(s["label"])}</text>'
-        )
-        lx += 22 + 8 * len(s["label"])
+    # Wrapped legend below the plot.
+    ly = PAD_T + plot_h + 38
+    for row in legend_rows:
+        lx = 32
+        for label, color in row:
+            out.append(
+                f'<rect x="{lx}" y="{ly - 10}" width="12" height="12" rx="2" '
+                f'fill="{color}"/>'
+            )
+            out.append(
+                f'<text x="{lx + 17}" y="{ly}" font-size="12" fill="{TEXT}">'
+                f'{esc(label)}</text>'
+            )
+            lx += 22 + 8 * len(label)
+        ly += legend_row_h
     out.append(
         f'<text x="{W - 16}" y="{height - 8}" font-size="11" fill="{SUB}" '
         f'text-anchor="end">{esc(unit)} (log scale)</text>'
     )
     out.append("</svg>")
     return "\n".join(out)
-
 
 def groups(summary: dict, workload: str, size: int, variant: str = "canonical"):
     return {
